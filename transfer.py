@@ -10,8 +10,8 @@ from selenium.webdriver.support import expected_conditions
 import time 
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 
-
-load_time = 0.5
+start_time = datetime.datetime.now()
+load_time = 1
 service = Service(executable_path="chromedriver.exe")
 options = Options()
 options.add_argument('--ignore-certificate-errors')
@@ -59,6 +59,13 @@ for i,id in enumerate(outages['ESI ID']):
     except StaleElementReferenceException as error:
         outage_log.write(f'{datetime.datetime.now()}: ESI ID \"{id}\": [ERROR] search was too fast, status was not updated\n')
 
+finish_time = datetime.datetime.now()
+delta = finish_time-start_time
+n_meters = outages['ESI ID'].size
+outage_log.write(f'updating {n_meters} meters took {delta.seconds} seconds')
 outages.to_excel('excel_out.xlsx','sheet1')
 outage_log.close()
 driver.quit()
+
+
+print(delta)
