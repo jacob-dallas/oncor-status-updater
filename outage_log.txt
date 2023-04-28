@@ -1,0 +1,624 @@
+2023-04-27 07:26:45.534528: ESI ID "0008036056": beginning search
+2023-04-27 07:26:50.145489: ESI ID "0008036056" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:26:50.146483: ESI ID "0008372180": beginning search
+2023-04-27 07:26:53.084132: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:26:53.085130: ESI ID "0008372118": beginning search
+2023-04-27 07:26:56.421679: ESI ID "0008372118" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:26:56.421679: ESI ID "0008372087": beginning search
+2023-04-27 07:26:59.934456: ESI ID "0008372087" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:26:59.934456: ESI ID "0009357175": beginning search
+2023-04-27 07:27:03.031613: ESI ID "0009357175" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:03.031613: ESI ID "0008380333": beginning search
+2023-04-27 07:27:06.288052: ESI ID "0008380333" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:06.288052: ESI ID "0009608398": beginning search
+2023-04-27 07:27:09.705076: ESI ID "0009608398" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:09.705076: ESI ID "0008363996": beginning search
+2023-04-27 07:27:13.344153: ESI ID "0008363996" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:13.344153: ESI ID "0009624146": beginning search
+2023-04-27 07:27:16.620878: ESI ID "0009624146" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:16.620878: ESI ID "0009618411": beginning search
+2023-04-27 07:27:19.703873: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:27:19.703873: ESI ID "0008380395": beginning search
+2023-04-27 07:27:22.843836: ESI ID "0008380395" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:22.843836: ESI ID "0008036087": beginning search
+2023-04-27 07:27:26.132439: ESI ID "0008036087" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:26.132439: ESI ID "0008597178": beginning search
+2023-04-27 07:27:29.309999: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:27:29.310486: ESI ID "0008173067": beginning search
+2023-04-27 07:27:32.778520: ESI ID "0008173067" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:32.778520: ESI ID "0008173098": beginning search
+2023-04-27 07:27:36.226375: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:27:36.226375: ESI ID "0008173160": beginning search
+2023-04-27 07:27:39.807527: ESI ID "0008173160" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:39.807527: ESI ID "0008382751": beginning search
+2023-04-27 07:27:43.095220: ESI ID "0008382751" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:43.095220: ESI ID "0008372211": beginning search
+2023-04-27 07:27:46.263165: ESI ID "0008372211" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:46.263165: ESI ID "0008372273": beginning search
+2023-04-27 07:27:49.669015: ESI ID "0008372273" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:49.669015: ESI ID "0008372149": beginning search
+2023-04-27 07:27:53.173833: ESI ID "0008372149" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:53.173833: ESI ID "0008036118": beginning search
+2023-04-27 07:27:56.242752: ESI ID "0008036118" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:56.242752: ESI ID "0008372242": beginning search
+2023-04-27 07:27:59.177581: ESI ID "0008372242" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:27:59.177581: ESI ID "0008380209": beginning search
+2023-04-27 07:28:02.342225: ESI ID "0008380209" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:02.342225: ESI ID "0008380240": beginning search
+2023-04-27 07:28:05.520545: ESI ID "0008380240" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:05.520545: ESI ID "0008380271": beginning search
+2023-04-27 07:28:08.723007: ESI ID "0008380271" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:08.723007: ESI ID "0008380302": beginning search
+2023-04-27 07:28:11.644226: ESI ID "0008380302" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:11.644226: ESI ID "0008380364": beginning search
+2023-04-27 07:28:14.726505: ESI ID "0008380364" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:14.727525: ESI ID "0008380426": beginning search
+2023-04-27 07:28:17.996762: ESI ID "0008380426" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:17.996762: ESI ID "0008597147": beginning search
+2023-04-27 07:28:21.082756: ESI ID "0008597147" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:21.082756: ESI ID "0009741853": beginning search
+2023-04-27 07:28:23.864670: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:28:23.864670: ESI ID "0006815669": beginning search
+2023-04-27 07:28:27.038004: ESI ID "0006815669" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:27.038004: ESI ID "0007110820": beginning search
+2023-04-27 07:28:30.357265: ESI ID "0007110820" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:30.357765: ESI ID "0006815452": beginning search
+2023-04-27 07:28:33.773989: ESI ID "0006815452" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:33.773989: ESI ID "0008176703": beginning search
+2023-04-27 07:28:36.920756: ESI ID "0008176703" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:36.920756: ESI ID "0008252870": beginning search
+2023-04-27 07:28:40.329328: ESI ID "0008252870" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:40.329328: ESI ID "0009295919": beginning search
+2023-04-27 07:28:43.750928: ESI ID "0009295919" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:43.750928: ESI ID "0009054150": beginning search
+2023-04-27 07:28:46.842382: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:28:46.842382: ESI ID "0008235324": beginning search
+2023-04-27 07:28:50.061366: ESI ID "0008235324" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:50.061366: ESI ID "0007428012": beginning search
+2023-04-27 07:28:53.228151: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:28:53.228151: ESI ID "0006388675": beginning search
+2023-04-27 07:28:56.255800: ESI ID "0006388675" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:28:56.255800: ESI ID "0008178439": beginning search
+2023-04-27 07:28:59.341167: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:28:59.341669: ESI ID "0008283560": beginning search
+2023-04-27 07:29:02.843328: ESI ID "0008283560" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:02.843328: ESI ID "0005854668": beginning search
+2023-04-27 07:29:05.667917: ESI ID "0005854668" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:05.667917: ESI ID "0009299484": beginning search
+2023-04-27 07:29:08.820569: ESI ID "0009299484" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:08.820569: ESI ID "0009426336": beginning search
+2023-04-27 07:29:12.229249: ESI ID "0009426336" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:12.229249: ESI ID "0009060877": beginning search
+2023-04-27 07:29:15.961266: ESI ID "0009060877" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:15.962264: ESI ID "0009489390": beginning search
+2023-04-27 07:29:19.265357: ESI ID "0009489390" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:19.265357: ESI ID "0006362697": beginning search
+2023-04-27 07:29:22.659892: ESI ID "0006362697" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:22.659892: ESI ID "0008047278": beginning search
+2023-04-27 07:29:26.088630: ESI ID "0008047278" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:26.088630: ESI ID "0008168581": beginning search
+2023-04-27 07:29:29.164817: ESI ID "0008168581" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:29.165865: ESI ID "0008168767": beginning search
+2023-04-27 07:29:32.337434: ESI ID "0008168767" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:32.337933: ESI ID "0008267533": beginning search
+2023-04-27 07:29:35.310297: ESI ID "0008267533" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:35.310297: ESI ID "0009001853": beginning search
+2023-04-27 07:29:39.924362: ESI ID "0009001853" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:39.924362: ESI ID "0009171237": beginning search
+2023-04-27 07:29:43.112145: ESI ID "0009171237" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:43.112145: ESI ID "0009171299": beginning search
+2023-04-27 07:29:46.271568: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:29:46.271568: ESI ID "0009224712": beginning search
+2023-04-27 07:29:49.437285: ESI ID "0009224712" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:49.437285: ESI ID "0009224743": beginning search
+2023-04-27 07:29:52.715945: ESI ID "0009224743" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:52.716947: ESI ID "0009487902": beginning search
+2023-04-27 07:29:56.140551: ESI ID "0009487902" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:29:56.141050: ESI ID "0006310029": beginning search
+2023-04-27 07:29:59.326630: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:29:59.327628: ESI ID "0007443528": beginning search
+2023-04-27 07:30:02.913666: ESI ID "0007443528" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:02.914662: ESI ID "0008469436": beginning search
+2023-04-27 07:30:06.077216: ESI ID "0008469436" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:06.077216: ESI ID "0000212152": beginning search
+2023-04-27 07:30:09.133221: ESI ID "0000212152" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:09.134221: ESI ID "0009225301": beginning search
+2023-04-27 07:30:12.086953: ESI ID "0009225301" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:12.086953: ESI ID "0006855752": beginning search
+2023-04-27 07:30:15.101422: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:30:15.102444: ESI ID "0009987653": beginning search
+2023-04-27 07:30:18.652292: ESI ID "0009987653" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:18.652292: ESI ID "0008375723": beginning search
+2023-04-27 07:30:21.859626: ESI ID "0008375723" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:21.859626: ESI ID "0008923826": beginning search
+2023-04-27 07:30:24.940647: ESI ID "0008923826" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:24.941650: ESI ID "0009956932": beginning search
+2023-04-27 07:30:28.431035: ESI ID "0009956932" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:28.431035: ESI ID "0005472838": beginning search
+2023-04-27 07:30:31.504697: ESI ID "0005472838" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:31.504697: ESI ID "0009036789": beginning search
+2023-04-27 07:30:34.605596: ESI ID "0009036789" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:34.605596: ESI ID "0007894842": beginning search
+2023-04-27 07:30:38.327154: ESI ID "0007894842" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:38.327154: ESI ID "0008209399": beginning search
+2023-04-27 07:30:41.163874: ESI ID "0008209399" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:41.163874: ESI ID "0009040416": beginning search
+2023-04-27 07:30:44.120635: ESI ID "0009040416" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:44.121159: ESI ID "0009040447": beginning search
+2023-04-27 07:30:47.051871: ESI ID "0009040447" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:47.051871: ESI ID "0009040261": beginning search
+2023-04-27 07:30:50.256672: ESI ID "0009040261" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:50.256672: ESI ID "0009040571": beginning search
+2023-04-27 07:30:53.303839: ESI ID "0009040571" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:53.303839: ESI ID "0009040323": beginning search
+2023-04-27 07:30:56.483854: ESI ID "0009040323" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:56.483854: ESI ID "0009040540": beginning search
+2023-04-27 07:30:59.546369: ESI ID "0009040540" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:30:59.546369: ESI ID "0009040509": beginning search
+2023-04-27 07:31:02.610803: ESI ID "0009040509" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:02.610803: ESI ID "0009040602": beginning search
+2023-04-27 07:31:05.887898: ESI ID "0009040602" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:05.887898: ESI ID "0007530127": beginning search
+2023-04-27 07:31:08.812754: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:31:08.812754: ESI ID "0009025567": beginning search
+2023-04-27 07:31:12.190143: ESI ID "0009025567" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:12.190143: ESI ID "0007979224": beginning search
+2023-04-27 07:31:15.091586: ESI ID "0007979224" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:15.091586: ESI ID "0009029287": beginning search
+2023-04-27 07:31:18.181212: ESI ID "0009029287" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:18.182208: ESI ID "0009025722": beginning search
+2023-04-27 07:31:21.573438: ESI ID "0009025722" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:21.573438: ESI ID "0006959199": beginning search
+2023-04-27 07:31:24.755447: ESI ID "0006959199" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:24.755447: ESI ID "0009024172": beginning search
+2023-04-27 07:31:28.149485: ESI ID "0009024172" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:28.149485: ESI ID "0009029380": beginning search
+2023-04-27 07:31:31.438412: ESI ID "0009029380" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:31.438412: ESI ID "0009029411": beginning search
+2023-04-27 07:31:34.501439: ESI ID "0009029411" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:34.502437: ESI ID "0009029256": beginning search
+2023-04-27 07:31:37.671405: ESI ID "0009029256" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:37.671405: ESI ID "0009029318": beginning search
+2023-04-27 07:31:40.852645: ESI ID "0009029318" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:40.852645: ESI ID "0009029349": beginning search
+2023-04-27 07:31:44.125571: ESI ID "0009029349" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:44.125571: ESI ID "0009027365": beginning search
+2023-04-27 07:31:47.318897: ESI ID "0009027365" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:47.318897: ESI ID "0006902328": beginning search
+2023-04-27 07:31:50.277402: ESI ID "0006902328" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:50.277402: ESI ID "0009029566": beginning search
+2023-04-27 07:31:53.062935: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:31:53.062935: ESI ID "0009029535": beginning search
+2023-04-27 07:31:56.482808: ESI ID "0009029535" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:56.482808: ESI ID "0008121483": beginning search
+2023-04-27 07:31:59.456102: ESI ID "0008121483" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:31:59.456102: ESI ID "0009029597": beginning search
+2023-04-27 07:32:02.745863: ESI ID "0009029597" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:02.745863: ESI ID "0009024203": beginning search
+2023-04-27 07:32:05.809345: ESI ID "0009024203" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:05.809345: ESI ID "0009024234": beginning search
+2023-04-27 07:32:08.881727: ESI ID "0009024234" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:08.882366: ESI ID "0006973119": beginning search
+2023-04-27 07:32:12.179157: ESI ID "0006973119" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:12.179157: ESI ID "0009028016": beginning search
+2023-04-27 07:32:15.572523: ESI ID "0009028016" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:15.572523: ESI ID "0006942583": beginning search
+2023-04-27 07:32:19.539086: ESI ID "0006942583" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:19.539086: ESI ID "0009025474": beginning search
+2023-04-27 07:32:22.932101: ESI ID "0009025474" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:22.932101: ESI ID "0006156486": beginning search
+2023-04-27 07:32:26.090265: ESI ID "0006156486" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:26.090265: ESI ID "0009010749": beginning search
+2023-04-27 07:32:29.252426: ESI ID "0009010749" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:29.252426: ESI ID "0008507836": beginning search
+2023-04-27 07:32:32.443670: ESI ID "0008507836" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:32.443670: ESI ID "0007014782": beginning search
+2023-04-27 07:32:35.961099: ESI ID "0007014782" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:35.961352: ESI ID "0009027489": beginning search
+2023-04-27 07:32:39.240800: ESI ID "0009027489" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:39.240800: ESI ID "0007318687": beginning search
+2023-04-27 07:32:42.425568: ESI ID "0007318687" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:42.425568: ESI ID "0009027396": beginning search
+2023-04-27 07:32:45.151046: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:32:45.151046: ESI ID "0000863022": beginning search
+2023-04-27 07:32:48.378017: ESI ID "0000863022" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:48.378017: ESI ID "0006308746": beginning search
+2023-04-27 07:32:51.487212: ESI ID "0006308746" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:51.487212: ESI ID "0009027427": beginning search
+2023-04-27 07:32:54.480393: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:32:54.480393: ESI ID "0005854822": beginning search
+2023-04-27 07:32:57.948847: ESI ID "0005854822" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:32:57.948847: ESI ID "0008753325": beginning search
+2023-04-27 07:33:00.997527: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:33:00.998523: ESI ID "0009027520": beginning search
+2023-04-27 07:33:04.607036: ESI ID "0009027520" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:04.607547: ESI ID "0009025505": beginning search
+2023-04-27 07:33:07.879628: ESI ID "0009025505" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:07.879628: ESI ID "0009027768": beginning search
+2023-04-27 07:33:10.926211: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:33:10.926211: ESI ID "0009025350": beginning search
+2023-04-27 07:33:14.086451: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:33:14.086907: ESI ID "0009025319": beginning search
+2023-04-27 07:33:17.023836: ESI ID "0009025319" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:17.023836: ESI ID "0005374460": beginning search
+2023-04-27 07:33:20.184596: ESI ID "0005374460" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:20.184596: ESI ID "0009025381": beginning search
+2023-04-27 07:33:23.444675: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:33:23.445704: ESI ID "0006867997": beginning search
+2023-04-27 07:33:27.199268: ESI ID "0006867997" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:27.199268: ESI ID "0007530065": beginning search
+2023-04-27 07:33:30.387345: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:33:30.387345: ESI ID "0008567835": beginning search
+2023-04-27 07:33:33.767212: ESI ID "0008567835" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:33.767212: ESI ID "0006867842": beginning search
+2023-04-27 07:33:36.834075: ESI ID "0006867842" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:36.834075: ESI ID "0008761075": beginning search
+2023-04-27 07:33:40.109662: ESI ID "0008761075" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:40.109662: ESI ID "0008759835": beginning search
+2023-04-27 07:33:43.391444: ESI ID "0008759835" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:43.391444: ESI ID "0009027985": beginning search
+2023-04-27 07:33:46.559094: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:33:46.559094: ESI ID "0005209122": beginning search
+2023-04-27 07:33:49.928540: ESI ID "0005209122" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:49.928540: ESI ID "0009025412": beginning search
+2023-04-27 07:33:53.059752: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:33:53.059752: ESI ID "0009010873": beginning search
+2023-04-27 07:33:56.146448: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:33:56.147446: ESI ID "0009010904": beginning search
+2023-04-27 07:33:59.344398: ESI ID "0009010904" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:33:59.344398: ESI ID "0008366507": beginning search
+2023-04-27 07:34:02.520158: ESI ID "0008366507" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:02.520158: ESI ID "0009029783": beginning search
+2023-04-27 07:34:05.688346: ESI ID "0009029783" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:05.688346: ESI ID "0009032976": beginning search
+2023-04-27 07:34:08.860763: ESI ID "0009032976" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:08.861770: ESI ID "0009030434": beginning search
+2023-04-27 07:34:11.908478: ESI ID "0009030434" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:11.909472: ESI ID "0009029473": beginning search
+2023-04-27 07:34:15.187839: ESI ID "0009029473" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:15.187839: ESI ID "0006192352": beginning search
+2023-04-27 07:34:18.165529: ESI ID "0006192352" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:18.166527: ESI ID "0009027272": beginning search
+2023-04-27 07:34:21.057998: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:34:21.058482: ESI ID "0009030279": beginning search
+2023-04-27 07:34:24.361559: ESI ID "0009030279" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:24.361559: ESI ID "0009030310": beginning search
+2023-04-27 07:34:27.560513: ESI ID "0009030310" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:27.560513: ESI ID "0009030062": beginning search
+2023-04-27 07:34:30.594451: ESI ID "0009030062" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:30.594451: ESI ID "0006137762": beginning search
+2023-04-27 07:34:33.570245: ESI ID "0006137762" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:33.570245: ESI ID "0006123068": beginning search
+2023-04-27 07:34:36.509697: ESI ID "0006123068" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:36.510704: ESI ID "0006137793": beginning search
+2023-04-27 07:34:39.673238: ESI ID "0006137793" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:39.673238: ESI ID "0006136336": beginning search
+2023-04-27 07:34:42.748989: ESI ID "0006136336" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:42.748989: ESI ID "0006137731": beginning search
+2023-04-27 07:34:46.034090: ESI ID "0006137731" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:46.034090: ESI ID "0006136429": beginning search
+2023-04-27 07:34:49.361474: ESI ID "0006136429" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:49.361474: ESI ID "0009030341": beginning search
+2023-04-27 07:34:52.867955: ESI ID "0009030341" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:52.867955: ESI ID "0007063080": beginning search
+2023-04-27 07:34:56.034859: ESI ID "0007063080" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:34:56.034859: ESI ID "0009030186": beginning search
+2023-04-27 07:34:59.028907: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:34:59.028907: ESI ID "0006724467": beginning search
+2023-04-27 07:35:02.593532: ESI ID "0006724467" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:02.593532: ESI ID "0009030093": beginning search
+2023-04-27 07:35:05.853826: ESI ID "0009030093" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:05.853826: ESI ID "0006867873": beginning search
+2023-04-27 07:35:08.804036: ESI ID "0006867873" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:08.804036: ESI ID "0008753976": beginning search
+2023-04-27 07:35:11.881728: ESI ID "0008753976" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:11.882055: ESI ID "0008754751": beginning search
+2023-04-27 07:35:14.719743: ESI ID "0008754751" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:14.719743: ESI ID "0006867904": beginning search
+2023-04-27 07:35:17.760321: ESI ID "0006867904" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:17.760321: ESI ID "0009027644": beginning search
+2023-04-27 07:35:20.968937: ESI ID "0009027644" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:20.968937: ESI ID "0006727939": beginning search
+2023-04-27 07:35:24.154105: ESI ID "0006727939" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:24.154105: ESI ID "0008145477": beginning search
+2023-04-27 07:35:27.251970: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:35:27.252985: ESI ID "0009038153": beginning search
+2023-04-27 07:35:30.345554: ESI ID "0009038153" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:30.345554: ESI ID "0004279809": beginning search
+2023-04-27 07:35:33.627301: ESI ID "0004279809" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:33.627301: ESI ID "0008462359": beginning search
+2023-04-27 07:35:36.689108: ESI ID "0008462359" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:36.689108: ESI ID "0009037161": beginning search
+2023-04-27 07:35:39.805134: ESI ID "0009037161" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:39.805134: ESI ID "0009016701": beginning search
+2023-04-27 07:35:42.979732: ESI ID "0009016701" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:42.979732: ESI ID "0009033565": beginning search
+2023-04-27 07:35:45.927116: ESI ID "0009033565" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:45.928112: ESI ID "0007530158": beginning search
+2023-04-27 07:35:48.876149: ESI ID "0007530158" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:48.876149: ESI ID "0009016329": beginning search
+2023-04-27 07:35:52.044934: ESI ID "0009016329" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:52.045932: ESI ID "0006816413": beginning search
+2023-04-27 07:35:55.327156: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:35:55.327678: ESI ID "0009004177": beginning search
+2023-04-27 07:35:58.504644: ESI ID "0009004177" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:35:58.504644: ESI ID "0006019806": beginning search
+2023-04-27 07:36:01.545180: ESI ID "0006019806" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:01.545180: ESI ID "0009037378": beginning search
+2023-04-27 07:36:04.731199: ESI ID "0009037378" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:04.731199: ESI ID "0009037316": beginning search
+2023-04-27 07:36:07.900882: ESI ID "0009037316" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:07.900882: ESI ID "0006624337": beginning search
+2023-04-27 07:36:11.325659: ESI ID "0006624337" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:11.325659: ESI ID "0006160082": beginning search
+2023-04-27 07:36:14.387335: ESI ID "0006160082" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:14.387335: ESI ID "0009037285": beginning search
+2023-04-27 07:36:17.457371: ESI ID "0009037285" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:17.457882: ESI ID "0007212997": beginning search
+2023-04-27 07:36:20.620687: ESI ID "0007212997" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:20.620687: ESI ID "0007434491": beginning search
+2023-04-27 07:36:24.058472: ESI ID "0007434491" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:24.058472: ESI ID "0009037409": beginning search
+2023-04-27 07:36:27.449773: ESI ID "0009037409" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:27.449773: ESI ID "0008425283": beginning search
+2023-04-27 07:36:30.658729: ESI ID "0008425283" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:30.659248: ESI ID "0009037223": beginning search
+2023-04-27 07:36:33.704278: ESI ID "0009037223" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:33.704278: ESI ID "0006727970": beginning search
+2023-04-27 07:36:36.609236: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:36:36.610232: ESI ID "0008553499": beginning search
+2023-04-27 07:36:39.454427: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:36:39.454427: ESI ID "0009025691": beginning search
+2023-04-27 07:36:42.851064: ESI ID "0009025691" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:42.851064: ESI ID "0009024358": beginning search
+2023-04-27 07:36:45.918617: ESI ID "0009024358" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:45.919082: ESI ID "0008750163": beginning search
+2023-04-27 07:36:49.429236: ESI ID "0008750163" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:49.429236: ESI ID "0008549097": beginning search
+2023-04-27 07:36:52.616755: ESI ID "0008549097" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:52.616755: ESI ID "0009024327": beginning search
+2023-04-27 07:36:55.462396: ESI ID "0009024327" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:55.463397: ESI ID "0009025536": beginning search
+2023-04-27 07:36:58.398020: ESI ID "0009025536" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:36:58.398020: ESI ID "0008387277": beginning search
+2023-04-27 07:37:01.682795: ESI ID "0008387277" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:01.682795: ESI ID "0009025598": beginning search
+2023-04-27 07:37:04.878651: ESI ID "0009025598" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:04.878651: ESI ID "0009025660": beginning search
+2023-04-27 07:37:08.288878: ESI ID "0009025660" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:08.288878: ESI ID "0009025629": beginning search
+2023-04-27 07:37:11.553388: ESI ID "0009025629" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:11.553388: ESI ID "0000742088": beginning search
+2023-04-27 07:37:14.748785: ESI ID "0000742088" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:14.748785: ESI ID "0009024296": beginning search
+2023-04-27 07:37:17.745672: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:37:17.745672: ESI ID "0007652794": beginning search
+2023-04-27 07:37:20.836423: ESI ID "0007652794" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:20.836423: ESI ID "0008554306": beginning search
+2023-04-27 07:37:24.161315: ESI ID "0008554306" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:24.161315: ESI ID "0007207086": beginning search
+2023-04-27 07:37:27.230270: ESI ID "0007207086" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:27.230270: ESI ID "0009024265": beginning search
+2023-04-27 07:37:30.273968: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:37:30.273968: ESI ID "0007530003": beginning search
+2023-04-27 07:37:33.898818: ESI ID "0007530003" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:33.898818: ESI ID "0008375311": beginning search
+2023-04-27 07:37:37.416222: ESI ID "0008375311" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:37.416222: ESI ID "0009028884": beginning search
+2023-04-27 07:37:41.152391: ESI ID "0009028884" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:41.152391: ESI ID "0009013880": beginning search
+2023-04-27 07:37:44.220134: ESI ID "0009013880" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:44.220134: ESI ID "0008086856": beginning search
+2023-04-27 07:37:47.380091: ESI ID "0008086856" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:47.380091: ESI ID "0009038215": beginning search
+2023-04-27 07:37:50.677824: ESI ID "0009038215" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:50.678862: ESI ID "0009037254": beginning search
+2023-04-27 07:37:53.845726: ESI ID "0009037254" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:53.845726: ESI ID "0009038184": beginning search
+2023-04-27 07:37:56.939325: ESI ID "0009038184" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:56.939325: ESI ID "0009040478": beginning search
+2023-04-27 07:37:59.871295: ESI ID "0009040478" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:37:59.871295: ESI ID "0007440846": beginning search
+2023-04-27 07:38:03.372380: ESI ID "0007440846" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:03.372380: ESI ID "0009040199": beginning search
+2023-04-27 07:38:06.787637: ESI ID "0009040199" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:06.787637: ESI ID "0009028915": beginning search
+2023-04-27 07:38:11.089218: ESI ID "0009028915" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:11.089218: ESI ID "0009027303": beginning search
+2023-04-27 07:38:13.916368: ESI ID "0009027303" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:13.916368: ESI ID "0000705446": beginning search
+2023-04-27 07:38:17.026184: ESI ID "0000705446" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:17.026184: ESI ID "0006867811": beginning search
+2023-04-27 07:38:20.032763: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:38:20.032763: ESI ID "0009025257": beginning search
+2023-04-27 07:38:23.238877: ESI ID "0009025257" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:23.238877: ESI ID "0009027830": beginning search
+2023-04-27 07:38:26.163547: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:38:26.163547: ESI ID "0009030217": beginning search
+2023-04-27 07:38:29.317949: ESI ID "0009030217" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:29.317949: ESI ID "0008761106": beginning search
+2023-04-27 07:38:32.126219: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:38:32.126219: ESI ID "0008786123": beginning search
+2023-04-27 07:38:35.680600: ESI ID "0008786123" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:35.680600: ESI ID "0008121266": beginning search
+2023-04-27 07:38:38.962243: ESI ID "0008121266" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:38.962243: ESI ID "0006867966": beginning search
+2023-04-27 07:38:41.903556: ESI ID "0006867966" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:41.903556: ESI ID "0006192290": beginning search
+2023-04-27 07:38:44.972888: ESI ID "0006192290" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:44.973347: ESI ID "0006867780": beginning search
+2023-04-27 07:38:48.355486: ESI ID "0006867780" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:48.355486: ESI ID "0006394566": beginning search
+2023-04-27 07:38:51.559660: ESI ID "0006394566" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:51.559660: ESI ID "0009010842": beginning search
+2023-04-27 07:38:54.368924: ESI ID "0009010842" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:54.369922: ESI ID "0000830293": beginning search
+2023-04-27 07:38:57.211392: ESI ID "0000830293" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:38:57.211392: ESI ID "0009015833": beginning search
+2023-04-27 07:38:59.934439: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:38:59.934898: ESI ID "0007151058": beginning search
+2023-04-27 07:39:03.419743: ESI ID "0007151058" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:03.419743: ESI ID "0008811915": beginning search
+2023-04-27 07:39:06.412666: ESI ID "0008811915" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:06.412666: ESI ID "0009486879": beginning search
+2023-04-27 07:39:10.014318: ESI ID "0009486879" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:10.014318: ESI ID "0008786092": beginning search
+2023-04-27 07:39:13.233551: ESI ID "0008786092" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:13.233551: ESI ID "0008812194": beginning search
+2023-04-27 07:39:16.182262: ESI ID "0008812194" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:16.182262: ESI ID "0008786030": beginning search
+2023-04-27 07:39:19.255879: ESI ID "0008786030" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:19.255879: ESI ID "00013557": beginning search
+2023-04-27 07:39:29.248833: ESI ID "00013557" status: device offline
+2023-04-27 07:39:29.248833: ESI ID "0008786061": beginning search
+2023-04-27 07:39:32.627553: ESI ID "0008786061" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:32.627553: ESI ID "0009030589": beginning search
+2023-04-27 07:39:35.701741: ESI ID "0009030589" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:35.701741: ESI ID "0009030620": beginning search
+2023-04-27 07:39:39.776908: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:39:39.776908: ESI ID "0006428449": beginning search
+2023-04-27 07:39:44.259257: ESI ID "0006428449" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:44.262250: ESI ID "0006428480": beginning search
+2023-04-27 07:39:50.609295: ESI ID "0006428480" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:50.625252: ESI ID "0000486989": beginning search
+2023-04-27 07:39:55.130218: ESI ID "0000486989" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:55.130218: ESI ID "0006923845": beginning search
+2023-04-27 07:39:59.637181: ESI ID "0006923845" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:39:59.637181: ESI ID "0009038525": beginning search
+2023-04-27 07:40:02.763827: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:40:02.763827: ESI ID "0006126074": beginning search
+2023-04-27 07:40:06.200646: ESI ID "0006126074" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:06.200646: ESI ID "0006136460": beginning search
+2023-04-27 07:40:09.910088: ESI ID "0006136460" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:09.910088: ESI ID "0008424322": beginning search
+2023-04-27 07:40:13.334132: ESI ID "0008424322" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:13.335125: ESI ID "0006136677": beginning search
+2023-04-27 07:40:16.709790: ESI ID "0006136677" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:16.709790: ESI ID "0006134848": beginning search
+2023-04-27 07:40:19.885132: ESI ID "0006134848" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:19.886130: ESI ID "0006152487": beginning search
+2023-04-27 07:40:23.332432: ESI ID "0006152487" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:23.332596: ESI ID "0006134786": beginning search
+2023-04-27 07:40:26.748860: ESI ID "0006134786" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:26.748860: ESI ID "0006136491": beginning search
+2023-04-27 07:40:29.899285: ESI ID "0006136491" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:29.899285: ESI ID "0009039951": beginning search
+2023-04-27 07:40:33.101366: ESI ID "0009039951" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:33.101366: ESI ID "0009038680": beginning search
+2023-04-27 07:40:36.255391: ESI ID "0009038680" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:36.255391: ESI ID "0008687729": beginning search
+2023-04-27 07:40:39.334644: ESI ID "0008687729" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:39.334644: ESI ID "0009040013": beginning search
+2023-04-27 07:40:42.615108: ESI ID "0009040013" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:42.615594: ESI ID "0006107599": beginning search
+2023-04-27 07:40:46.029304: ESI ID "0006107599" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:46.029304: ESI ID "0006994280": beginning search
+2023-04-27 07:40:49.316908: ESI ID "0006994280" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:49.317930: ESI ID "0009040044": beginning search
+2023-04-27 07:40:52.220534: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:40:52.220999: ESI ID "0009040106": beginning search
+2023-04-27 07:40:55.428583: ESI ID "0009040106" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:55.429579: ESI ID "0009038556": beginning search
+2023-04-27 07:40:58.389771: ESI ID "0009038556" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:40:58.389771: ESI ID "0009192967": beginning search
+2023-04-27 07:41:01.563512: ESI ID "0009192967" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:01.563512: ESI ID "0009029969": beginning search
+2023-04-27 07:41:04.617904: ESI ID "0009029969" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:04.617904: ESI ID "0009030031": beginning search
+2023-04-27 07:41:07.609702: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:41:07.610700: ESI ID "0009926472": beginning search
+2023-04-27 07:41:10.948256: ESI ID "0009926472" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:10.948256: ESI ID "0009032945": beginning search
+2023-04-27 07:41:14.248452: ESI ID "0009032945" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:14.248452: ESI ID "0008209461": beginning search
+2023-04-27 07:41:17.412698: ESI ID "0008209461" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:17.412698: ESI ID "0008209585": beginning search
+2023-04-27 07:41:20.351739: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:41:20.351739: ESI ID "0009393371": beginning search
+2023-04-27 07:41:23.754704: ESI ID "0009393371" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:23.754704: ESI ID "0009033007": beginning search
+2023-04-27 07:41:27.055507: ESI ID "0009033007" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:27.055507: ESI ID "0007530096": beginning search
+2023-04-27 07:41:29.986628: ESI ID "0007530096" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:29.986628: ESI ID "0009030372": beginning search
+2023-04-27 07:41:33.074133: ESI ID "0009030372" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:33.074133: ESI ID "0000087926": beginning search
+2023-04-27 07:41:36.112056: ESI ID "0000087926" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:36.112056: ESI ID "0009030403": beginning search
+2023-04-27 07:41:39.278773: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:41:39.278773: ESI ID "0009012795": beginning search
+2023-04-27 07:41:42.550034: ESI ID "0009012795" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:42.550034: ESI ID "0008357393": beginning search
+2023-04-27 07:41:45.731587: ESI ID "0008357393" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:45.731587: ESI ID "0008121297": beginning search
+2023-04-27 07:41:49.027782: ESI ID "0008121297" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:49.027782: ESI ID "0008288356": beginning search
+2023-04-27 07:41:52.314158: ESI ID "0008288356" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:52.314158: ESI ID "0006730109": beginning search
+2023-04-27 07:41:55.727045: ESI ID "0006730109" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:55.727045: ESI ID "0009014438": beginning search
+2023-04-27 07:41:58.992325: ESI ID "0009014438" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:41:58.992325: ESI ID "0009016081": beginning search
+2023-04-27 07:42:01.960344: ESI ID "0009016081" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:01.960344: ESI ID "0005575600": beginning search
+2023-04-27 07:42:05.227616: ESI ID "0005575600" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:05.228614: ESI ID "0009016174": beginning search
+2023-04-27 07:42:08.198386: This account is not yet active. Please contact your Retailer of choice to establish service
+2023-04-27 07:42:08.198386: ESI ID "0009016019": beginning search
+2023-04-27 07:42:11.489508: ESI ID "0009016019" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:11.489508: ESI ID "0009014469": beginning search
+2023-04-27 07:42:14.756807: ESI ID "0009014469" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:14.757776: ESI ID "0008121328": beginning search
+2023-04-27 07:42:18.036158: ESI ID "0008121328" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:18.036158: ESI ID "0009016236": beginning search
+2023-04-27 07:42:21.433093: ESI ID "0009016236" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:21.433093: ESI ID "0009016639": beginning search
+2023-04-27 07:42:24.722303: ESI ID "0009016639" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:24.723295: ESI ID "0009033038": beginning search
+2023-04-27 07:42:28.009516: ESI ID "0009033038" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:28.009516: ESI ID "0008569433": beginning search
+2023-04-27 07:42:31.219024: This account has been temporarily disconnected. Please contact your Retailer to restore service.
+2023-04-27 07:42:31.219024: ESI ID "0008126133": beginning search
+2023-04-27 07:42:34.585005: ESI ID "0008126133" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:34.585005: ESI ID "0008887400": beginning search
+2023-04-27 07:42:37.959990: ESI ID "0008887400" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:37.959990: ESI ID "0008005636": beginning search
+2023-04-27 07:42:41.705449: ESI ID "0008005636" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:41.705449: ESI ID "0007800540": beginning search
+2023-04-27 07:42:45.107366: ESI ID "0007800540" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:45.107366: ESI ID "0007828130": beginning search
+2023-04-27 07:42:48.277892: ESI ID "0007828130" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:48.277892: ESI ID "0008843163": beginning search
+2023-04-27 07:42:51.790928: ESI ID "0008843163" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:51.790928: ESI ID "0000025121": beginning search
+2023-04-27 07:42:54.966305: ESI ID "0000025121" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:54.966305: ESI ID "0008843194": beginning search
+2023-04-27 07:42:58.168750: ESI ID "0008843194" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:42:58.168750: ESI ID "0008843318": beginning search
+2023-04-27 07:43:01.482427: ESI ID "0008843318" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:01.482427: ESI ID "0008843132": beginning search
+2023-04-27 07:43:04.657766: ESI ID "0008843132" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:04.657766: ESI ID "0008843225": beginning search
+2023-04-27 07:43:07.817941: ESI ID "0008843225" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:07.817941: ESI ID "0008843256": beginning search
+2023-04-27 07:43:11.124564: ESI ID "0008843256" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:11.124564: ESI ID "0008843287": beginning search
+2023-04-27 07:43:14.405349: ESI ID "0008843287" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:14.406345: ESI ID "0008843349": beginning search
+2023-04-27 07:43:17.735574: ESI ID "0008843349" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:17.736578: ESI ID "0008843411": beginning search
+2023-04-27 07:43:21.102088: ESI ID "0008843411" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:21.103086: ESI ID "0009692625": beginning search
+2023-04-27 07:43:24.492637: ESI ID "0009692625" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:24.492637: ESI ID "0006688384": beginning search
+2023-04-27 07:43:27.831095: ESI ID "0006688384" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:27.831095: ESI ID "0006772641": beginning search
+2023-04-27 07:43:31.302967: ESI ID "0006772641" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:31.302967: ESI ID "0009938641": beginning search
+2023-04-27 07:43:34.601156: ESI ID "0009938641" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:34.601156: ESI ID "0007494570": beginning search
+2023-04-27 07:43:38.211513: ESI ID "0007494570" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:38.211513: ESI ID "0006688353": beginning search
+2023-04-27 07:43:41.506562: ESI ID "0006688353" status: Oncor is not aware of an existing outage at this address:
+2023-04-27 07:43:41.506562: ESI ID "0008816596": beginning search
+2023-04-27 07:43:44.798090: ESI ID "0008816596" status: Oncor is not aware of an existing outage at this address:
