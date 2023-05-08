@@ -1,0 +1,77 @@
+\documentclass[letterpaper, notitlepage]{report}
+\usepackage[]{graphicx}
+\title{ACID (Automated Communication and Information Display): Pilot Project Proposal and Report}
+\author{Jacob Pavelka, Department of Transportation}
+
+\begin{document}
+\maketitle
+
+\section{Executive Summary}
+
+Information plays a critical role in the Department of Transportation's decision making process, and often, the required information is not readily available. In one such instance, power outage information must be manually requested to determine if signals are inoperable because of hardware malfunction or power outages. Automatically requesting this information and having it readily displayed alongside traffic signal information could drastically improve response time during severe weather events. This document proposes a pilot project to implement a framework for such an automatic process. Additionally, the current progress of implementing this framework is presented. 
+
+\section{Introduction}
+
+The City of Dallas has over 1400 signalized intersections, and managing the efficiency and serviceability of these signals is among the Department of Transportation's top priorities. Maintaining traffic signal operation becomes especially difficult during severe weather events. Often, when communication is lost with the controller, the cause of malfunction is unknown. It could be caused by the hardware in the traffic signal controller, a power surge to the traffic signal controller, or even because of a loss of power to the signal. Knowing the cause of signal malfunction determines how it can be fixed, so in severe weather events, determining the cause quickly is crucial to a rapid response. 
+
+However, during events like these, only partial information is readily available. Traffic signal controllers constantly emit their status to our Advanced Traffic Management System Server (ATMS Server), MAXVIEW. However, information on electricity meters status is not readily available, so when communication is lost, we are unsure if it caused by a lack of power or malfunction traffic signal devices. This uncertainty delays our response to fix malfunctioning signals because if a technician is sent out to a signal that has lost power, they will not be able to fix it and they will have wasted time on that signal.
+
+This situation is one instance of a widespread issue. The most limiting factor keeping us from making rapid, effective decisions is the lack of real-time information. Often, to request maintenance on an intersection, improve an intersection's timing, or resolve a service request submitted by a citizen, we need to check multiple sources of information, requiring tedious hours of searching for information in databases or even field visits before we can build confidence in any decision. 
+
+Many technologies have been developed to combat these issues. Utility provider, Oncor, now provides real time electricity meter outage updates to their website graphical user interface (GUI) if given the meter's electrical service identifier ID (ESI ID). Smart Meter Texas, a new electricity meter service, provides a similar feature, except it gives information on meter usage as well. This technology even has application programming interfaces (API) that support representational state transfer (REST), allowing information to be easily queried using Hyper Text Transfer Protocol-Secure (HTTPS) messages. Programming languages, such as python, are simple to use and provide a pathway for interaction between many of these other technologies. Similarly, low-code or no-code integration environments, such as PowerAutomate have been recently developed to achieve a similar purpose. Finally, Geographic Information Systems (GIS) provide software to visualize information spatially, making it readily interpretable to the user. While these technologies are powerful on their own and have been used in impressive applications, integrating them into one framework for our specialized purpose has not been done yet.
+
+To begin to solve this issue with severe weather rapid response and many other related issues, we propose a pilot project to establish a framework to automatically collect and display power outage information from external, online sources. This framework will only be established on a few traffic signals to begin, but upon successful and secure completion of this pilot, the remaining traffic signals can be easily integrated into the framework. With vital information being automatically communicated and displayed, engineers and technicians will be able to diagnose faults and fix them at a greater rate than previously possible. Additionally, once this framework is fully developed with all traffic signals integrated, it will serve as a powerful example of how other important sources of information can be integrated into our typical workflow. 
+
+The remainder of this proposal and report will state the scope of the pilot, the efforts that have already began on this pilot, and the pilot's needs if it is to continue into the future.
+
+\section{Initial Pilot Scope}
+While many technologies are available to implement an automated communication and information display framework, the pilot will only initially use SMT's REST API, the python programming language, and ARCGIS's GIS platform. Additionally, however, other technologies, such as PowerAutomate and Oncor's web GUI will be investigated for usefulness in other projects. Overall, the scope of this pilot is to develop a program to interact with Smart Meter Texas's REST API and constantly pull power meter data. Once having this data, it will be integrated with current GIS software to display it along side other diagnostic information for traffic signals. However, this project will begin by only integrating a few traffic signals as a proof of concept. Once they have been integrated without conflict or errors, this pilot project can develop into a full project and the remaining signals can be integrated.
+
+There are three general tasks that comprise this pilot project: 
+\begin{itemize}
+    \item API setup;
+    \item API integration, and;
+    \item GIS synchronization.
+\end{itemize}
+
+
+Setting up the API requires coordination with SMT. By default, SMT only provides a web GUI to collect electricity meter data, which is difficult to use for automatic data collection. Establishing the REST API interface is only completed upon request. For SMT to set up the REST API, they require an SSL certificate, a public, static IP, and a "Business Account" with the SMT system. 
+%(why ssl and ip are needed). 
+In SMT, accounts represent organizations, like businesses or utility providers. The accounts are straight-forward to setup; only associated ESI IDs (unique identifiers for electric service accounts), meter numbers, and service provider information is needed to establish an account. The account will be set up as the Dallas Department of Transportation and have a DUNS number associated with the city of Dallas. Initially, only five ESI ID's will be associated with this account. Upon successful and secure implementation, however, the remaining ESI ID's of interest will be added.
+
+Additionally, this "API setup" task requires a detailed plan for who has access to the API and the SMT Account. Through the SMT web portal, different levels of users can be added to an account, where users represent individuals in organization's account. Administrative user profiles can be distributed to those who need to change ESI ID and meter numbers, and standard profiles can be given to those who only need to view electricity meter data. SMT also provides the ability to create technician users if a third party is brought in to manage the account and API. Along with these users, a special "API user" must be created. This user will be "programmed" into our API integration and provide proper credentials for API access. Additionally, this API user's credentials will be kept confidential and can be managed by administrative users.
+
+API integration requires developing and hosting a program to submit HTTPS POST requests and receive data at specified intervals. The Python programming language will be used to complete this task because it is high-level and easy to read and understand. This allows the department to more easily maintain existing feature and possibly implement new ones. Additionally, since this API integration will not require extreme computing power or efficiency, Python is not limiting its performance. Data recieved from the HTTPS POST request needs to be processed before it can continue onto GIS applications. This task can also be easily handled by Python as well.
+
+Once queried data has been processed, it needs to be integrated with GIS software to display real-time power outage information alongside traffic signal information. This task requires development of a private API that can be consumed by internal GIS map layers. Once GIS map layers have the necessary information, they can easily be consumed by our ATMS or our integrated display software, CUT, as many GIS map layers are already available in these applications.
+
+When developing this pilot project, we believe it is important to also consider other avenues we could have used to complete this project. While this implementation is likely the best for this specific use case, future automation projects may benefit from other methods. For example, while the current method is likely the most efficient in terms of integration cost and retrieval speed, it is more complex to set-up, making it harder to replicate in future automation projects. Alternative tools, such as PowerAutomate and Oncor's web GUI will be explored to determine their benefits.
+
+
+\section{Current Progress}
+We have already made progress in this pilot project, and the details of this project are shared now.
+
+Related to the API setup task, a business account of the Dallas Department of Transportation has been created and two ESI ID's have been added to it. Both of these ID's are associated with traffic signals. Additionally, one administrative user and one API user has been created for the account. However, the API user is not useful at the moment because the API has not been set up yet. Following this report is an official request for an SSL certificate with an appropriate common name. Once that is achieved the API can be set up on SMT's end. 
+
+Related to the API integration task, a program has been developed to query SMT's API, but it cannot successfully pull information because the API has not been set up. Once the API is set up, it can be polled properly, and data manipulation algorithms can be developed according to our needs.
+
+No work has been completed on the third task yet, excluding a meeting that has been scheduled with the GIS department to discuss integration strategies. 
+
+Additionally, we have investigated several other automatic information retrieval solutions, but they all contain fundamental flaws that limit real-time information gathering. Once implementation considers using web scraping technology to query Oncor's web GUI for each of our 1407 ESI ID's. Since this process uses web scraping and a web GUI, however, it is very slow, and only updates every hour. This hour delay in information may defeat the purpose in rapid storm response. Another implementation uses Power Automate to perform a similar type of web-scraping, but using this technology is limiting, requires secure downloads of the software, and requires aquistion of software liscences. A few Alternative approaches have even been considered inside the current proposed approach. For example, instead of using the python programming language as an API interface and for post-processing, a popular GUI interface, called postman, may have features to connect SMT and our GIS applications.
+
+\section{Conclusions and Future Needs}
+
+This proposal and report presents the intended scope of the pilot project and its current status. This project intends to provide automatic communication and information display with external sources of data. While significant progress has been made on this pilot project, to continue its development we require additional resources from other departments, such as GIS and ITS. Once these resources are acquired and the pilot project is complete, then a full information retrieval and display system can be developed for power outages. This software and procedure will serve as a powerful example for future automation projects as well, allowing other information sources to be integrated and increasing our overall ability to make decision effectively.
+
+What is needed specifically from the ITS department is:
+\begin{itemize}
+    \item an SSL certificate
+\end{itemize}
+
+What is specifically needed from the GIS department is:
+\begin{itemize}
+    \item assistance and information on integrating data into consumable map layers.
+\end{itemize}
+
+
+\end{document}
