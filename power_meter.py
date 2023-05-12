@@ -1,23 +1,14 @@
 from difflib import SequenceMatcher
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import ElementClickInterceptedException,TimeoutException
+from account_disconnect import check_active, check_restored
 
 class PowerMeter():
     
 
-    def __init__(self,dict_in=None):
-        if (dict_in):
-            self.dict_in = dict_in
-            self.esi = dict_in['esi_id']
-            self.cog = dict_in['cog_id']
-            self.name = dict_in['name']
-            
-            self.meters = [dict_in['meter_number']]
-            if dict_in['meter_number_2']!= '-':
-                self.meters.append(dict_in['meter_number_2'])
-
-            assert len(self.meters) == dict_in['num_meters'],f'the number of valid meter numbers does not match number of meters recorded for esi_id {self.esi}'
-
-            self.street = dict_in['street']
-            self.zip_code = dict_in['zip_code']
+    def __init__(self,dict_in:dict =None):
+        for key in dict_in:
+            setattr(self,key,dict_in[key])
 
     def verify_address(self,driver):
         driver.get("https://www.oncor.com/outages/check_status/identify/esi")
@@ -26,34 +17,33 @@ class PowerMeter():
         id_input = driver.find_element(value='esi_id_text')
         next_button = driver.find_element(value='next')
         id_input.clear()
-        id_input.send_keys(self.esi) #truncate id
+        id_input.send_keys(self.id)
         next_button.click()
-        address = driver.find_element(value='address_text').text
-        self.oncor_address = address
+        try:
+            address = WebDriverWait(driver,timeout=2).until(lambda d: d.find_element(value='address_text').text)
+            self.status = 'registered'
+            self.oncor_address = address
 
-        ind = address.index('...')
-        comp = address[0:ind]
-        trim = self.street[0:len(comp)]
+            ind = address.index('...')
+            comp = address[0:ind].lower()
+            trim = self.street[0:len(comp)].lower()
 
-        sim = SequenceMatcher(None,trim,comp).ratio()
+            sim = SequenceMatcher(None,trim,comp).ratio()
+        except (ElementClickInterceptedException,TimeoutException) as error:
+            msg = check_active(driver)
+            self.status = msg
+            print(msg)
+            self.oncor_address = ''
+            sim = 0
         self.sim = sim
 
         return sim
-    def to_dict(self):
-        dict_out = self.dict_in
-        dict_out['esi_id'] = self.esi
-        dict_out['cog_id'] = self.cog
-        dict_out['name'] = self.name
-
-        dict_out['meter_number'] = self.meters[0]
-        if len(self.meters)>1:
-            dict_out['meter_number_2'] = self.meters[1]
-
-        dict_out['street'] = self.street
-        dict_out['zip_code'] = self.zip_code
-
-        if self.oncor_address is not None:
-            dict_out['oncor_address'] = self.oncor_address
-            dict_out['address_sim'] = self.sim
-
-        return dict_out
+    
+    @property
+    def id(self):
+        return str(self.esi)[-10:]
+    
+    @property
+    def address(self):
+        zip_code = str(int(self.zip_code))
+        return f"{self.street}, Dallas, TX {zip_code}"
