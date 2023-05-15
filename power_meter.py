@@ -35,13 +35,13 @@ class PowerMeter():
             print(msg)
             self.oncor_address = ''
             sim = 0
-        self.sim = sim
+        self.address_sim = sim
 
         return sim
     
     @property
     def id(self):
-        return str(self.esi)[-10:]
+        return str(self.esi_id)[-10:]
     
     @property
     def address(self):

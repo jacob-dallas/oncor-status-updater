@@ -62,7 +62,6 @@ def full_scan():
                     ignored_exceptions=[StaleElementReferenceException]
                 ).until(next)
 
-                print('here')
 
                 try:
                     status = WebDriverWait(
@@ -100,7 +99,7 @@ def full_scan():
         finish_time = datetime.datetime.now()
         delta = finish_time-start_time
         outage_log.write(f'updating {last_complete_entry} meters took {delta.seconds} seconds')
-        outages.to_excel('excel_out.xlsx','sheet1',index=False)
+        outages.to_excel(f'logs\excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx','sheet1',index=False)
         outage_log.close()
         driver.quit()
 

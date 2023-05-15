@@ -6,10 +6,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 def migrate(filename, oncor=False):
-    migrate_1(filename)
-    migrate_2(filename)
-    if oncor:
-        oncor_record(filename)
+    # migrate_1(filename)
+    # migrate_2(filename)
+    # if oncor:
+    #     oncor_record(filename)
     match_esi(filename)
 
 
@@ -104,7 +104,7 @@ def oncor_record(json_file):
         sim = sig.verify_address(driver)
         signal["oncor_address"] = sig.oncor_address
         signal["status"] = sig.status
-        signal["address_sim"] = sig.sim
+        signal["address_sim"] = sig.address_sim
 
     with open(json_file,'w') as data_json:
         json.dump(data,data_json,indent=1)
@@ -129,6 +129,10 @@ def match_esi(json_file):
                     meter['delete']=True
             if match_count==0:
                 meter['status'] = 'unregistered with no replacement'
+                meter['delete']=False
+        else:
+            meter['delete']=False
+
     
     new_meters = []
     for meter in meters:
@@ -141,4 +145,4 @@ def match_esi(json_file):
         json.dump(data,data_json,indent=1)
 
 if __name__ == '__main__':
-    migrate('power.json')
+    migrate('power.json',True)
