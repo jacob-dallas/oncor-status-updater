@@ -144,5 +144,25 @@ def match_esi(json_file):
     with open(json_file,'w') as data_json:
         json.dump(data,data_json,indent=1)
 
+def cut_integrate(json_file,cut_file):
+    with open(json_file,'r') as f:
+        data = json.load(f)['Traffic Signals']
+    with open(cut_file,'r') as f:
+        cut = json.load(f)['devices']
+
+    for signal in data:
+        for cut_signal in cut:
+
+            try:
+                if int(cut_signal['interApplicationId'])==signal['cog_id']:
+                    signal['cut_service_id'] = cut_signal['serviceId']
+                    signal['cut_id'] = cut_signal['id']
+            except KeyError:
+                continue
+    print('finished')
+
+    with open('power_cut.json','w') as f:
+        data = json.dump(data,f,indent=1)
+
 if __name__ == '__main__':
-    migrate('power.json',True)
+    cut_integrate('power.json','cut_devices.json')
