@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime
+import sys
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -13,6 +14,7 @@ import concurrent.futures
 import threading
 import json
 from power_meter import PowerMeter
+import requests
 
 thread_local = threading.local()
 lock = threading.Lock()
@@ -20,6 +22,8 @@ lock = threading.Lock()
 
 
 def get_driver():
+    global service
+    global options
     if not hasattr(thread_local,'driver'):
         thread_local.driver = webdriver.Chrome(service=service, options=options)
     return thread_local.driver
@@ -27,6 +31,8 @@ def get_driver():
 def updates(meter):
         global last_complete_entry
         global meters
+        global outage_log
+        global sig_meters
         # Keeps a live updated on percentage complete
 
         obj = PowerMeter(meter)
@@ -48,6 +54,9 @@ def updates(meter):
             outage_log.write(log_str)
             i = sig_meters.index(meter)
             meters['Traffic Signals'][i] = obj.__dict__ 
+        if broadcast:
+            json_str = json.dumps(obj.__dict__)
+            res = requests.post('http://localhost:5000/t_update',json=json_str)
 
 def quit_driver(thread):
     if hasattr(thread_local,'driver'):
@@ -62,7 +71,9 @@ def parallel_update(ids):
         finally:
             executor.map(quit_driver,range(n_threads))
 
-def full_scan():
+def full_scan(broadcast = False):
+    global service
+    global n_meters
     start_time = datetime.datetime.now()
     service = Service(executable_path="chromedriver113.exe")
     options = Options()
@@ -80,7 +91,6 @@ def full_scan():
     # Keep track of progress
     last_complete_entry = 0
     n_meters = len(sig_meters)
-
     # Multi-Thread the search process
     parallel_update(sig_meters)
 
@@ -96,10 +106,11 @@ def full_scan():
     with open('update.json','w') as f:
         json.dump(meters,f,indent=1)
     # outages.to_excel(f'logs\excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx','sheet1',index=False)
-
-    # TODO: http connection pool error and can threads access non-threaded scope?
-    # Everything writes to the log correctly, but the pool error stops it from 
-    # geting info
     
 if __name__ == '__main__':
-    full_scan()
+    try:
+        broadcast = sys.argv[1]
+    except IndexError:
+        broadcast = False
+    finally:
+        full_scan(broadcast)

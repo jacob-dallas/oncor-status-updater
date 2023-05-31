@@ -1,8 +1,11 @@
 import json
 import requests
+import dotenv
+import os
+dotenv.load_dotenv()
 
 redirect = 'https://cmss.city.dallastx.cod'
-key = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJhYjM0YTUwMS0zMDJjLTQ5NzItYThlMi1lYmUxNDMzNGY5ZTAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8yOTM1NzA5ZS1jMTBjLTQ4MDktYTMwMi04NTJkMzY5Zjg3MDAvIiwiaWF0IjoxNjg1MDQyNzUyLCJuYmYiOjE2ODUwNDI3NTIsImV4cCI6MTY4NTA0NzE1NSwiYWNyIjoiMSIsImFpbyI6IkUyWmdZQkNVMDltdG5lVzdLRXZBa3FOSDhaUW1DMHRTYTlIRlJuY2VsL1MvdXJzU3MvUzZkczdLdEJmNTgzZnZaMitYTDR2TEFBPT0iLCJhbXIiOlsicHdkIl0sImFwcGlkIjoiYWIzNGE1MDEtMzAyYy00OTcyLWE4ZTItZWJlMTQzMzRmOWUwIiwiYXBwaWRhY3IiOiIxIiwiZmFtaWx5X25hbWUiOiJQYXZlbGthIiwiZ2l2ZW5fbmFtZSI6IkphY29iIiwiaXBhZGRyIjoiNjYuOTcuMTQ1LjY1IiwibmFtZSI6IlBhdmVsa2EsIEphY29iIiwib2lkIjoiNTE5ZWE1NmUtZWFkOC00ZTVkLTkyY2EtOWEyOGFlNzAyMTJjIiwib25wcmVtX3NpZCI6IlMtMS01LTIxLTEwODUwMzEyMTQtMTY3NzEyODQ4My03MjUzNDU1NDMtMjEwNDcxIiwicmgiOiIwLkFUY0FubkExS1F6QkNVaWpBb1V0TnAtSEFBR2xOS3NzTUhKSnFPTHI0VU0wLWVBM0FPay4iLCJzY3AiOiJVc2VyLlJlYWQiLCJzdWIiOiJ5cHVsa09PVEt3OGZXX0twbUZfVUVEQkliRmgyN2tieHNZTlZPVUFSTEpRIiwidGlkIjoiMjkzNTcwOWUtYzEwYy00ODA5LWEzMDItODUyZDM2OWY4NzAwIiwidW5pcXVlX25hbWUiOiJqYWNvYi5wYXZlbGthQGRhbGxhc2NpdHloYWxsLmNvbSIsInVwbiI6ImphY29iLnBhdmVsa2FAZGFsbGFzY2l0eWhhbGwuY29tIiwidXRpIjoidjN1Slp1eTBKVU9PSEtiWm9SLVRBQSIsInZlciI6IjEuMCJ9.U5s1Nhlz8m3fxrsEzSlQHC7jo2J_BfTW18WE7cjgM4MJACXdhrUAadECnM5S_k-WRCvhq-3zqdWp4Jf5unWcSbd_nGJjnuo_ylQV11BVTdBCPSU7HyCAI6Tb9gfV8yswKRN8-9xuEiubam6JrkiU_HSwNRfuAUn34ovsJNrjLTYNSSuU0Pq_aMXXr6a6Yal5oWxsLH_2U_PNe05bSUZyKia-SC20suXRPM57cx_by9_gTLzOwAPJPNqHgDu-5JfQikTNpyyEbNwZ0nzakuxixr23_tpDNQSa2jIM_xM1DpXdvBJrXI5cBTEpxaEhDdyfMWlx7oZidWU3y6Im9H705Q'
+key = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJhYjM0YTUwMS0zMDJjLTQ5NzItYThlMi1lYmUxNDMzNGY5ZTAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8yOTM1NzA5ZS1jMTBjLTQ4MDktYTMwMi04NTJkMzY5Zjg3MDAvIiwiaWF0IjoxNjg1NDU2Mjc2LCJuYmYiOjE2ODU0NTYyNzYsImV4cCI6MTY4NTQ2MTM4MSwiYWNyIjoiMSIsImFpbyI6IkFUUUF5LzhUQUFBQWJxNGZEUmdacEhvemI1T21lU3hNbzBFenNTTUJ1dmFhYXZ5WGFJVURjNmFITzBHWEFNWmdNZ1lqbStsSFlZWk8iLCJhbXIiOlsicHdkIl0sImFwcGlkIjoiYWIzNGE1MDEtMzAyYy00OTcyLWE4ZTItZWJlMTQzMzRmOWUwIiwiYXBwaWRhY3IiOiIxIiwiZmFtaWx5X25hbWUiOiJQYXZlbGthIiwiZ2l2ZW5fbmFtZSI6IkphY29iIiwiaXBhZGRyIjoiNjYuOTcuMTQ1LjY1IiwibmFtZSI6IlBhdmVsa2EsIEphY29iIiwib2lkIjoiNTE5ZWE1NmUtZWFkOC00ZTVkLTkyY2EtOWEyOGFlNzAyMTJjIiwib25wcmVtX3NpZCI6IlMtMS01LTIxLTEwODUwMzEyMTQtMTY3NzEyODQ4My03MjUzNDU1NDMtMjEwNDcxIiwicmgiOiIwLkFUY0FubkExS1F6QkNVaWpBb1V0TnAtSEFBR2xOS3NzTUhKSnFPTHI0VU0wLWVBM0FPay4iLCJzY3AiOiJVc2VyLlJlYWQiLCJzdWIiOiJ5cHVsa09PVEt3OGZXX0twbUZfVUVEQkliRmgyN2tieHNZTlZPVUFSTEpRIiwidGlkIjoiMjkzNTcwOWUtYzEwYy00ODA5LWEzMDItODUyZDM2OWY4NzAwIiwidW5pcXVlX25hbWUiOiJqYWNvYi5wYXZlbGthQGRhbGxhc2NpdHloYWxsLmNvbSIsInVwbiI6ImphY29iLnBhdmVsa2FAZGFsbGFzY2l0eWhhbGwuY29tIiwidXRpIjoiN1JKWkZjRXVQRVdVcE5jVkdXU0FBQSIsInZlciI6IjEuMCJ9.PPW-MuDQhbqYBvtKo94gU4Lg8OhpHtbFZr8AMTU0oAsH_E5_cCrMshif9HmVipnhyKK5DYF_sMmAuFH0Aqijwj1haiwcJv8XkoWK-p0uLsBLTxtAJFhzhK5wYuVZEtnPDuMB1llpJi8U-0q8yiHRSmYR-N9P0WcXwv8jK0Nmr3OsVLoecafsVUJcUPBFzY7_eiPm6yHeJU42ZSlObmhylWqAcf7P2uJS0kquyMYK3Zhj6uzx6kQUAjPyedtMjT4tk-g4fOuXpLPFissbMpkcnUVVSND-GEYU53fqNmj_6sXJ92J4U_-Atd_pzndmhjPyHqSQpzUScxLmtJRUdH0Uaw'
 
 def alarms():
 
@@ -58,16 +61,81 @@ def devices(key,fields=''):
         raise Exception('you are not authorized')
     return res
 
+def auth(name,pwd):
+
+    url = 'https://cmss.city.dallastx.cod/rest/ctcapi/v3/auth/login'
+
+    body = {
+        'username':name,
+        'password':pwd
+    }
+
+    res = requests.post(
+        url,
+        verify='other.cer',
+        json=body
+    )
+    return res
+
+def swagger(key):
+    url = 'https://cmss.city.dallastx.cod/rest/ctcapi/v3/api.json'
+
+    res = requests.get(
+        url,
+        verify='other.cer',
+        headers={'x-access-token':key}
+    )
+
+    return res
+
+def auth_AAD():
+
+    client_id = "ab34a501-302c-4972-a8e2-ebe14334f9e0"
+    alt_client_id = "b9061727-30d0-4832-be26-ed4d35776727"
+    response_type = 'code'
+    redirect_url = 'http://127.0.0.1:5000/auth'
+    alt_redirect_url = 'https://cmss.city.dallastx.cod'
+
+    ms_url = f"https://login.microsoftonline.com/common/oauth2/authorize?response_type={response_type}&client_id={client_id}&redirect_uri={redirect_url}"
+    res = requests.get(
+        'https://login.microsoftonline.com/common/oauth2/authorize',
+        params={
+            'response_type': response_type,
+            'client_id':client_id,
+            'redirect_uri':alt_redirect_url
+        }
+    )
+
 if __name__ == '__main__':
-    try:
-        res = devices()
-    except Exception as ex:
-        print(ex)
-        quit()
-    print(res)
-    data = json.loads(res.text)
-    with open('cut_devices.json','w') as f:
-        json.dump(data,f,indent=1)
+    username = os.environ['USERNAME']
+    pwd = os.environ['PWD']
+    res = auth(username,pwd)
+    print(res.text)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # try:
+    #     res = devices()
+    # except Exception as ex:
+    #     print(ex)
+    #     quit()
+    # print(res)
+    # data = json.loads(res.text)
+    # with open('cut_devices.json','w') as f:
+    #     json.dump(data,f,indent=1)
 
 # location is a feature collection that contains a feature. the feature is gps coord. I imagine other features are possible too
 # device type is traffic signal controller, and that device is in the traffic signal group
@@ -80,6 +148,5 @@ if __name__ == '__main__':
 # TxDOT camera and message signs are other device types. they are in txdot camera and message sign category. I think the other things that could be in this category are like bbus and stuff
 # smartobjecttypes and services are confusing to me still
 
-# try this url for auth https://github.com/AzureAD/azure-activedirectory-library-for-python#microsoft-azure-active-directory-authentication-library-adal-for-python
 
 
