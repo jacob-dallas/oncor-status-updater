@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.19)  27 APR 2023 16:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.19)  30 MAY 2023 10:37
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -110,20 +110,6 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 [1
 
-{c:/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2 <./esi_id.PNG> <./oncor_esi_in.PNG>] [3 <./oncor_status.PNG>] (./main.aux) ) 
-Here is how much of TeX's memory you used:
- 1316 strings out of 476017
- 21759 string characters out of 5793760
- 1857660 words of memory out of 5000000
- 21811 multiletter control sequences out of 15000+600000
- 515322 words of font info for 42 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 57i,7n,62p,812b,230s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-Output written on main.pdf (3 pages, 73418 bytes).
-PDF statistics:
- 36 PDF objects out of 1000 (max. 8388607)
- 18 compressed objects within 1 object stream
- 0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+{c:/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map
+!pdfTeX error: pdflatex.exe (file c:/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map): fflush() failed (Invalid argument)
+ ==> Fatal error occurred, no output PDF file produced!

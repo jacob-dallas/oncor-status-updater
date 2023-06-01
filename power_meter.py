@@ -1,7 +1,8 @@
 from difflib import SequenceMatcher
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.common.exceptions import ElementClickInterceptedException,TimeoutException
-from account_disconnect import check_active, check_restored
+from selenium.common.exceptions import ElementClickInterceptedException,TimeoutException,StaleElementReferenceException,NoSuchElementException
+from selenium.webdriver.common.by import By
+import datetime
 
 class PowerMeter():
     
@@ -47,3 +48,101 @@ class PowerMeter():
     def address(self):
         zip_code = str(int(self.zip_code))
         return f"{self.street}, Dallas, TX {zip_code}"
+    
+    def next(self,driver):
+
+        next_button = driver.find_element(value='next')
+        next_button.click()
+        return True
+
+    def grab_status(self,driver):
+        status = driver.find_element(value='label_no_omscall_fault')
+        return status.text
+    
+    def check_active(self,driver):
+        try:
+            error_msg = driver.find_element(By.ID,'error')
+            return error_msg.text
+        except NoSuchElementException as error:
+            return 'acount_active'
+
+    def check_restored_or_out(self, driver):
+        try:
+            msg = driver.find_element(By.ID,'power_outage').text
+            date = driver.find_element(By.ID,'outage_report_date').text
+            status = f"{msg} {date}"
+        except NoSuchElementException as error:  
+            status = "device offline"
+        return status
+    
+    def get_status(self,driver):
+        try:    
+
+            driver.get(
+                "https://www.oncor.com/outages/check_status/identify/esi"
+            )
+
+            # interaction for first Oncor page
+            id_input = driver.find_element(value='esi_id_text')
+            next_button = driver.find_element(value='next')
+            id_input.clear()
+            id_input.send_keys(self.id)
+            next_button.click()
+
+            # Proper wait strategy to allow page to load before more interaction
+            WebDriverWait(
+                driver, 
+                3,
+                ignored_exceptions=[StaleElementReferenceException]
+            ).until(
+                self.next
+            )
+
+
+            try:
+                # Proper wait strategy to allow page to load before more interaction
+                status = WebDriverWait(
+                    driver, 
+                    3,
+                    ignored_exceptions=[StaleElementReferenceException,NoSuchElementException]
+                ).until(
+                    self.grab_status
+                )
+                log_str = f"ESI ID \"{self.id}\": [SUCCESS] status was updated\n"
+                return status,log_str
+
+            # if element isnt present, power is out or has just been restored
+            except (TimeoutException) as error:
+                status = self.check_restored_or_out(driver)
+                log_str = f'{datetime.datetime.now()}: ESI ID \"{self.id}\" status: {status}\n'
+                return status,log_str
+
+        # This exception shouldnt trigger because of proper wait strategy, but it is
+        # left in for redundancy
+        except StaleElementReferenceException as error:
+            status = 'unupdated'
+            log_str = f'{datetime.datetime.now()}: ESI ID \"{self.id}\": [ERROR] search was too fast, status was not updated\n'
+            return status,log_str
+
+        # This exception triggers if the account is not registered with Oncor
+        except ElementClickInterceptedException as error:
+
+            # Double checks the error was that the account wasn't active
+            msg = self.check_active(driver)
+
+            # Throws another error if the account is active
+            if msg == 'acount_active':
+                raise Exception
+            
+            status=msg
+            log_str = f'{datetime.datetime.now()}: ESI ID \"{self.id}\": [ERROR] {msg}\n'
+            return status,log_str
+
+        # Handles any unexpected exceptions so the program will mostly continue to 
+        # run        
+        except Exception as error:
+            print("an error occured\n")
+            print(error)
+            status = 'An unknown error occured; status update cannot be guaranteed'
+            log_str = f'{datetime.datetime.now()}: ESI ID \"{self.id}\": [ERROR] a fatal error occured\n'
+            return status,log_str
