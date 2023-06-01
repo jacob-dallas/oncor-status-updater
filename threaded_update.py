@@ -4,10 +4,7 @@ import sys
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
 import time 
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, ElementClickInterceptedException, TimeoutException
 import concurrent.futures
@@ -19,44 +16,41 @@ import requests
 thread_local = threading.local()
 lock = threading.Lock()
 
-
+def continuous_update(broadcast):
+    while True:
+        full_scan(broadcast)
 
 def get_driver():
-    global service
-    global options
     if not hasattr(thread_local,'driver'):
         thread_local.driver = webdriver.Chrome(service=service, options=options)
     return thread_local.driver
 
 def updates(meter):
-        global last_complete_entry
-        global meters
-        global outage_log
-        global sig_meters
-        # Keeps a live updated on percentage complete
+    global last_complete_entry
+    # Keeps a live updated on percentage complete
 
-        obj = PowerMeter(meter)
-        # Safely writes to outage log
-        with lock:
-            outage_log.write(
-                f'{datetime.datetime.now()}: ESI ID \"{obj.id}\": beginning search\n'
-            )
+    obj = PowerMeter(meter)
+    # Safely writes to outage log
+    with lock:
+        outage_log.write(
+            f'{datetime.datetime.now()}: ESI ID \"{obj.id}\": beginning search\n'
+        )
 
-        # Begins the search web interface
-        driver = get_driver()
-        status,log_str = obj.get_status(driver)
-        obj.online_status=status
+    # Begins the search web interface
+    driver = get_driver()
+    status,log_str = obj.get_status(driver)
+    obj.online_status=status
 
-        with lock:
-            percent_complete = last_complete_entry/n_meters*100
-            last_complete_entry += 1
-            print(f'{percent_complete:.2f}%')
-            outage_log.write(log_str)
-            i = sig_meters.index(meter)
-            meters['Traffic Signals'][i] = obj.__dict__ 
-        if broadcast:
-            json_str = json.dumps(obj.__dict__)
-            res = requests.post('http://localhost:5000/t_update',json=json_str)
+    with lock:
+        percent_complete = last_complete_entry/n_meters*100
+        last_complete_entry += 1
+        print(f'{percent_complete:.2f}%')
+        outage_log.write(log_str)
+        i = sig_meters.index(meter)
+        meters['Traffic Signals'][i] = obj.__dict__ 
+    if broadcast:
+        json_str = json.dumps(obj.__dict__)
+        res = requests.post('http://localhost:5000/t_update',json=json_str)
 
 def quit_driver(thread):
     if hasattr(thread_local,'driver'):
@@ -64,7 +58,7 @@ def quit_driver(thread):
         delattr(thread_local,'driver')
 
 def parallel_update(ids):
-    n_threads = 5
+    n_threads = 3
     with concurrent.futures.ThreadPoolExecutor(max_workers=n_threads) as executor:
         try:
             executor.map(updates,ids)
@@ -73,14 +67,17 @@ def parallel_update(ids):
 
 def full_scan(broadcast = False):
     global service
+    global options
     global n_meters
+    global last_complete_entry
+    global meters
+    global outage_log
+    global sig_meters
     start_time = datetime.datetime.now()
-    service = Service(executable_path="chromedriver113.exe")
+    service = Service()
     options = Options()
-    options.add_argument('--ignore-certificate-errors')
-    options.add_argument('--ignore-ssl-errors')
+    options.accept_insecure_certs = True
     options.add_argument('--headless=new')
-    options.accept_insecure_certs=True
     with open('power.json','r') as f:
         meters = json.load(f)
 

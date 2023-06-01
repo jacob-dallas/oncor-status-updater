@@ -5,13 +5,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Power Outage Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.min.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
-    <div id="status"></div>
+    <main class="d-flex flex-nowrap">
+        <div id="status" class="d-flex flex-column flex-shrink-0 p-3 bg-dark sticky-top" style="width: 300px; height: 100vh;">
+            <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white fs-4 bg-dark"> Power Outage Detector</span>
+            <hr class="bg-light">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="/" class="nav-link active" aria-current="page">
+                        All Meters
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="listen" class="nav-link">
+                        Comm Failures
+                    </a>
+                </li>
+                
+            </ul>
+            <hr>
+        </div>
+        <table class="table" >
+            <thead class="sticky-top bg-white">
+                <tr>
+                    <th scope = "col">Id</th>
+                    <th scope = "col">Name</th>
+                    <th scope = "col">Status</th>
+                    <th scope = "col">Communicating</th>
+                    <th scope = "col">IP</th>
+                </tr>
+            </thead>
+            <tbody id="list">
+
+            </tbody>
+
+        </table>
+<!-- connect to cut button -->
+    </main>
     
 
     <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script src="{{ url_for('static', filename='/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

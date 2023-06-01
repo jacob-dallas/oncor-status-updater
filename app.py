@@ -4,9 +4,13 @@ from flask import (Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 import requests
 from message import MessageAnnouncer, format_sse
+import json
+import webbrowser
+import sys
 
 app = Flask(__name__)
 ma = MessageAnnouncer()
+base_dir = os.path.dirname(__file__)
 
 @app.route('/')
 def index():
@@ -14,11 +18,15 @@ def index():
     print('Request for index page received')
     return render_template('index.html')
 
-@app.route('/threaded_update',methods=['POST'])
-def t_update():
-    request.
-    print('updating')
-
+# @app.route('/threaded_update',methods=['POST'])
+# def t_update():
+#     request.
+#     print('updating')
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    with open('power.json') as f:
+        data = json.load(f)['Traffic Signals']
+    return data
 
 @app.route('/listen', methods=['GET'])
 def listen():
@@ -49,22 +57,9 @@ def auth():
     print('Request for index page received')
     return render_template('index.html')
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-@app.route('/hello', methods=['POST'])
-def hello():
-   name = request.form.get('name')
-
-   if name:
-       print('Request for hello page received with name=%s' % name)
-       return render_template('hello.html', name = name)
-   else:
-       print('Request for hello page received with no name or blank name -- redirecting')
-       return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
+   os.chdir(app.root_path)
+   webbrowser.open_new_tab('http://127.0.0.1:5000')
    app.run()
