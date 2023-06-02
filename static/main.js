@@ -1,4 +1,4 @@
-
+let d_json
 
 // get data from request
 async function get_data(){
@@ -17,9 +17,10 @@ async function get_data(){
 addEventListener("load",async event =>  {
     const table_data = document.getElementById('list')
     const data = await get_data()
-    let d_json = await data.json()
+    d_json = await data.json()
     d_json.forEach(signal => {
         let entry = document.createElement('tr')
+        entry.id = signal.cog_id
 
         let id = document.createElement('th')
         id.setAttribute('scope','row')
@@ -64,9 +65,23 @@ addEventListener("load",async event =>  {
 
 // export to excel functionality
 
+addEventListener('load',update)
+function update(){
+    handler = new EventSource('http://127.0.0.1:5000/listen')
 
-// function update(){
-//     handler = new EventSource('http://localhost:5000/listen')
-
-//     handler.
-// }
+    handler.onmessage = (e) => {
+        const meter_string = e.data
+        const meter_obj = JSON.parse(e.data)
+        const table_data = document.getElementById('list')
+        let meters = table_data.children
+        meters = Array.from(meters)
+        
+        meters.forEach(meter =>{
+            if (Number(meter.id) == meter_obj.cog_id){
+                meter.children[0].innerHTML=meter_obj.cog_id
+                meter.children[1].innerHTML=meter_obj.name
+                meter.children[2].innerHTML=meter_obj.online_status
+            }
+        })
+    }
+}

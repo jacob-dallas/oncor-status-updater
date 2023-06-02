@@ -1,22 +1,20 @@
-import pandas as pd
 import datetime
-import sys
+from os import path
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-import time 
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, ElementClickInterceptedException, TimeoutException
 import concurrent.futures
 import threading
 import json
 from power_meter import PowerMeter
-import requests
+import message
+from webdriver_manager.chrome import ChromeDriverManager
 
 thread_local = threading.local()
 lock = threading.Lock()
 
-def continuous_update(broadcast):
+async def continuous_update(broadcast):
     while True:
         full_scan(broadcast)
 
@@ -48,9 +46,6 @@ def updates(meter):
         outage_log.write(log_str)
         i = sig_meters.index(meter)
         meters['Traffic Signals'][i] = obj.__dict__ 
-    if broadcast:
-        json_str = json.dumps(obj.__dict__)
-        res = requests.post('http://localhost:5000/t_update',json=json_str)
 
 def quit_driver(thread):
     if hasattr(thread_local,'driver'):
@@ -58,7 +53,7 @@ def quit_driver(thread):
         delattr(thread_local,'driver')
 
 def parallel_update(ids):
-    n_threads = 3
+    n_threads = 1
     with concurrent.futures.ThreadPoolExecutor(max_workers=n_threads) as executor:
         try:
             executor.map(updates,ids)
@@ -78,8 +73,8 @@ def full_scan(broadcast = False):
     options = Options()
     options.accept_insecure_certs = True
     options.add_argument('--headless=new')
-    with open('power.json','r') as f:
-        meters = json.load(f)
+    # with open('power.json','r') as f:
+    #     meters = json.load(f)
 
     sig_meters = meters['Traffic Signals']
 
@@ -99,15 +94,91 @@ def full_scan(broadcast = False):
     # Close the log
     outage_log.close()
 
-    # Write the search results
-    with open('update.json','w') as f:
-        json.dump(meters,f,indent=1)
+    # Write the search resultsoperate threads over list without executor python
+    # with open('update.json','w') as f:
+    #     json.dump(meters,f,indent=1)
     # outages.to_excel(f'logs\excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx','sheet1',index=False)
+
+# need to create a function where meter doesn't need to be passed so i can run 
+# parallel without executor so threads can run along side main thread.
+def update_noexec(queue):
+    global last_complete_entry
+    global n_meters
+
+    while True:
+        try:
+            with lock:
+                thread_local.i = last_complete_entry
+                if thread_local.i > n_meters:
+                    last_complete_entry = 0
+                else:
+                    last_complete_entry += 1
+                thread_local.i = last_complete_entry
+        finally:
+            quit_driver(1)
+        
+        meter = sig_meters[thread_local.i]
+        updates(meter)
+
+class UpdateThread(threading.Thread):
+    service = Service(ChromeDriverManager().install())
+    options = Options()
+    options.accept_insecure_certs = True
+    options.add_argument('--headless=new')
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--start-maximized")
+
+
     
+    lock = threading.Lock()
+    last_complete_entry = 0
+    
+    def __init__(self, queue,**kwargs):
+        super().__init__(**kwargs)
+        self.queue = queue
+    
+    def run(self):
+        self.driver = webdriver.Chrome(service=self.service, options=self.options)
+        try:
+            while True:
+                with self.lock:
+                    self.i = UpdateThread.last_complete_entry
+                    if self.i > UpdateThread.n_meters:
+                        UpdateThread.last_complete_entry = 0
+                        self.i = UpdateThread.last_complete_entry
+                    else:
+                        UpdateThread.last_complete_entry += 1
+            
+                meter = UpdateThread.sig_meters[self.i]
+                self.update(meter)
+        finally:
+            self.driver.quit()
+    
+    def update(self,meter):
+
+        obj = PowerMeter(meter)
+
+        # Safely writes to outage log
+        with lock:
+            UpdateThread.outage_log.write(
+                f'{datetime.datetime.now()}: ESI ID \"{obj.id}\": beginning search\n'
+            )
+
+        # Begins the search web interface
+        status,log_str = obj.get_status(self.driver)
+        obj.online_status=status
+
+        with self.lock:
+            percent_complete = self.i/self.n_meters*100
+            self.last_complete_entry += 1
+            print(f'{percent_complete:.2f}%')
+            self.outage_log.write(log_str)
+            UpdateThread.meters['Traffic Signals'][self.i] = obj.__dict__ 
+            self.queue.put(json.dumps(obj.__dict__))
+
 if __name__ == '__main__':
-    try:
-        broadcast = sys.argv[1]
-    except IndexError:
-        broadcast = False
-    finally:
-        full_scan(broadcast)
+    ma = message.MessageAnnouncer()
+    thread_1 = UpdateThread(ma,name='thread_1')
+    thread_2 = UpdateThread(ma,name='thread_2')
+    thread_1.start()
+    thread_2.start()

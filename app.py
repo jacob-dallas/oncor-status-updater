@@ -6,11 +6,17 @@ import requests
 from message import MessageAnnouncer, format_sse
 import json
 import webbrowser
-import sys
+from threaded_update import UpdateThread
+import datetime
+from selenium.webdriver.chrome.service import Service
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import threading
+import queue
 
 app = Flask(__name__)
-ma = MessageAnnouncer()
 base_dir = os.path.dirname(__file__)
+queue_outage = queue.Queue(6)
 
 @app.route('/')
 def index():
@@ -18,10 +24,11 @@ def index():
     print('Request for index page received')
     return render_template('index.html')
 
-# @app.route('/threaded_update',methods=['POST'])
-# def t_update():
-#     request.
-#     print('updating')
+@app.route('/threaded_update',methods=['POST'])
+def t_update():
+    print('updating')
+
+
 @app.route('/get_data', methods=['GET'])
 def get_data():
     with open('power.json') as f:
@@ -32,10 +39,9 @@ def get_data():
 def listen():
 
     def stream():
-        messages = ma.listen()  # returns a queue.Queue
         while True:
-            msg = messages.get()  # blocks until a new message arrives
-            yield msg
+            msg = queue_outage.get()  # blocks until a new message arrives
+            yield format_sse(msg)
 
     return flask.Response(stream(), mimetype='text/event-stream')
 
@@ -60,6 +66,26 @@ def auth():
 
 
 if __name__ == '__main__':
-   os.chdir(app.root_path)
-   webbrowser.open_new_tab('http://127.0.0.1:5000')
-   app.run()
+    os.chdir(app.root_path)
+
+    with open('power.json','r') as f:
+        meters = json.load(f)
+
+        
+    outage_log = open('outage_log.txt','w')
+    UpdateThread.sig_meters = meters['Traffic Signals']
+    UpdateThread.meters = meters
+    UpdateThread.outage_log = outage_log
+    
+    UpdateThread.n_meters = len(UpdateThread.sig_meters)
+    n_threads = 3
+    threads = []
+    for thread in range(n_threads):
+        thread_i = UpdateThread(queue_outage)
+        threads.append(thread_i)
+        thread_i.start()
+        
+
+
+    webbrowser.open_new_tab('http://127.0.0.1:5000')
+    app.run()
