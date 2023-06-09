@@ -41,7 +41,11 @@ def listen():
     def stream():
         while True:
             msg = queue_outage.get()  # blocks until a new message arrives
-            yield format_sse(msg)
+            if "modem" in msg:
+                yield format_sse(msg,'ping')
+            else :
+                yield format_sse(msg)
+
 
     return flask.Response(stream(), mimetype='text/event-stream')
 
@@ -78,7 +82,7 @@ if __name__ == '__main__':
     UpdateThread.outage_log = outage_log
     
     UpdateThread.n_meters = len(UpdateThread.sig_meters)
-    n_threads = 3
+    n_threads = 3 
     threads = []
     for thread in range(n_threads):
         thread_i = UpdateThread(queue_outage)
@@ -89,3 +93,7 @@ if __name__ == '__main__':
 
     webbrowser.open_new_tab('http://127.0.0.1:5000')
     app.run()
+
+
+    # have databases, config and text files in appdata
+    # readme in distribution

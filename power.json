@@ -3335,7 +3335,7 @@
    "delete": false
   },
   {
-   "cog_id": 2402,
+   "cog_id": 2403,
    "esi_id": 10443720009028915,
    "street": "332A W DAVIS ST",
    "name": "Bishop-Davis",
@@ -11593,24 +11593,6 @@
    "oncor_address": "2299 BR... ST",
    "status": "registered",
    "address_sim": 1.0,
-   "old_esi": [],
-   "delete": false
-  },
-  {
-   "cog_id": 3262,
-   "esi_id": 10443720009314921,
-   "street": "2402 BRYAN",
-   "name": "Bryan-Leonard",
-   "comment": "Removed Signal",
-   "esi_match": true,
-   "device_type": "SIG",
-   "zip_code": 75243,
-   "meters": [
-    "114229772LG"
-   ],
-   "oncor_address": "",
-   "status": "unregistered with no replacement",
-   "address_sim": 0,
    "old_esi": [],
    "delete": false
   },

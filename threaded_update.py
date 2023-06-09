@@ -10,6 +10,8 @@ import json
 from power_meter import PowerMeter
 import message
 from webdriver_manager.chrome import ChromeDriverManager
+from pythonping import ping
+from controller_snmp import controller_ping
 
 thread_local = threading.local()
 lock = threading.Lock()
@@ -146,6 +148,7 @@ class UpdateThread(threading.Thread):
                     if self.i > UpdateThread.n_meters:
                         UpdateThread.last_complete_entry = 0
                         self.i = UpdateThread.last_complete_entry
+                        # add a function in here to search for a specific meter
                     else:
                         UpdateThread.last_complete_entry += 1
             
@@ -175,6 +178,34 @@ class UpdateThread(threading.Thread):
             self.outage_log.write(log_str)
             UpdateThread.meters['Traffic Signals'][self.i] = obj.__dict__ 
             self.queue.put(json.dumps(obj.__dict__))
+
+
+class CommThread(threading.Thread):
+    status_dict = {
+        "160":"Cabinet Flash",
+        "32":"Cabinet Flash",
+        "48":"Local Flash",
+        "128":"Coordination",
+         
+    }
+    def __init__(self,queue,**kwargs):
+        super.__init__(**kwargs)
+        self.queue = queue
+    def run(self, signals):
+        for signal in signals:
+            modem_online = ping(signal['ip'],count=1).success()
+            controller_online = controller_ping(signal['ip'])
+            if controller_online:
+                status_code = controller_online.variableBindngs.variables.__getitem__(0).value.value
+                controller_status = self.status_dict.get(str(status_code),'Free/Unregistered Status')
+                controller_online = True
+            else:
+                controller_status = "N/A"
+            self.queue.put(json.dumps({
+                "modem_online":modem_online,
+                "controller_online":controller_online,
+                "controller_status":controller_status
+            }))
 
 if __name__ == '__main__':
     ma = message.MessageAnnouncer()

@@ -4,6 +4,7 @@ from power_meter import PowerMeter
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from itertools import compress
 
 def migrate(filename, oncor=False):
     # migrate_1(filename)
@@ -161,8 +162,171 @@ def cut_integrate(json_file,cut_file):
                 continue
     print('finished')
 
-    with open('power_cut.json','w') as f:
-        data = json.dump(data,f,indent=1)
+    with open(json_file,'w') as f:
+        json.dump(data,f,indent=1)
+
+def ago_ip_integrate(json_file):
+    # cut down to one esi and meter number, include other relevant info
+    signals_out = []
+    with open(json_file,'r') as f:
+        data = json.load(f)['Traffic Signals']
+
+    ago_data = pd.read_excel(
+        'ElectricMetersAGOL_06012023.xlsx',
+        sheet_name='ElectricMetersAGOL_06012023',
+        na_values='-',
+    )
+
+    ip_data = pd.read_excel(
+        'Traffic Signal Spreadsheets.xlsx',
+        sheet_name="Intersections",
+        header=4,
+        na_values='-',
+
+    )
+
+    ago_data = ago_data[ago_data['El_Device_Type']=="SIG"].fillna('-')
+    ip_data = ip_data.fillna('-')
+    for meter in data:
+        
+        ip_sig = ip_data[ip_data["COG ID"]==meter["cog_id"]] #int-int
+        if ip_sig.empty:
+            raise Exception(f'no associated IP {meter["cog_id"]}')
+        ago_sig = ago_data[ago_data["COG_ID"]==meter["cog_id"]] #float-int
+        if ago_sig.empty:
+            print(f'no associated ago {meter["cog_id"]}')
+            continue
+        signal = {
+            "cog_id":meter["cog_id"],
+            "ip":ip_sig['IP Address'],
+            "name":meter["name"],
+            "street":meter["street"],
+            "zip_code":meter["zip_code"],
+            "signal_system":ip_sig["Signal System"]
+        }
+
+        meter.pop('cog_id')
+        meter.pop('name')
+        meter.pop('street')
+        meter.pop('zip_code')
+        meter.pop('device_type')
+        meter.pop('esi_match')
+        meter.pop('meters')
+        meter.pop('old_esi')
+        meter.pop('delete')
+        meters = []
+
+        # if the esi we have isnt in maria's list, just delete it. it is 
+        # probably old
+        esi_from_ago = ago_sig['ESI_Short'].to_list()
+        esi_from_ago = [str(int(x)) for x in esi_from_ago]
+        esi_id = str(meter.get('esi_id','0000000'))[-7:]
+        if not esi_id in esi_from_ago:
+            meter['esi_id'] = '0000000'
+
+        # get all esi accounts from maria's list and put them on the same signal 
+        # object
+        for i,meter_b in ago_sig.iterrows():
+            # 1784 has two active accounts
+            # if one of maria's esi accounts matches ours, just replace our data 
+            if int(esi_id)==int(meter_b['ESI_Short']): #int(str)-int(float)
+                meter['bbu']=meter_b["BBUPresent"]
+                meter['owner']=meter_b["Department"]
+                meter['pole_num']=meter_b["Pole_Number"]
+                meter['checked']=meter_b["Checked"]
+                meter['comment']=meter_b["Comment"]
+                meter['number']=meter_b["Meter_Number"]
+            # otherwise make a new account object. the accounts comments are 
+            # included so each signal can be narrowed down to having one account
+            else:
+                meter = {
+                    'esi_id':int(f'1044372{int(meter_b["ESI_Short"]):010}'),
+                    'bbu':meter_b["BBUPresent"],
+                    'owner':meter_b["Department"],
+                    'pole_num':meter_b["Pole_Number"],
+                    'checked':meter_b["Checked"],
+                    'comment':meter_b["Comment"],
+                    'oncor_address':'-',
+                    'address_sim':1,
+                }
+            meters.append(meter)
+        signal['meters']=meters
+
+        signals_out.append(signal)
+
+    # get a list of unique identifiers (cog_ids) for comparing later
+    cog_ids = [x['cog_id'] for x in signals_out]
+
+    # check if any uids from ip data do not exist in our data, add if they are 
+    # missing from our data but do not include meter info yet
+    for i, signal in ip_data.iterrows():
+        if not (str(signal['COG ID']) in str(cog_ids)):
+            signal_dict = {
+                "meters":[],
+                "cog_id":signal["COG ID"],
+                "ip":signal['IP Address'],
+                "name":signal["Intersection Name"],
+                "signal_system":signal["Signal System"]
+            }
+            signals_out.append(signal_dict)
+
+    # remake uid list because new ones were added
+    
+    cog_ids = [x['cog_id'] for x in signals_out]
+    for i, signal in ago_data.iterrows():
+        # check if there are any uids in ago data that are not in existing data.
+        # If so, add them to the list. there shouldnt be many.
+        if not signal["COG_ID"] in cog_ids:
+            signal_dict = {
+                "meters":[{
+                    'esi_id':int(f'1044372{int(meter_b["ESI_Short"]):010}'),
+                    'bbu':signal["BBUPresent"],
+                    'owner':signal["Department"],
+                    'pole_num':signal["Pole_Number"],
+                    'checked':signal["Checked"],
+                    'comment':signal["Comment"],
+                    'oncor_address':'-',
+                    'address_sim':1,
+                }],
+                "cog_id":signal["COG_ID"],
+                "ip":'0.0.0.0',
+                "name":signal["Loc_Name"],
+                "signal_system":"-"
+            }
+            signals_out.append(signal_dict)
+            cog_ids.append(signal_dict['cog_id'])
+
+        # if uid is already listed, make sure this esi and meter is associated 
+        # with it
+        else:
+            # at this point all meters existing in the data should have been 
+            # updated if they match ago or removed if they were not included 
+            # in ago. if a signal doesn't have a meter in our data but has one 
+            # in ago, this loop will add it to our data
+            ind = cog_ids.index(signal['COG_ID'])
+            sig_out = signals_out[ind]
+            esi_list = [str(x['esi_id'])[-7:] for x in sig_out["meters"]]
+            if not str(signal['ESI_Short']) in esi_list:
+                meter = {
+                    'esi_id':f'1044372{str(signal["ESI_Short"]).zfill(10)}',
+                    'bbu':signal["BBUPresent"],
+                    'owner':signal["Department"],
+                    'pole_num':signal["Pole_Number"],
+                    'checked':signal["Checked"],
+                    'comment':signal["Comment"],
+                    'oncor_address':'-',
+                    'address_sim':1,
+                }
+                sig_out["meters"].append(meter)
+
+    with open('test.json','w') as f:
+        json.dump(signals_out,f,indent=1)
 
 if __name__ == '__main__':
-    cut_integrate('power.json','cut_devices.json')
+    ago_ip_integrate('power.json')
+    # cut_integrate('power.json','cut_devices.json')
+
+    # old spreadsheet is at least older than 7.2022
+    # i need to find a meter that says it is working but actually isnt
+    # i can go look back at parthas messages
+    
