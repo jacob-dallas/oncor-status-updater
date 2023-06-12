@@ -32,17 +32,28 @@ addEventListener("load",async event =>  {
         entry.append(entry_name)
 
         let status = document.createElement('td')
-        if (signal.status == 'registered') {
+        sig_stat = signal.meters[0].status
+        if (sig_stat == 'registered') {
             status.innerHTML = '&#9889'
             status.setAttribute('title','Recieving Power')
         }
-        if (signal.status == 'unregistered with no replacement') {
+        if (sig_stat == 'unregistered with no replacement') {
             status.innerHTML = '&#10060'
             status.setAttribute('title','Disconnected')
         }
         entry.append(status)
 
         let comm = document.createElement('td')
+        entry.append(comm)
+
+        let ip = document.createElement('td')
+        ip.innerHTML = signal.ip
+        entry.append(ip)
+
+
+        let esi = document.createElement('td')
+        esi.innerHTML = signal.meters[0].esi_id
+        entry.append(esi)
 
 
         table_data.append(entry)
@@ -78,10 +89,21 @@ function update(){
         
         meters.forEach(meter =>{
             if (Number(meter.id) == meter_obj.cog_id){
-                meter.children[0].innerHTML=meter_obj.cog_id
-                meter.children[1].innerHTML=meter_obj.name
                 meter.children[2].innerHTML=meter_obj.online_status
             }
         })
     }
+
+    handler.addEventListener("ping_comm", (e)=>{
+        const com_obj = JSON.parse(e.data)
+        const table_data = document.getElementById('list')
+        let signals = table_data.children
+        signals = Array.from(signals)
+        
+        signals.forEach(signal =>{
+            if (Number(signal.id) == com_obj.cog_id){
+                signal.children[3].innerHTML=com_obj.modem_online
+            }
+        })
+    })
 }

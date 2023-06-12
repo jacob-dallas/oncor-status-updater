@@ -6,7 +6,7 @@ import requests
 from message import MessageAnnouncer, format_sse
 import json
 import webbrowser
-from threaded_update import UpdateThread
+from threaded_update import UpdateThread,CommThread
 import datetime
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
@@ -32,7 +32,7 @@ def t_update():
 @app.route('/get_data', methods=['GET'])
 def get_data():
     with open('power.json') as f:
-        data = json.load(f)['Traffic Signals']
+        data = json.load(f)
     return data
 
 @app.route('/listen', methods=['GET'])
@@ -41,7 +41,11 @@ def listen():
     def stream():
         while True:
             msg = queue_outage.get()  # blocks until a new message arrives
-            yield format_sse(msg)
+            if "modem" in msg:
+                yield format_sse(msg,'ping_comm')
+            else :
+                yield format_sse(msg)
+
 
     return flask.Response(stream(), mimetype='text/event-stream')
 
@@ -73,12 +77,15 @@ if __name__ == '__main__':
 
         
     outage_log = open('outage_log.txt','w')
-    UpdateThread.sig_meters = meters['Traffic Signals']
+    UpdateThread.sig_meters = meters
     UpdateThread.meters = meters
     UpdateThread.outage_log = outage_log
     
     UpdateThread.n_meters = len(UpdateThread.sig_meters)
-    n_threads = 3
+    c_thread = CommThread(queue_outage)
+    c_thread.signals = meters
+    c_thread.start()
+    n_threads = 3 
     threads = []
     for thread in range(n_threads):
         thread_i = UpdateThread(queue_outage)
@@ -89,3 +96,7 @@ if __name__ == '__main__':
 
     webbrowser.open_new_tab('http://127.0.0.1:5000')
     app.run()
+
+
+    # have databases, config and text files in appdata
+    # readme in distribution
