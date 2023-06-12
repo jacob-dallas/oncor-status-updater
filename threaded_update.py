@@ -153,7 +153,7 @@ class UpdateThread(threading.Thread):
                         UpdateThread.last_complete_entry += 1
             
                 meter = UpdateThread.sig_meters[self.i]
-                self.update(meter)
+                self.update(meter['meters'][0])
         finally:
             self.driver.quit()
     
@@ -176,7 +176,7 @@ class UpdateThread(threading.Thread):
             self.last_complete_entry += 1
             print(f'{percent_complete:.2f}%')
             self.outage_log.write(log_str)
-            UpdateThread.meters['Traffic Signals'][self.i] = obj.__dict__ 
+            UpdateThread.meters[self.i] = obj.__dict__ 
             self.queue.put(json.dumps(obj.__dict__))
 
 
@@ -189,19 +189,21 @@ class CommThread(threading.Thread):
          
     }
     def __init__(self,queue,**kwargs):
-        super.__init__(**kwargs)
+        super().__init__(**kwargs)
         self.queue = queue
-    def run(self, signals):
-        for signal in signals:
+    def run(self):
+        for signal in self.signals:
+            print('pinged controller')
             modem_online = ping(signal['ip'],count=1).success()
             controller_online = controller_ping(signal['ip'])
             if controller_online:
-                status_code = controller_online.variableBindngs.variables.__getitem__(0).value.value
+                status_code = controller_online.variableBindings.variables.__getitem__(0).value.value
                 controller_status = self.status_dict.get(str(status_code),'Free/Unregistered Status')
                 controller_online = True
             else:
                 controller_status = "N/A"
             self.queue.put(json.dumps({
+                "cog_id":signal["cog_id"],
                 "modem_online":modem_online,
                 "controller_online":controller_online,
                 "controller_status":controller_status

@@ -147,7 +147,7 @@ def match_esi(json_file):
 
 def cut_integrate(json_file,cut_file):
     with open(json_file,'r') as f:
-        data = json.load(f)['Traffic Signals']
+        data = json.load(f)
     with open(cut_file,'r') as f:
         cut = json.load(f)['devices']
 
@@ -198,11 +198,11 @@ def ago_ip_integrate(json_file):
             continue
         signal = {
             "cog_id":meter["cog_id"],
-            "ip":ip_sig['IP Address'],
+            "ip":ip_sig['IP Address'].values[0],
             "name":meter["name"],
             "street":meter["street"],
             "zip_code":meter["zip_code"],
-            "signal_system":ip_sig["Signal System"]
+            "signal_system":ip_sig["Signal System"].values[0]
         }
 
         meter.pop('cog_id')
@@ -306,9 +306,11 @@ def ago_ip_integrate(json_file):
             ind = cog_ids.index(signal['COG_ID'])
             sig_out = signals_out[ind]
             esi_list = [str(x['esi_id'])[-7:] for x in sig_out["meters"]]
-            if not str(signal['ESI_Short']) in esi_list:
+            if signal['ESI_Short']=='-':
+                signal['ESI_Short'] = 0
+            if not str(int(signal['ESI_Short'])).zfill(7) in esi_list:
                 meter = {
-                    'esi_id':f'1044372{str(signal["ESI_Short"]).zfill(10)}',
+                    'esi_id':f'1044372{str(int(signal["ESI_Short"])).zfill(10)}',
                     'bbu':signal["BBUPresent"],
                     'owner':signal["Department"],
                     'pole_num':signal["Pole_Number"],
@@ -319,12 +321,11 @@ def ago_ip_integrate(json_file):
                 }
                 sig_out["meters"].append(meter)
 
-    with open('test.json','w') as f:
+    with open(json_file,'w') as f:
         json.dump(signals_out,f,indent=1)
 
 if __name__ == '__main__':
-    ago_ip_integrate('power.json')
-    # cut_integrate('power.json','cut_devices.json')
+    cut_integrate('power.json','cut_devices.json')
 
     # old spreadsheet is at least older than 7.2022
     # i need to find a meter that says it is working but actually isnt
