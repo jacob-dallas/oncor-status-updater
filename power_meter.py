@@ -92,7 +92,7 @@ class PowerMeter():
             # Proper wait strategy to allow page to load before more interaction
             WebDriverWait(
                 driver, 
-                3,
+                5,
                 ignored_exceptions=[StaleElementReferenceException]
             ).until(
                 self.next

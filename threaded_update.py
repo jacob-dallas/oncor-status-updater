@@ -124,7 +124,7 @@ class UpdateThread(threading.Thread):
     service = Service(ChromeDriverManager().install())
     options = Options()
     options.accept_insecure_certs = True
-    options.add_argument('--headless=new')
+    # options.add_argument('--headless=new')
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--start-maximized")
 
