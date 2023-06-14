@@ -3,6 +3,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import ElementClickInterceptedException,TimeoutException,StaleElementReferenceException,NoSuchElementException
 from selenium.webdriver.common.by import By
 import datetime
+import requests
+import json
+from urllib3.connection import ConnectTimeoutError
 
 class PowerMeter():
     
@@ -44,11 +47,6 @@ class PowerMeter():
     def id(self):
         return str(self.esi_id)[-10:]
     
-    @property
-    def address(self):
-        zip_code = str(int(self.zip_code))
-        return f"{self.street}, Dallas, TX {zip_code}"
-    
     def next(self,driver):
 
         next_button = driver.find_element(value='next')
@@ -75,7 +73,7 @@ class PowerMeter():
             status = "device offline"
         return status
     
-    def get_status(self,driver):
+    def selenium_get(self,driver):
         try:    
 
             driver.get(
@@ -146,3 +144,38 @@ class PowerMeter():
             status = 'An unknown error occured; status update cannot be guaranteed'
             log_str = f'{datetime.datetime.now()}: ESI ID \"{self.id}\": [ERROR] a fatal error occured\n'
             return status,log_str
+        
+    def http_get(self):
+        try:
+            if self.id == '0000000000' or self.id == '0000000':
+                if self.number == '-':
+                    return 'no_id'
+                else:
+                    esi_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/meter?meter={self.number[0:9]}'
+                    res = json.loads(requests.get(esi_url).text)
+                    if res.get('validateMeterResponse',False):
+                        self.esi_id = res['validateMeterResponse']['account'][0]['number']
+                    else:
+                        return 'bad_id'
+            # json parse error on 1823
+            # pars error is because of bad response but there is only a bad response some of the time when accouts are inactive or temporarily disabled
+            # nevermind, that had something to do with caches
+            # even error codes come back with 200 response
+            validate_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}'
+            url = f"https://ors-svc.aws.cloud.oncor.com/customerOutage/outage/checkStatus?esiid={self.id}&source=ORS"
+
+            res = json.loads(requests.get(validate_url).text)
+            if res.get('Error',False):
+                return 'bad_id'
+            if res.get('validateAccountResponse',False):
+                if res['validateAccountResponse']['account']['status'] =='ACTIVE':
+                    
+                    res = json.loads(requests.get(url).text)
+                    return res['getOutageStatusResponse']['powerStatus']['status']
+                else:
+                    return res['validateAccountResponse']['account']['status']
+            else:
+                return 'unknown'
+        except (TimeoutError, ConnectTimeoutError) as e:
+            print(e)
+            return 'update failed'

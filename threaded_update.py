@@ -12,6 +12,7 @@ import message
 from webdriver_manager.chrome import ChromeDriverManager
 from pythonping import ping
 from controller_snmp import controller_ping
+import queue
 
 thread_local = threading.local()
 lock = threading.Lock()
@@ -129,9 +130,22 @@ class UpdateThread(threading.Thread):
     options.add_argument('--headless=new')
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--start-maximized")
+    status_dict = {
+        "160":"Cabinet Flash",
+        "32":"Cabinet Flash",
+        "48":"Local Flash",
+        "128":"Coordination",
+         
+    }
 
-
-    
+    res_dict = {
+        'ON':'&#9889',
+        'INACTIVE': 'inactive',
+        'TEMP_DISCONNECT': 'inactive',
+        'no_id': 'inactive',
+        'bad_id': 'inactive',
+        'unknown': 'unknown'
+    }
     lock = threading.Lock()
     last_complete_entry = 0
     
@@ -140,25 +154,61 @@ class UpdateThread(threading.Thread):
         self.queue = queue
     
     def run(self):
-        self.driver = webdriver.Chrome(service=self.service, options=self.options)
-        try:
-            while True:
-                with self.lock:
+        while True:
+            with self.lock:
+                self.i = UpdateThread.last_complete_entry
+                if self.i > UpdateThread.n_meters:
+                    UpdateThread.last_complete_entry = 0
                     self.i = UpdateThread.last_complete_entry
-                    if self.i > UpdateThread.n_meters:
-                        UpdateThread.last_complete_entry = 0
-                        self.i = UpdateThread.last_complete_entry
-                        # add a function in here to search for a specific meter
-                    else:
-                        UpdateThread.last_complete_entry += 1
-            
-                meter = UpdateThread.sig_meters[self.i]
-                self.update(meter['meters'][0])
-        finally:
-            self.driver.quit()
+                    # add a function in here to search for a specific meter
+                else:
+                    UpdateThread.last_complete_entry += 1
+
+            signal = UpdateThread.signals[self.i]
+            preffered_ind = 0
+            if len(signal['meters'])>1:
+                for i,meter in enumerate(signal['meters']):
+                    if ('new' in meter['comment'].lower()):
+                        preffered_ind = i
+            if len(signal['meters'])==0:
+                print('no_meter')
+                blank_res = {
+                    'cog_id':signal['cog_id'],
+                    'online_status': 'no_meter',
+                    'id': 'N/A'
+                }
+                self.queue.put(json.dumps(blank_res))
+            else:
+                meter = signal['meters'][preffered_ind]
+            meter['cog_id'] = signal['cog_id']
+            self.update(meter)
+            if signal['ip'] == '0.0.0.0':
+                controller_online = 'unknown/noip'
+                modem_online = 'unknown/noip'
+                controller_status = 'unknown/noip'
+            else:
+                print('pinged controller')
+                ip = signal['ip'].split(':')[0]
+                modem_online = ping(ip,count=1).success()
+                controller_online = controller_ping(ip)
+                if controller_online:
+                    status_code = controller_online.variableBindings.variables.__getitem__(0).value.value
+                    controller_status = self.status_dict.get(str(status_code),'Free/Unregistered Status')
+                    controller_online = True
+                else:
+                    controller_status = "N/A"
+            self.queue.put(json.dumps({
+                "cog_id":signal["cog_id"],
+                "modem_online":modem_online,
+                "controller_online":controller_online,
+                "controller_status":controller_status
+            }))
+            self.queue.put(json.dumps({
+                "cog_id":signal["cog_id"],
+                'time':str(datetime.datetime.now())
+            }))
     
     def update(self,meter):
-
         obj = PowerMeter(meter)
 
         # Safely writes to outage log
@@ -168,49 +218,29 @@ class UpdateThread(threading.Thread):
             )
 
         # Begins the search web interface
-        status,log_str = obj.get_status(self.driver)
-        obj.online_status=status
+        status = obj.http_get()
+
+        obj.online_status = self.res_dict.get(status,status)
 
         with self.lock:
             percent_complete = self.i/self.n_meters*100
             self.last_complete_entry += 1
             print(f'{percent_complete:.2f}%')
-            self.outage_log.write(log_str)
-            UpdateThread.meters[self.i] = obj.__dict__ 
+            self.outage_log.write(status)
             self.queue.put(json.dumps(obj.__dict__))
 
 
-class CommThread(threading.Thread):
-    status_dict = {
-        "160":"Cabinet Flash",
-        "32":"Cabinet Flash",
-        "48":"Local Flash",
-        "128":"Coordination",
-         
-    }
-    def __init__(self,queue,**kwargs):
-        super().__init__(**kwargs)
-        self.queue = queue
-    def run(self):
-        for signal in self.signals:
-            print('pinged controller')
-            modem_online = ping(signal['ip'],count=1).success()
-            controller_online = controller_ping(signal['ip'])
-            if controller_online:
-                status_code = controller_online.variableBindings.variables.__getitem__(0).value.value
-                controller_status = self.status_dict.get(str(status_code),'Free/Unregistered Status')
-                controller_online = True
-            else:
-                controller_status = "N/A"
-            self.queue.put(json.dumps({
-                "cog_id":signal["cog_id"],
-                "modem_online":modem_online,
-                "controller_online":controller_online,
-                "controller_status":controller_status
-            }))
-
 if __name__ == '__main__':
-    ma = message.MessageAnnouncer()
+    with open('power.json','r') as f:
+        signals = json.load(f)
+
+        
+    outage_log = open('outage_log.txt','w')
+    UpdateThread.signals = signals
+    UpdateThread.outage_log = outage_log
+    
+    UpdateThread.n_meters = len(UpdateThread.signals)
+    ma = queue.Queue(10)
     thread_1 = UpdateThread(ma,name='thread_1')
     thread_2 = UpdateThread(ma,name='thread_2')
     thread_1.start()
