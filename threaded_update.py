@@ -180,8 +180,8 @@ class UpdateThread(threading.Thread):
                 self.queue.put(json.dumps(blank_res))
             else:
                 meter = signal['meters'][preffered_ind]
-            meter['cog_id'] = signal['cog_id']
-            self.update(meter)
+                meter['cog_id'] = signal['cog_id']
+                self.update(meter)
             if signal['ip'] == '0.0.0.0':
                 controller_online = 'unknown/noip'
                 modem_online = 'unknown/noip'
@@ -230,43 +230,6 @@ class UpdateThread(threading.Thread):
             self.queue.put(json.dumps(obj.__dict__))
 
 
-<<<<<<< HEAD
-class CommThread(threading.Thread):
-    status_dict = {
-        "160":"Cabinet Flash",
-        "32":"Cabinet Flash",
-        "48":"Local Flash",
-        "128":"Coordination",
-         
-    }
-    def __init__(self,queue,**kwargs):
-        super().__init__(**kwargs)
-        self.queue = queue
-    def run(self):
-        for signal in self.signals:
-            try:
-                print('pinged controller')
-                modem_online = ping(signal['ip'],count=1).success()
-                controller_online = controller_ping(signal['ip'])
-                if controller_online:
-                    status_code = controller_online.variableBindings.variables.__getitem__(0).value.value
-                    controller_status = self.status_dict.get(str(status_code),'Free/Unregistered Status')
-                    controller_online = True
-                else:
-                    controller_status = "N/A"
-                self.queue.put(json.dumps({
-                    "cog_id":signal["cog_id"],
-                    "modem_online":modem_online,
-                    "controller_online":controller_online,
-                    "controller_status":controller_status
-                }))
-            except KeyError as e:
-                print(signal)
-                print(e)
-                
-
-=======
->>>>>>> fs/jacob-updates
 if __name__ == '__main__':
     with open('power.json','r') as f:
         signals = json.load(f)

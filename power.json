@@ -32105,7 +32105,7 @@
     "pole_num": "3957377 3588089",
     "checked": 1,
     "comment": "Q: No bill",
-    "number": 29554428,
+    "number": "29554428",
     "oncor_address": "-",
     "address_sim": 1
    }
@@ -32267,7 +32267,7 @@
  {
   "meters": [],
   "cog_id": 2541,
-  "ip": 0,
+  "ip": "0.0.0.0",
   "name": "Eighth-RL Thornton NBSR",
   "signal_system": "Oak Cliff"
  },

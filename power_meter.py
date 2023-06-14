@@ -175,6 +175,8 @@ class PowerMeter():
                     return res['validateAccountResponse']['account']['status']
             else:
                 return 'unknown'
-        except (TimeoutError, ConnectTimeoutError) as e:
+        except (requests.Timeout, TimeoutError, ConnectTimeoutError) as e:
             print(e)
+            return 'update failed'
+        except :
             return 'update failed'

@@ -45,7 +45,12 @@ addEventListener("load",async event =>  {
 
 
         let esi = document.createElement('td')
-        esi.innerHTML = signal.meters[0].esi_id
+        if (signal.meters[0]){
+            esi.innerHTML = signal.meters[0].esi_id
+
+        } else {
+            esi.innerHTML = 'N/A'
+        }
         entry.append(esi)
 
         let ts = document.createElement('td')
@@ -85,10 +90,10 @@ function update(){
         meters = Array.from(meters)
         
         meters.forEach(meter =>{
-            if (String(meter.children[5].innerHTML) == String(meter_obj.esi_id)){
+            if (String(meter.id) == String(meter_obj.cog_id)){
                 meter.children[2].innerHTML=meter_obj.online_status
                 meter.children[2].setAttribute('title','updated')
-                meter.children[5].innerHTML=meter_obj.id
+                meter.children[5].innerHTML=meter_obj.esi_id
             }
         })
     })

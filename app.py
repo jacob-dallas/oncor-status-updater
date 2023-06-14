@@ -85,7 +85,7 @@ if __name__ == '__main__':
         UpdateThread.outage_log = outage_log
         
         UpdateThread.n_meters = len(UpdateThread.signals)
-        n_threads = 3 
+        n_threads = 10
         threads = []
         for thread in range(n_threads):
             thread_i = UpdateThread(queue_outage)
