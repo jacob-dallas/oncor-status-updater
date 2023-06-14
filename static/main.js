@@ -32,15 +32,8 @@ addEventListener("load",async event =>  {
         entry.append(entry_name)
 
         let status = document.createElement('td')
-        sig_stat = signal.meters[0].status
-        if (sig_stat == 'registered') {
-            status.innerHTML = '&#9889'
-            status.setAttribute('title','Recieving Power')
-        }
-        if (sig_stat == 'unregistered with no replacement') {
-            status.innerHTML = '&#10060'
-            status.setAttribute('title','Disconnected')
-        }
+        status.innerHTML = '&#9203'
+        status.setAttribute('title','Not Updated')
         entry.append(status)
 
         let comm = document.createElement('td')
@@ -54,6 +47,10 @@ addEventListener("load",async event =>  {
         let esi = document.createElement('td')
         esi.innerHTML = signal.meters[0].esi_id
         entry.append(esi)
+
+        let ts = document.createElement('td')
+        ts.innerHTML = '00:00:00'
+        entry.append(ts)
 
 
         table_data.append(entry)
@@ -80,7 +77,7 @@ addEventListener('load',update)
 function update(){
     handler = new EventSource('http://127.0.0.1:5000/listen')
 
-    handler.onmessage = (e) => {
+    handler.addEventListener('oncor', (e) => {
         const meter_string = e.data
         const meter_obj = JSON.parse(e.data)
         const table_data = document.getElementById('list')
@@ -90,9 +87,11 @@ function update(){
         meters.forEach(meter =>{
             if (String(meter.children[5].innerHTML) == String(meter_obj.esi_id)){
                 meter.children[2].innerHTML=meter_obj.online_status
+                meter.children[2].setAttribute('title','updated')
+                meter.children[5].innerHTML=meter_obj.id
             }
         })
-    }
+    })
 
     handler.addEventListener("ping_comm", (e)=>{
         const com_obj = JSON.parse(e.data)
@@ -103,6 +102,18 @@ function update(){
         signals.forEach(signal =>{
             if (Number(signal.id) == com_obj.cog_id){
                 signal.children[3].innerHTML=com_obj.modem_online
+            }
+        })
+    })
+    handler.addEventListener("timestamp", (e)=>{
+        const com_obj = JSON.parse(e.data)
+        const table_data = document.getElementById('list')
+        let signals = table_data.children
+        signals = Array.from(signals)
+        
+        signals.forEach(signal =>{
+            if (Number(signal.id) == com_obj.cog_id){
+                signal.children[6].innerHTML=com_obj.time
             }
         })
     })

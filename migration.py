@@ -246,6 +246,7 @@ def ago_ip_integrate(json_file):
                     'pole_num':meter_b["Pole_Number"],
                     'checked':meter_b["Checked"],
                     'comment':meter_b["Comment"],
+                    'number':meter_b["Meter_Number"],
                     'oncor_address':'-',
                     'address_sim':1,
                 }
@@ -260,6 +261,8 @@ def ago_ip_integrate(json_file):
     # check if any uids from ip data do not exist in our data, add if they are 
     # missing from our data but do not include meter info yet
     for i, signal in ip_data.iterrows():
+        if str(signal['COG ID']) =='-':
+            continue
         if not (str(signal['COG ID']) in str(cog_ids)):
             signal_dict = {
                 "meters":[],
@@ -276,22 +279,31 @@ def ago_ip_integrate(json_file):
     for i, signal in ago_data.iterrows():
         # check if there are any uids in ago data that are not in existing data.
         # If so, add them to the list. there shouldnt be many.
+        tempcog = 100000
         if not signal["COG_ID"] in cog_ids:
+            if signal["ESI_Short"] == '-':
+                signal["ESI_Short"] = 0
+            if signal["COG_ID"] == '-':
+                signal["COG_ID"] = tempcog
+                tempcog +=1
             signal_dict = {
                 "meters":[{
-                    'esi_id':int(f'1044372{int(meter_b["ESI_Short"]):010}'),
+                    'esi_id':int(f'1044372{int(signal["ESI_Short"]):010}'),
                     'bbu':signal["BBUPresent"],
                     'owner':signal["Department"],
                     'pole_num':signal["Pole_Number"],
                     'checked':signal["Checked"],
                     'comment':signal["Comment"],
+                    'number':signal["Meter_Number"],
                     'oncor_address':'-',
                     'address_sim':1,
                 }],
-                "cog_id":signal["COG_ID"],
+                "cog_id":int(signal["COG_ID"]),
                 "ip":'0.0.0.0',
                 "name":signal["Loc_Name"],
-                "signal_system":"-"
+                "signal_system":"-",
+                "street":signal["Act_Service_Address"],
+                "zip_code":signal["ZIPCode"]
             }
             signals_out.append(signal_dict)
             cog_ids.append(signal_dict['cog_id'])
@@ -310,12 +322,13 @@ def ago_ip_integrate(json_file):
                 signal['ESI_Short'] = 0
             if not str(int(signal['ESI_Short'])).zfill(7) in esi_list:
                 meter = {
-                    'esi_id':f'1044372{str(int(signal["ESI_Short"])).zfill(10)}',
+                    'esi_id':int(f'1044372{str(int(signal["ESI_Short"])).zfill(10)}'),
                     'bbu':signal["BBUPresent"],
                     'owner':signal["Department"],
                     'pole_num':signal["Pole_Number"],
                     'checked':signal["Checked"],
                     'comment':signal["Comment"],
+                    'number':signal["Meter_Number"],
                     'oncor_address':'-',
                     'address_sim':1,
                 }
@@ -325,6 +338,7 @@ def ago_ip_integrate(json_file):
         json.dump(signals_out,f,indent=1)
 
 if __name__ == '__main__':
+    ago_ip_integrate('power.json')
     cut_integrate('power.json','cut_devices.json')
 
     # old spreadsheet is at least older than 7.2022
