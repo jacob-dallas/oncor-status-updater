@@ -88,7 +88,7 @@ function update(){
         meters = Array.from(meters)
         
         meters.forEach(meter =>{
-            if (Number(meter.id) == meter_obj.cog_id){
+            if (String(meter.children[5].innerHTML) == String(meter_obj.esi_id)){
                 meter.children[2].innerHTML=meter_obj.online_status
             }
         })

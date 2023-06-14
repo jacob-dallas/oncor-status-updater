@@ -131,8 +131,7 @@ class PowerMeter():
             msg = self.check_active(driver)
 
             # Throws another error if the account is active
-            if msg == 'acount_active':
-                raise Exception
+
             
             status=msg
             log_str = f'{datetime.datetime.now()}: ESI ID \"{self.id}\": [ERROR] {msg}\n'

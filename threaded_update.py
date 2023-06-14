@@ -193,21 +193,26 @@ class CommThread(threading.Thread):
         self.queue = queue
     def run(self):
         for signal in self.signals:
-            print('pinged controller')
-            modem_online = ping(signal['ip'],count=1).success()
-            controller_online = controller_ping(signal['ip'])
-            if controller_online:
-                status_code = controller_online.variableBindings.variables.__getitem__(0).value.value
-                controller_status = self.status_dict.get(str(status_code),'Free/Unregistered Status')
-                controller_online = True
-            else:
-                controller_status = "N/A"
-            self.queue.put(json.dumps({
-                "cog_id":signal["cog_id"],
-                "modem_online":modem_online,
-                "controller_online":controller_online,
-                "controller_status":controller_status
-            }))
+            try:
+                print('pinged controller')
+                modem_online = ping(signal['ip'],count=1).success()
+                controller_online = controller_ping(signal['ip'])
+                if controller_online:
+                    status_code = controller_online.variableBindings.variables.__getitem__(0).value.value
+                    controller_status = self.status_dict.get(str(status_code),'Free/Unregistered Status')
+                    controller_online = True
+                else:
+                    controller_status = "N/A"
+                self.queue.put(json.dumps({
+                    "cog_id":signal["cog_id"],
+                    "modem_online":modem_online,
+                    "controller_online":controller_online,
+                    "controller_status":controller_status
+                }))
+            except KeyError as e:
+                print(signal)
+                print(e)
+                
 
 if __name__ == '__main__':
     ma = message.MessageAnnouncer()
