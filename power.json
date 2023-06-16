@@ -32367,7 +32367,7 @@
  {
   "meters": [],
   "cog_id": "2537a",
-  "ip": "signal removed",
+  "ip": "0.0.0.0",
   "name": "Ewing-RL Thornton NBSR",
   "signal_system": "Oak Cliff"
  },
@@ -32464,7 +32464,7 @@
  {
   "meters": [],
   "cog_id": 2239,
-  "ip": "no signal there",
+  "ip": "0.0.0.0",
   "name": "Garden-Second",
   "signal_system": "Fair Park",
   "cut_service_id": "2d5dc3ce-25d3-11e8-b467-0ed5f89f718b",
@@ -32794,7 +32794,7 @@
  {
   "meters": [],
   "cog_id": 2593,
-  "ip": "signal removed",
+  "ip": "0.0.0.0",
   "name": "Harwood-ML King",
   "signal_system": "Fair Park",
   "cut_service_id": "2d5dc3ce-25d3-11e8-b467-0ed5f89f718b",

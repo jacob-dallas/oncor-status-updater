@@ -1,19 +1,19 @@
 from wakepy import keep
 import os
+import sys
+import shutil
 import flask
 from flask import (Flask, redirect, render_template, request,
-                   send_from_directory, url_for)
+                   send_from_directory, url_for,send_file)
 import requests
-from message import MessageAnnouncer, format_sse
+from message import format_sse
 import json
 import webbrowser
 from threaded_update import UpdateThread
-import datetime
-from selenium.webdriver.chrome.service import Service
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-import threading
 import queue
+import pandas as pd
+import io
+from json_to_excel import export_sig
 
 app = Flask(__name__)
 base_dir = os.path.dirname(__file__)
@@ -21,20 +21,25 @@ queue_outage = queue.Queue(6)
 
 @app.route('/')
 def index():
-
-    print('Request for index page received')
     return render_template('index.html')
-
-@app.route('/threaded_update',methods=['POST'])
-def t_update():
-    print('updating')
-
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    with open('power.json') as f:
-        data = json.load(f)
+    with UpdateThread.lock:
+        data = UpdateThread.signals
     return data
+
+@app.route('/get_xlsx', methods=['GET'])
+def get_xlsx():
+    with UpdateThread.lock:
+        data = UpdateThread.signals
+    file = export_sig(data)
+    return send_file(file,download_name='signals.xlsx',mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+@app.route('/post_xlsx', methods=['POST'])
+def post_xlsx():
+    request.form['file']
+    return render_template('index.html')
 
 @app.route('/listen', methods=['GET'])
 def listen():
@@ -65,24 +70,34 @@ def auth():
             'redirectUri':'https://cmss.city.dallastx.cod/'
         }
     )
-    print(res)
-
-    print('Request for index page received')
     return render_template('index.html')
 
 
 
 if __name__ == '__main__':
+    data_root = os.path.join(os.getenv('APPDATA'),'acid')
+    db_path = os.path.join(data_root,'db.json')
+    log_dir = os.path.join(data_root,'logs')
+    oncor_log = os.path.join(log_dir,'oncor.txt')
+
+    if not os.path.exists(data_root):
+        os.mkdir(data_root)
+    if not os.path.exists(log_dir):
+        os.mkdir(log_dir)
+
+    if not os.path.exists(db_path):
+        shutil.copy('power.json',db_path)
+
+    with open(db_path,'r') as f:
+        signals = json.load(f)
+    
     with keep.presenting() as m:
-        os.chdir(app.root_path)
 
-        with open('power.json','r') as f:
-            signals = json.load(f)
-
-            
-        outage_log = open('outage_log.txt','w')
+        outage_log = open(oncor_log,'w')
         UpdateThread.signals = signals
         UpdateThread.outage_log = outage_log
+        UpdateThread.db = db_path
+        UpdateThread.data_root = data_root
         
         UpdateThread.n_meters = len(UpdateThread.signals)
         n_threads = 10

@@ -16,7 +16,7 @@
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
                     <a href="/" class="nav-link active" aria-current="page">
-                        All Meters
+                        All Signals
                     </a>
                 </li>
                 <!-- <li class="nav-item">
@@ -28,23 +28,32 @@
             </ul>
             <hr>
         </div>
-        <table class="table" >
-            <thead class="sticky-top bg-white">
-                <tr>
-                    <th scope = "col">COG Id</th>
-                    <th scope = "col">Name</th>
-                    <th scope = "col">Status</th>
-                    <th scope = "col">Communicating</th>
-                    <th scope = "col">IP</th>
-                    <th scope = "col">ESI</th>
-                    <th scope = "col">Update Time</th>
-                </tr>
-            </thead>
-            <tbody id="list">
+        <div class="d-flex flex-column">
 
-            </tbody>
+            
+            <div id="settings" class="sticky-top d-flex justify-content-end p-3">
+                <button class="btn btn-primary btn-sm mx-1" id="export_btn">Export to Excel</button>
+                <button class="btn btn-primary btn-sm mx-1" id="import_btn">Import From Excel</button>
+                
+            </div>
+            <table class="table" >
+                <thead class="sticky-top bg-white">
+                    <tr>
+                        <th scope = "col">COG Id</th>
+                        <th scope = "col">Name</th>
+                        <th scope = "col">Status</th>
+                        <th scope = "col">Communicating</th>
+                        <th scope = "col">IP</th>
+                        <th scope = "col">ESI</th>
+                        <th scope = "col">Update Time</th>
+                    </tr>
+                </thead>
+                <tbody id="list">
 
-        </table>
+                </tbody>
+
+            </table>
+        </div>
 <!-- connect to cut button -->
     </main>
     

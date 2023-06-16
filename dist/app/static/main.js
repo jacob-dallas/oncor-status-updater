@@ -32,17 +32,30 @@ addEventListener("load",async event =>  {
         entry.append(entry_name)
 
         let status = document.createElement('td')
-        if (signal.status == 'registered') {
-            status.innerHTML = '&#9889'
-            status.setAttribute('title','Recieving Power')
-        }
-        if (signal.status == 'unregistered with no replacement') {
-            status.innerHTML = '&#10060'
-            status.setAttribute('title','Disconnected')
-        }
+        status.innerHTML = '&#9203'
+        status.setAttribute('title','Not Updated')
         entry.append(status)
 
         let comm = document.createElement('td')
+        entry.append(comm)
+
+        let ip = document.createElement('td')
+        ip.innerHTML = signal.ip
+        entry.append(ip)
+
+
+        let esi = document.createElement('td')
+        if (signal.meters[0]){
+            esi.innerHTML = signal.meters[0].esi_id
+
+        } else {
+            esi.innerHTML = 'N/A'
+        }
+        entry.append(esi)
+
+        let ts = document.createElement('td')
+        ts.innerHTML = '00:00:00'
+        entry.append(ts)
 
 
         table_data.append(entry)
@@ -69,7 +82,7 @@ addEventListener('load',update)
 function update(){
     handler = new EventSource('http://127.0.0.1:5000/listen')
 
-    handler.onmessage = (e) => {
+    handler.addEventListener('oncor', (e) => {
         const meter_string = e.data
         const meter_obj = JSON.parse(e.data)
         const table_data = document.getElementById('list')
@@ -77,11 +90,36 @@ function update(){
         meters = Array.from(meters)
         
         meters.forEach(meter =>{
-            if (Number(meter.id) == meter_obj.cog_id){
-                meter.children[0].innerHTML=meter_obj.cog_id
-                meter.children[1].innerHTML=meter_obj.name
+            if (String(meter.id) == String(meter_obj.cog_id)){
                 meter.children[2].innerHTML=meter_obj.online_status
+                meter.children[2].setAttribute('title','updated')
+                meter.children[5].innerHTML=meter_obj.esi_id
             }
         })
-    }
+    })
+
+    handler.addEventListener("ping_comm", (e)=>{
+        const com_obj = JSON.parse(e.data)
+        const table_data = document.getElementById('list')
+        let signals = table_data.children
+        signals = Array.from(signals)
+        
+        signals.forEach(signal =>{
+            if (Number(signal.id) == com_obj.cog_id){
+                signal.children[3].innerHTML=com_obj.modem_online
+            }
+        })
+    })
+    handler.addEventListener("timestamp", (e)=>{
+        const com_obj = JSON.parse(e.data)
+        const table_data = document.getElementById('list')
+        let signals = table_data.children
+        signals = Array.from(signals)
+        
+        signals.forEach(signal =>{
+            if (Number(signal.id) == com_obj.cog_id){
+                signal.children[6].innerHTML=com_obj.time
+            }
+        })
+    })
 }

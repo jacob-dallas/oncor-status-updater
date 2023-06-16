@@ -1,5 +1,63 @@
 let d_json
 
+
+const export_btn = document.getElementById('export_btn')
+export_btn.addEventListener('click',async e=>{
+    console.log(e)
+    const myInit = {
+        method: "GET",
+        mode: "cors",
+        cache: "default",
+    };
+    let data = await fetch('http://127.0.0.1:5000/get_xlsx',myInit)
+    // let test = await data.formData()
+    let a = document.createElement('a')
+    let data_b = await data.blob()
+    let url = URL.createObjectURL(data_b)
+    a.href = url
+    a.download = 'Signals.xlsx'
+    document.body.appendChild(a)
+    a.click()
+    setTimeout(()=>{
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 0);
+})
+
+const import_btn = document.getElementById('import_btn')
+import_btn.addEventListener('click',async e=>{
+    console.log(e)
+    let file = document.createElement('input')
+    file.setAttribute('type','file')
+    file.display = 'hidden'
+    document.body.appendChild(file)
+    file.click()
+
+    let data = new FormData()
+    data.append('file', file)
+
+
+    const myInit = {
+        method: "POST",
+        body: data,
+        mode: "cors",
+        cache: "default",
+    };
+    let res = await fetch('http://127.0.0.1:5000/post_xlsx',myInit)
+    // // let test = await data.formData()
+    // let a = document.createElement('a')
+    // let data_b = await data.blob()
+    // let url = URL.createObjectURL(data_b)
+    // a.href = url
+    // a.download = 'Signals.xlsx'
+    // document.body.appendChild(a)
+    // a.click()
+    // setTimeout(()=>{
+    //     document.body.removeChild(a);
+    //     window.URL.revokeObjectURL(url);
+    // }, 0);
+})
+
 // get data from request
 async function get_data(){
     const myInit = {
@@ -32,11 +90,12 @@ addEventListener("load",async event =>  {
         entry.append(entry_name)
 
         let status = document.createElement('td')
-        status.innerHTML = '&#9203'
+        status.innerHTML = signal.meters[0].online_status || '&#9203'
         status.setAttribute('title','Not Updated')
         entry.append(status)
-
+        
         let comm = document.createElement('td')
+        comm.innerHTML = signal.modem_online || '&#9203'
         entry.append(comm)
 
         let ip = document.createElement('td')
@@ -54,7 +113,7 @@ addEventListener("load",async event =>  {
         entry.append(esi)
 
         let ts = document.createElement('td')
-        ts.innerHTML = '00:00:00'
+        ts.innerHTML = signal.updated_at ||'00:00:00'
         entry.append(ts)
 
 
