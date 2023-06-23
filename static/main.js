@@ -31,31 +31,30 @@ import_btn.addEventListener('click',async e=>{
     file.setAttribute('type','file')
     file.display = 'hidden'
     document.body.appendChild(file)
+    file.addEventListener('change', async (e) => {
+        if (e.target.files[0]) {
+            let data = new FormData()
+            let filedata = e.target.files[0]
+            data.append('file', filedata)
+            console.log('You selected ' + e.target.files[0].name);
+            
+            const myInit = {
+                method: "POST",
+                body: data,
+                mode: "cors",
+                cache: "default",
+                redirect: 'follow'
+            };
+            let res = await fetch('http://127.0.0.1:5000/post_xlsx',myInit)
+            console.log(res)
+            location.reload()
+        }
+
+    })
     file.click()
 
-    let data = new FormData()
-    data.append('file', file)
 
 
-    const myInit = {
-        method: "POST",
-        body: data,
-        mode: "cors",
-        cache: "default",
-    };
-    let res = await fetch('http://127.0.0.1:5000/post_xlsx',myInit)
-    // // let test = await data.formData()
-    // let a = document.createElement('a')
-    // let data_b = await data.blob()
-    // let url = URL.createObjectURL(data_b)
-    // a.href = url
-    // a.download = 'Signals.xlsx'
-    // document.body.appendChild(a)
-    // a.click()
-    // setTimeout(()=>{
-    //     document.body.removeChild(a);
-    //     window.URL.revokeObjectURL(url);
-    // }, 0);
 })
 
 // get data from request

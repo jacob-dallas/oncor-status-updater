@@ -13,7 +13,7 @@ from threaded_update import UpdateThread
 import queue
 import pandas as pd
 import io
-from json_to_excel import export_sig
+from json_to_excel import export_sig, import_sig
 
 app = Flask(__name__)
 base_dir = os.path.dirname(__file__)
@@ -38,8 +38,11 @@ def get_xlsx():
 
 @app.route('/post_xlsx', methods=['POST'])
 def post_xlsx():
-    request.form['file']
-    return render_template('index.html')
+    file = request.files['file']
+    signals = import_sig(file)
+    with UpdateThread.lock:
+        UpdateThread.signals = signals
+    return redirect(url_for('index'))
 
 @app.route('/listen', methods=['GET'])
 def listen():
