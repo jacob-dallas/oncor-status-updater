@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block head%}
+    <title>Power Outage Dashboard</title>
+
+{% endblock %}
+
+{% block body%}
+    
+
+
+<body>
+    <main class="d-flex flex-nowrap">
+        <div id="status" class="d-flex flex-column flex-shrink-0 p-3 bg-dark sticky-top" style="width: 300px; height: 100vh;">
+            <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white fs-4 bg-dark"> Power Outage Detector</span>
+            <hr class="bg-light">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="/" class="nav-link active" aria-current="page">
+                        All Signals
+                    </a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a href="listen" class="nav-link">
+                        Comm Failures
+                    </a>
+                </li> -->
+                
+            </ul>
+            <hr>
+        </div>
+        <div class="d-flex flex-column">
+
+            
+            <div id="settings" class="sticky-top d-flex justify-content-end p-3">
+                <button class="btn btn-primary btn-sm mx-1" id="export_btn">Export to Excel</button>
+                <button class="btn btn-primary btn-sm mx-1" id="import_btn">Import From Excel</button>
+                
+            </div>
+            <table class="table" >
+                <thead class="sticky-top bg-white">
+                    <tr>
+                        <th scope = "col">COG Id</th>
+                        <th scope = "col">Name</th>
+                        <th scope = "col">Status</th>
+                        <th scope = "col">Communicating</th>
+                        <th scope = "col">IP</th>
+                        <th scope = "col">ESI</th>
+                        <th scope = "col">Update Time</th>
+                    </tr>
+                </thead>
+                <tbody id="list">
+                    
+                </tbody>
+                
+            </table>
+        </div>
+<!-- connect to cut button -->
+    </main>
+    
+    {%block script%}
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    {% endblock %}
+</body>
+{% endblock %}
