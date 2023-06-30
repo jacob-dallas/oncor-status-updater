@@ -318,3 +318,4 @@ if __name__ == '__main__':
             url = f'http://{ip}:{port}'
             webbrowser.open_new_tab(url)
             serve(app, host=ip, port=port,)
+
