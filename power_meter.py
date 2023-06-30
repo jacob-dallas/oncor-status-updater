@@ -4,9 +4,12 @@ from selenium.common.exceptions import ElementClickInterceptedException,TimeoutE
 from selenium.webdriver.common.by import By
 import datetime
 import requests
+from urlib3.exceptions import InsecureRequestWarning
 import json
 from urllib3.connection import ConnectTimeoutError
 
+requests.packages.urlib3.diable_warnings(category =  InsecureRequestsWarning)
+response = requests.get("https://ors-svc.aws.cloud.oncor.com", verify = False)
 class PowerMeter():
     
 
@@ -160,6 +163,7 @@ class PowerMeter():
             # pars error is because of bad response but there is only a bad response some of the time when accouts are inactive or temporarily disabled
             # nevermind, that had something to do with caches
             # even error codes come back with 200 response
+            response = requests.get("https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}", verify = False)
             validate_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}'
             url = f"https://ors-svc.aws.cloud.oncor.com/customerOutage/outage/checkStatus?esiid={self.id}&source=ORS"
 
@@ -178,5 +182,6 @@ class PowerMeter():
         except (requests.Timeout, TimeoutError, ConnectTimeoutError) as e:
             print(e)
             return 'update failed'
-        except :
+        except Exception as e:
+            print(e)
             return 'update failed'
