@@ -9,6 +9,20 @@ import shutil
 
 from power_meter import PowerMeter
 
+def n_power_updaters():
+    i = 0
+    for thread in threading.enumerate():
+        if isinstance(thread, UpdateThread):
+            i+=1
+    return i
+def stop_power():
+    for thread in threading.enumerate():
+        if isinstance(thread, UpdateThread):
+            thread.set_stop(True)
+    
+
+# add update schedule
+
 # outages.to_excel(f'logs\excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx','sheet1',index=False)
 
 class UpdateThread(threading.Thread):
@@ -74,7 +88,7 @@ class UpdateThread(threading.Thread):
                 self.save_and_bak()
 
             with self.lock:
-                percent_complete = self.i/self.n_meters*100
+                percent_complete = self.i/self.n_signals*100
                 self.last_complete_entry += 1
                 print(f'{percent_complete:.2f}%')
     
@@ -174,7 +188,7 @@ if __name__ == '__main__':
     UpdateThread.signals = signals
     UpdateThread.outage_log = outage_log
     
-    UpdateThread.n_meters = len(UpdateThread.signals)
+    UpdateThread.n_signals = len(UpdateThread.signals)
     ma = queue.Queue(10)
     thread_1 = UpdateThread(ma,name='thread_1')
     thread_2 = UpdateThread(ma,name='thread_2')

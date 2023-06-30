@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import io
 import copy
+import numpy as np
 
 
 def export_sig(signals):
@@ -56,7 +57,7 @@ def import_sig(file):
     }
 
     met_types = {
-        'esi_id':int,
+        'esi_id':np.int64,
         'comment':str,
         'oncor_address':str,
         'address_sim':float,

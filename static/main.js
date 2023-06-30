@@ -71,7 +71,7 @@ async function get_data(){
     console.log(data)
     return data
 }
-addEventListener("load",async event =>  {
+addEventListener("load",async (event) =>  {
     const table_data = document.getElementById('list')
     const data = await get_data()
     d_json = await data.json()
@@ -89,7 +89,11 @@ addEventListener("load",async event =>  {
         entry.append(entry_name)
 
         let status = document.createElement('td')
-        status.innerHTML = signal.meters[0].online_status || '&#9203'
+        if (signal.meters[0]){
+            status.innerHTML = signal.meters[0].online_status || '&#9203'
+        } else {
+            status.innerHTML = 'no_meter'
+        }
         status.setAttribute('title','Not Updated')
         entry.append(status)
         

@@ -1,47 +1,57 @@
 const on_btn = document.getElementById('power_updater')
+const runSimple_btn = document.getElementById('advBtn')
+const runAdv_btn = document.getElementById('simpleBtn')
 const backup_btn = document.getElementById('foo')
 let listener
 let off_btn = document.getElementById('updater_stop')
 
-function startAndMonitorThreads(){
-    const listener = new EventSource('http://127.0.0.1:5000/start_power_threads')
+window.addEventListener('load',monitorThreads)
+
+function monitorThreads(){
+
+    listener = new EventSource('http://127.0.0.1:5000/monitor_power_threads')
 
     listener.onopen = (e)=>{
-        on_btn.style.display = 'none'
-        
-        off_btn.style.display = 'block'
         console.log('starting!')
     }
 
     let thread_counter = document.getElementById('thread_count')
     let status = document.getElementById('thread_status')
-
+    
     listener.addEventListener('thread_count',(e)=>{
         console.log(e.data)
         thread_counter.innerHTML = e.data
         if (Number(e.data) >0){
             status.innerHTML = 'Online'
-
+            
         } else {
             status.innerHTML = 'Offline'
         }
     })
-
-    off_btn.addEventListener('click',()=>{
-        listener.close()
-        console.log('closing sse')
-        on_btn.style.display = 'block'
-        off_btn.style.display = 'none'
-        thread_counter.innerHTML = 0
-        status.innerHTML = 'Offline'
-    })
 }
+
+off_btn.addEventListener('click',async ()=>{
+    listener.close()
+    let status = document.getElementById('thread_status')
+    let thread_counter = document.getElementById('thread_count')
+    console.log('closing sse')
+    on_btn.style.display = 'block'
+    off_btn.style.display = 'none'
+    thread_counter.innerHTML = 0
+    status.innerHTML = 'Offline'
+    let res = await fetch('http://127.0.0.1:5000/stop_power_threads',{
+        method: 'POST'
+    })
+    console.log(res)
+    // submit del request to close
+})
 
 const pwrModal = document.getElementById('power_config')
 
 on_btn.addEventListener('click',()=>{
     pwrModal.showModal()
 })
+
 pwrModal.addEventListener("click", e => {
     const dialogDimensions = pwrModal.getBoundingClientRect()
     if (
@@ -109,3 +119,28 @@ runUntilOpt.addEventListener('change',(e)=>{
     until.disabled = false
     forInput.disabled = true
 })
+
+async function submitPowerConf(){
+    let form
+    if (formSelector.value ==1){
+        form = document.getElementById('simpleForm')
+    } else {
+        form = document.getElementById('advancedForm')
+    }
+    const data = new FormData(form)
+    
+    res = await fetch(
+        'http://127.0.0.1:5000/start_power_threads',
+        {
+            body: data,
+            method: 'POST',
+        }
+    )
+    console.log(res)
+    
+    on_btn.style.display = 'none'
+        
+    off_btn.style.display = 'block'
+}
+runAdv_btn.addEventListener('click',submitPowerConf)
+runSimple_btn.addEventListener('click',submitPowerConf)

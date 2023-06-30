@@ -9,13 +9,14 @@ import requests
 from message import format_sse
 import json
 import webbrowser
-from threaded_update import UpdateThread
+from threaded_update import UpdateThread,n_power_updaters,stop_power
 import queue
 import pandas as pd
 import io
 from json_to_excel import export_sig, import_sig
 import threading
 import time
+import datetime
 
 app = Flask(__name__)
 base_dir = os.path.dirname(__file__)
@@ -23,7 +24,16 @@ queue_outage = queue.Queue(6)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if n_power_updaters():
+        power_status = 'Online'
+        buttons= ['display:none;','display:block;']
+    else:
+        power_status = 'Offline'
+        buttons= ['display:block;','display:none;']
+
+    n_threads = n_power_updaters()
+
+    return render_template('index.html',power_status=power_status,n_threads=n_threads,buttons=buttons)
 
 @app.route('/power')
 def power():
@@ -52,7 +62,7 @@ def post_xlsx():
 
 @app.route('/listen', methods=['GET'])
 def listen():
-
+    # why are so many threads being generated
     def stream():
         while True:
             msg = queue_outage.get()  # blocks until a new message arrives
@@ -71,8 +81,29 @@ def listen():
 def progress():
     return render_template('wip.html')
 
-@app.route('/start_power_threads')
-def power_thread():
+@app.route('/stop_power_threads', methods=['POST'])
+def stop_power_threads():
+    stop_power()
+    return flask.Response(status=200)
+
+@app.route('/start_power_threads', methods=['POST'])
+def start_power_threads():
+    if n_power_updaters():
+        return flask.Response(status=400)
+
+    print(request.form)
+    req_data = request.form
+
+    record = req_data.get('recordInt',0)
+    n_threads = req_data.get('threads',10)
+    stop_after = req_data.get('runFor', 0)
+    stop_at = req_data.get('runUntil',0)
+
+    if stop_after:
+        stop_at = datetime.datetime.now() + datetime.datetime.hour(stop_after)
+    if stop_at:
+        stop_at = datetime.datetime.fromisoformat(stop_at)
+
     data_root = os.path.join(os.getenv('APPDATA'),'acid')
     db_path = os.path.join(data_root,'db.json')
     log_dir = os.path.join(data_root,'logs')
@@ -89,24 +120,28 @@ def power_thread():
     with open(db_path,'r') as f:
         signals = json.load(f)
 
-    # outage_log = open(oncor_log,'w')
-    # UpdateThread.signals = signals
-    # UpdateThread.outage_log = outage_log
-    # UpdateThread.db = db_path
-    # UpdateThread.data_root = data_root
-    
-    # UpdateThread.n_meters = len(UpdateThread.signals)
-    # n_threads = 10
-    # threads = []
-    # for thread in range(n_threads):
-    #     thread_i = UpdateThread(queue_outage)
-    #     threads.append(thread_i)
-    #     thread_i.start()
+    outage_log = open(oncor_log,'w')
+    UpdateThread.signals = signals
+    UpdateThread.outage_log = outage_log
+    UpdateThread.db = db_path
+    UpdateThread.data_root = data_root
+    UpdateThread.stop_at = stop_at
+    UpdateThread.record = record
 
+    UpdateThread.n_signals = len(UpdateThread.signals)
+    threads = []
+    for thread in range(n_threads):
+        thread_i = UpdateThread(queue_outage)
+        threads.append(thread_i)
+        thread_i.start()
+    return flask.Response(status=200)
+
+@app.route('/monitor_power_threads')
+def power_thread():
     cond = True
     def stream():
-        while cond:
-            yield format_sse(f'{threading.active_count()}','thread_count')
+        while cond:                
+            yield format_sse(f'{n_power_updaters()}','thread_count')
             time.sleep(2)
 
     return flask.Response(stream(), mimetype='text/event-stream')

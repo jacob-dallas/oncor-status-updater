@@ -11,20 +11,20 @@
 
                 <div class="d-flex justify-content-around gap-2">
                     <a href="{{url_for('power')}}" class="btn btn-primary flex-grow-1">Go</a>
-                    <a id = 'power_updater' class="btn btn-success flex-grow-1">Start</a>
-                    <a id = 'updater_stop' class="btn btn-danger flex-grow-1" style="display:none">Stop</a>
+                    <a id = 'power_updater' class="btn btn-success flex-grow-1" style="{{buttons[0]}}">Start</a>
+                    <a id = 'updater_stop' class="btn btn-danger flex-grow-1" style="{{buttons[1]}}">Stop</a>
                     
                 </div>
                 <div id="thread_statuses" class="mb-3 border-bottom border-top">
                     <div class="row">
     
                         <div class="col">Status:</div>
-                        <div class="col" id="thread_status">Offline</div>
+                        <div class="col" id="thread_status">{{power_status}}</div>
                     </div>
                     <div class="row">
 
                         <div class="col">n_threads:</div>
-                        <div class="col" id="thread_count">0</div>
+                        <div class="col" id="thread_count">{{n_threads}}</div>
                     </div>
 
                 </div>
@@ -39,7 +39,7 @@
             <div class="d-flex flex-column-reverse h-50 mt-auto">
 
                 <div class="d-flex justify-content-around gap-2">
-                    <a href="{{url_for('power')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1">Go</a>
                     
                 </div>
             </div>
@@ -53,8 +53,8 @@
             <div class="d-flex flex-column-reverse h-50 mt-auto">
 
                 <div class="d-flex justify-content-around gap-2">
-                    <a href="{{url_for('power')}}" class="btn btn-primary flex-grow-1">Go</a>
-                    <a href="{{url_for('power')}}" class="btn btn-success flex-grow-1">Start</a>
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    <a href="{{url_for('progress')}}" class="btn btn-success flex-grow-1">Start</a>
                     
                 </div>
             </div>
@@ -68,13 +68,13 @@
             <div class="d-flex flex-column-reverse h-50 mt-auto">
 
                 <div class="d-flex justify-content-around gap-2">
-                    <a href="{{url_for('power')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1">Go</a>
                     
                 </div>
             </div>
         </div>
     </div>
-<dialog id="power_config" style="width: 500px; height: 400px; border:none; border-radius: 15px;">
+<dialog id="power_config" style="width: 600px; height: 500px; border:none; border-radius: 15px;">
     <div class="pb-2 h-25">
 
         <label for="power_type">Select Run Type</label>
@@ -88,19 +88,23 @@
         <form method="dialog" id="simpleForm" class="h-100">
             <div class="d-flex flex-column h-100">
 
-                <div style="display: block;" class="pb-1">
+                <label for="nThread" class="form-text">Number of Threads:</label>
+                <input type="number" name="nThread" id="nThread" class="form-control" min="0" value="10">
+                <div style="display: block;" class="pt-3">
                     
                     <label for="recordOpt" class="form-check-label">Export Recordings?</label>
                     <input type="checkbox" name="recordOpt" id="recordOpt" class="form-check-input">
                 </div>
                 <label for="recordInt" class="form-text">Recording Inteval (hours):</label>
                 <input type="number" name="recordInt" id="recordInt" class="form-control" disabled>
-                <button class="btn btn-success mt-auto">Run</button>
+                <button class="btn btn-success mt-auto" id="simpleBtn">Run</button>
             </div>
         </form>
         <form method="dialog" id="advancedForm" style="display: none;" class="h-100">
             <div class="d-flex flex-column h-100">
-
+                <label for="nThread" class="form-text">Number of Threads:</label>
+                <input type="number" name="nThread" id="nThread" class="form-control" min="0" value="10">
+                
                 <div id="runRadios" class="border-bottom">
                     <label for="runUntilOpt">Run Updates Until a Specified Time</label>
                     <input type="radio" name="runOpt" id="runUntilOpt" value='until' checked />
@@ -108,7 +112,7 @@
                     <input type="radio" name="runOpt" id="runForOpt" value='for'>
                     
                 </div>
-                <div id="runUntilInput" class="pb-4">
+                <div id="runUntilInput" class="pb-1">
                     <label for="runUntil" class="form-text">Run Until?</label>
                     <input type="datetime-local" name="runUntil" id="runUntil" class="form-control">
                 </div>
@@ -117,14 +121,14 @@
                     <input type="number" name="runFor" id="runFor" class="form-control">
                 </div>
 
-                <div style="display: block;" class="pb-1">
+                <div style="display: block;" class="pt-3">
                     
                     <label for="recordOptAdv" class="form-check-label">Export Recordings?</label>
                     <input type="checkbox" name="recordOptAdv" id="recordOptAdv" class="form-check-input">
                 </div>
                 <label for="recordIntAdv" class="form-text">Recording Inteval (hours):</label>
-                <input type="number" name="recordIntAdv" id="recordIntAdv" class="form-control" disabled>
-                <button class="btn btn-success mt-auto">Run</button>
+                <input type="number" name="recordInt" id="recordIntAdv" class="form-control" disabled>
+                <button class="btn btn-success mt-auto" id="advBtn">Run</button>
             </div>
         </form>
     </div>
