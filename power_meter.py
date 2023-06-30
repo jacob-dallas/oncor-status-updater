@@ -4,12 +4,9 @@ from selenium.common.exceptions import ElementClickInterceptedException,TimeoutE
 from selenium.webdriver.common.by import By
 import datetime
 import requests
-from urlib3.exceptions import InsecureRequestWarning
 import json
 from urllib3.connection import ConnectTimeoutError
 
-requests.packages.urlib3.diable_warnings(category =  InsecureRequestsWarning)
-response = requests.get("https://ors-svc.aws.cloud.oncor.com", verify = False)
 class PowerMeter():
     
 
@@ -154,7 +151,7 @@ class PowerMeter():
                     return 'no_id'
                 else:
                     esi_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/meter?meter={self.number[0:9]}'
-                    res = json.loads(requests.get(esi_url,verify='./amazon.cer').text)
+                    res = json.loads(requests.get(esi_url,verify='./aws.cloud.oncor.com').text)
                     if res.get('validateMeterResponse',False):
                         self.esi_id = res['validateMeterResponse']['account'][0]['number']
                     else:
@@ -163,17 +160,17 @@ class PowerMeter():
             # pars error is because of bad response but there is only a bad response some of the time when accouts are inactive or temporarily disabled
             # nevermind, that had something to do with caches
             # even error codes come back with 200 response
-            response = requests.get("https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}", verify = False)
+           
             validate_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}'
             url = f"https://ors-svc.aws.cloud.oncor.com/customerOutage/outage/checkStatus?esiid={self.id}&source=ORS"
 
-            res = json.loads(requests.get(validate_url,verify='./amazon.cer').text)
+            res = json.loads(requests.get(validate_url,verify='./aws.cloud.oncor.com').text)
             if res.get('Error',False):
                 return 'bad_id'
             if res.get('validateAccountResponse',False):
                 if res['validateAccountResponse']['account']['status'] =='ACTIVE':
                     
-                    res = json.loads(requests.get(url,verify='./amazon.cer').text)
+                    res = json.loads(requests.get(url,verify='./aws.cloud.oncor.com').text)
                     return res['getOutageStatusResponse']['powerStatus']['status']
                 else:
                     return res['validateAccountResponse']['account']['status']
