@@ -154,7 +154,7 @@ class PowerMeter():
                     return 'no_id'
                 else:
                     esi_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/meter?meter={self.number[0:9]}'
-                    res = json.loads(requests.get(esi_url).text)
+                    res = json.loads(requests.get(esi_url,verify='./amazon.cer').text)
                     if res.get('validateMeterResponse',False):
                         self.esi_id = res['validateMeterResponse']['account'][0]['number']
                     else:
@@ -167,13 +167,13 @@ class PowerMeter():
             validate_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}'
             url = f"https://ors-svc.aws.cloud.oncor.com/customerOutage/outage/checkStatus?esiid={self.id}&source=ORS"
 
-            res = json.loads(requests.get(validate_url).text)
+            res = json.loads(requests.get(validate_url,verify='./amazon.cer').text)
             if res.get('Error',False):
                 return 'bad_id'
             if res.get('validateAccountResponse',False):
                 if res['validateAccountResponse']['account']['status'] =='ACTIVE':
                     
-                    res = json.loads(requests.get(url).text)
+                    res = json.loads(requests.get(url,verify='./amazon.cer').text)
                     return res['getOutageStatusResponse']['powerStatus']['status']
                 else:
                     return res['validateAccountResponse']['account']['status']

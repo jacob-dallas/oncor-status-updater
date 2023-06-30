@@ -1,64 +1,145 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Outage Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body>
-    <main class="d-flex flex-nowrap">
-        <div id="status" class="d-flex flex-column flex-shrink-0 p-3 bg-dark sticky-top" style="width: 300px; height: 100vh;">
-            <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white fs-4 bg-dark"> Power Outage Detector</span>
-            <hr class="bg-light">
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="/" class="nav-link active" aria-current="page">
-                        All Signals
-                    </a>
-                </li>
-                <!-- <li class="nav-item">
-                    <a href="listen" class="nav-link">
-                        Comm Failures
-                    </a>
-                </li> -->
-                
-            </ul>
-            <hr>
-        </div>
-        <div class="d-flex flex-column">
+{% extends "layout.html" %}
+{% block body%}
 
-            
-            <div id="settings" class="sticky-top d-flex justify-content-end p-3">
-                <button class="btn btn-primary btn-sm mx-1" id="export_btn">Export to Excel</button>
-                <button class="btn btn-primary btn-sm mx-1" id="import_btn">Import From Excel</button>
-                
-            </div>
-            <table class="table" >
-                <thead class="sticky-top bg-white">
-                    <tr>
-                        <th scope = "col">COG Id</th>
-                        <th scope = "col">Name</th>
-                        <th scope = "col">Status</th>
-                        <th scope = "col">Communicating</th>
-                        <th scope = "col">IP</th>
-                        <th scope = "col">ESI</th>
-                        <th scope = "col">Update Time</th>
-                    </tr>
-                </thead>
-                <tbody id="list">
+<main class="d-flex justify-content-sm-start m-5 gap-4">
+    <div class="card" style="width: 250px; height: 300px">
+        <img src="" alt="" class="card-img-top">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Power Meter Status</h5>
+            <p class="card-text">Check status of oncor power meters and communication</p>
+            <div class="d-flex flex-column-reverse h-50 mt-auto">
 
-                </tbody>
-
-            </table>
-        </div>
-<!-- connect to cut button -->
-    </main>
+                <div class="d-flex justify-content-around gap-2">
+                    <a href="{{url_for('power')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    <a id = 'power_updater' class="btn btn-success flex-grow-1" style="{{buttons[0]}}">Start</a>
+                    <a id = 'updater_stop' class="btn btn-danger flex-grow-1" style="{{buttons[1]}}">Stop</a>
+                    
+                </div>
+                <div id="thread_statuses" class="mb-3 border-bottom border-top">
+                    <div class="row">
     
+                        <div class="col">Status:</div>
+                        <div class="col" id="thread_status">{{power_status}}</div>
+                    </div>
+                    <div class="row">
 
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
-    <script src="{{ url_for('static', filename='/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-</body>
-</html>
+                        <div class="col">n_threads:</div>
+                        <div class="col" id="thread_count">{{n_threads}}</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="width: 250px; height: 300px">
+        <img src="" alt="" class="card-img-top">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Modem Portal</h5>
+            <p class="card-text"></p>
+            <div class="d-flex flex-column-reverse h-50 mt-auto">
+
+                <div class="d-flex justify-content-around gap-2">
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="width: 250px; height: 300px">
+        <img src="" alt="" class="card-img-top">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Radar Portal</h5>
+            <p class="card-text"></p>
+            <div class="d-flex flex-column-reverse h-50 mt-auto">
+
+                <div class="d-flex justify-content-around gap-2">
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    <a href="{{url_for('progress')}}" class="btn btn-success flex-grow-1">Start</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="width: 250px; height: 300px">
+        <img src="" alt="" class="card-img-top">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Database Hub</h5>
+            <p class="card-text"></p>
+            <div class="d-flex flex-column-reverse h-50 mt-auto">
+
+                <div class="d-flex justify-content-around gap-2">
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+<dialog id="power_config" style="width: 600px; height: 500px; border:none; border-radius: 15px;">
+    <div class="pb-2 h-25">
+
+        <label for="power_type">Select Run Type</label>
+        <select class="form-select" aria-label="Default select example", id = 'power_type'>
+            <option value="1">Simple</option>
+            <option value="2">Advanced</option>
+        </select>
+    </div>
+    <div class="h-75">
+
+        <form method="dialog" id="simpleForm" class="h-100">
+            <div class="d-flex flex-column h-100">
+
+                <label for="nThread" class="form-text">Number of Threads:</label>
+                <input type="number" name="nThread" id="nThread" class="form-control" min="0" value="10">
+                <div style="display: block;" class="pt-3">
+                    
+                    <label for="recordOpt" class="form-check-label">Export Recordings?</label>
+                    <input type="checkbox" name="recordOpt" id="recordOpt" class="form-check-input">
+                </div>
+                <label for="recordInt" class="form-text">Recording Inteval (hours):</label>
+                <input type="number" name="recordInt" id="recordInt" class="form-control" disabled>
+                <button class="btn btn-success mt-auto" id="simpleBtn">Run</button>
+            </div>
+        </form>
+        <form method="dialog" id="advancedForm" style="display: none;" class="h-100">
+            <div class="d-flex flex-column h-100">
+                <label for="nThread" class="form-text">Number of Threads:</label>
+                <input type="number" name="nThread" id="nThread" class="form-control" min="0" value="10">
+                
+                <div id="runRadios" class="border-bottom">
+                    <label for="runUntilOpt">Run Updates Until a Specified Time</label>
+                    <input type="radio" name="runOpt" id="runUntilOpt" value='until' checked />
+                    <label for="runForOpt">Run Updates For a Specified Time</label>
+                    <input type="radio" name="runOpt" id="runForOpt" value='for'>
+                    
+                </div>
+                <div id="runUntilInput" class="pb-1">
+                    <label for="runUntil" class="form-text">Run Until?</label>
+                    <input type="datetime-local" name="runUntil" id="runUntil" class="form-control">
+                </div>
+                <div id="runForInput" style="display: none;" class="pb-4">
+                    <label for="runFor" class="form-text"> Run for how long? (hours)</label>
+                    <input type="number" name="runFor" id="runFor" class="form-control">
+                </div>
+
+                <div style="display: block;" class="pt-3">
+                    
+                    <label for="recordOptAdv" class="form-check-label">Export Recordings?</label>
+                    <input type="checkbox" name="recordOptAdv" id="recordOptAdv" class="form-check-input">
+                </div>
+                <label for="recordIntAdv" class="form-text">Recording Inteval (hours):</label>
+                <input type="number" name="recordInt" id="recordIntAdv" class="form-control" disabled>
+                <button class="btn btn-success mt-auto" id="advBtn">Run</button>
+            </div>
+        </form>
+    </div>
+        
+</dialog>
+</main>
+
+
+{% endblock%}
+
+{% block script%}
+<script src="{{ url_for('static', filename='power.js') }}"></script>
+
+{% endblock%}
