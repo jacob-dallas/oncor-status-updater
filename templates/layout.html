@@ -10,17 +10,23 @@
     <title>ACID</title>
     {% endblock %}
 </head>
-    <h1 style="width: 100vw; background-color:gray; color:white;padding:20px 0; margin:0;" class="d-flex justify-content-center">
-        <a href="{{ url_for('index')}}" class="mx-auto object-fit-scale" style="text-decoration: none;color:white;">
-            Automated Communication and Information Display (ACID)
-        </a>
-    </h1>
-    {% block body%}
-    {% endblock %}
-    
-    
-    {% block script%}
-    {% endblock %}
+    <body class="vh-100 d-flex flex-column">
+
+        <h1 style="width: 100vw; background-color:gray; color:white;padding:20px 0; margin:0;" class="d-flex justify-content-center">
+            <a href="{{ url_for('index')}}" class="mx-auto object-fit-scale" style="text-decoration: none;color:white;">
+                Automated Communication and Information Display (ACID)
+            </a>
+        </h1>
+        <div class="flex-fill">
+
+            {% block body%}
+            {% endblock %}
+        </div>
+        
+        
+        {% block script%}
+        {% endblock %}
+    </body>
 
     <script src="{{ url_for('static', filename='/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </html>

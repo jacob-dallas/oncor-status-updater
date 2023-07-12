@@ -4,12 +4,13 @@ const runAdv_btn = document.getElementById('simpleBtn')
 const backup_btn = document.getElementById('foo')
 let listener
 let off_btn = document.getElementById('updater_stop')
+let ip = location.host
 
 window.addEventListener('load',monitorThreads)
 
 function monitorThreads(){
 
-    listener = new EventSource('http://127.0.0.1:5000/monitor_power_threads')
+    listener = new EventSource(`http://${ip}/monitor_power_threads`)
 
     listener.onopen = (e)=>{
         console.log('starting!')
@@ -23,9 +24,11 @@ function monitorThreads(){
         thread_counter.innerHTML = e.data
         if (Number(e.data) >0){
             status.innerHTML = 'Online'
-            
         } else {
             status.innerHTML = 'Offline'
+            on_btn.style.display = 'block'
+            off_btn.style.display = 'none'
+
         }
     })
 }
@@ -39,7 +42,7 @@ off_btn.addEventListener('click',async ()=>{
     off_btn.style.display = 'none'
     thread_counter.innerHTML = 0
     status.innerHTML = 'Offline'
-    let res = await fetch('http://127.0.0.1:5000/stop_power_threads',{
+    let res = await fetch(`http://${ip}/stop_power_threads`,{
         method: 'POST'
     })
     console.log(res)
@@ -128,9 +131,10 @@ async function submitPowerConf(){
         form = document.getElementById('advancedForm')
     }
     const data = new FormData(form)
+    data.append('pause',true)
     
     res = await fetch(
-        'http://127.0.0.1:5000/start_power_threads',
+        `http://${ip}/start_power_threads`,
         {
             body: data,
             method: 'POST',

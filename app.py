@@ -17,7 +17,14 @@ from json_to_excel import export_sig, import_sig
 import threading
 import time
 import datetime
+from waitress import serve
+import dotenv
+dotenv.load_dotenv()
 
+data_root = os.path.join(os.getenv('APPDATA'),'acid')
+db_path = os.path.join(data_root,'db.json')
+log_dir = os.path.join(data_root,'logs')
+oncor_log = os.path.join(log_dir,'oncor.txt')
 app = Flask(__name__)
 base_dir = os.path.dirname(__file__)
 queue_outage = queue.Queue(6)
@@ -41,8 +48,14 @@ def power():
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    with UpdateThread.lock:
-        data = UpdateThread.signals
+    try:
+        with UpdateThread.lock:
+            data = UpdateThread.signals
+    except AttributeError:
+        with open(db_path,'r') as f:
+            data = json.load(f)
+            with UpdateThread.lock:
+                UpdateThread.signals = data
     return data
 
 @app.route('/get_xlsx', methods=['GET'])
@@ -60,8 +73,19 @@ def post_xlsx():
         UpdateThread.signals = signals
     return redirect(url_for('power'))
 
+@app.route('/pause_listen', methods=['POST'])
+def puase_listen():
+    req_data = request.form
+    print(req_data)
+    with UpdateThread.lock:
+        UpdateThread.pause= True
+    return flask.Response(status=200)
+
 @app.route('/listen', methods=['GET'])
 def listen():
+    print('new listen!')
+    with UpdateThread.lock:
+        UpdateThread.pause = False
     # why are so many threads being generated
     def stream():
         while True:
@@ -98,16 +122,14 @@ def start_power_threads():
     n_threads = req_data.get('threads',10)
     stop_after = req_data.get('runFor', 0)
     stop_at = req_data.get('runUntil',0)
+    pause = req_data.get('pause',True)
 
-    if stop_after:
-        stop_at = datetime.datetime.now() + datetime.datetime.hour(stop_after)
+
+
     if stop_at:
         stop_at = datetime.datetime.fromisoformat(stop_at)
-
-    data_root = os.path.join(os.getenv('APPDATA'),'acid')
-    db_path = os.path.join(data_root,'db.json')
-    log_dir = os.path.join(data_root,'logs')
-    oncor_log = os.path.join(log_dir,'oncor.txt')
+    if stop_after:
+        stop_at = datetime.datetime.now() + datetime.timedelta(hours=float(stop_after))
 
     if not os.path.exists(data_root):
         os.mkdir(data_root)
@@ -121,6 +143,7 @@ def start_power_threads():
         signals = json.load(f)
 
     outage_log = open(oncor_log,'w')
+    UpdateThread.pause=pause
     UpdateThread.signals = signals
     UpdateThread.outage_log = outage_log
     UpdateThread.db = db_path
@@ -165,43 +188,12 @@ def auth():
 
 
 if __name__ == '__main__':
-    data_root = os.path.join(os.getenv('APPDATA'),'acid')
-    db_path = os.path.join(data_root,'db.json')
-    log_dir = os.path.join(data_root,'logs')
-    oncor_log = os.path.join(log_dir,'oncor.txt')
-
-    if not os.path.exists(data_root):
-        os.mkdir(data_root)
-    if not os.path.exists(log_dir):
-        os.mkdir(log_dir)
-
-    if not os.path.exists(db_path):
-        shutil.copy('power.json',db_path)
-
-    with open(db_path,'r') as f:
-        signals = json.load(f)
     
     with keep.presenting() as m:
-
-        outage_log = open(oncor_log,'w')
-        UpdateThread.signals = signals
-        UpdateThread.outage_log = outage_log
-        UpdateThread.db = db_path
-        UpdateThread.data_root = data_root
         
-        UpdateThread.n_meters = len(UpdateThread.signals)
-        n_threads = 10
-        threads = []
-        for thread in range(n_threads):
-            thread_i = UpdateThread(queue_outage)
-            threads.append(thread_i)
-            thread_i.start()
-            
 
-
-        webbrowser.open_new_tab('http://127.0.0.1:5000')
-        app.run()
-
-
-        # have databases, config and text files in appdata
-        # readme in distribution
+        if os.environ['DEVELOPMENT']:
+            webbrowser.open_new_tab('http://127.0.0.1:5000')
+            app.run(debug=True)
+        else:
+            serve(app, host='0.0.0.0', port=5000)

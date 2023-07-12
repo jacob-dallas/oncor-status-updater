@@ -49,17 +49,7 @@ def scan():
             df = pd.DataFrame(out_data)
             df.to_excel(f'logs\excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx','sheet1',index=False)
             #zip files
-            xl_files = []
-            files = os.listdir('./logs')
-            for f in files:
-                if (f.endswith('.xlsx')):
-                    xl_files.append(f)
             
-            if len(xl_files)>9:
-                with zipfile.ZipFile(f'logs\excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.zip', mode='w') as archive:
-                    for f in xl_files:
-                        archive.write(os.path.join('logs',f))
-                        os.remove(os.path.join('logs',f))
     finally:
         driver.quit()
 

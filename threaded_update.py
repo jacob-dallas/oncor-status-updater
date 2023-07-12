@@ -6,8 +6,10 @@ from pythonping import ping
 from controller_snmp import controller_ping
 import queue
 import shutil
-
+from json_to_excel import export_sig
 from power_meter import PowerMeter
+
+import zipfile
 
 def n_power_updaters():
     i = 0
@@ -22,8 +24,6 @@ def stop_power():
     
 
 # add update schedule
-
-# outages.to_excel(f'logs\excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx','sheet1',index=False)
 
 class UpdateThread(threading.Thread):
 
@@ -64,6 +64,7 @@ class UpdateThread(threading.Thread):
         while True:
             if self.stop:
                 break
+            
             with self.lock:
                 self.i = UpdateThread.last_complete_entry
                 if self.i > self.n_signals-1:
@@ -76,16 +77,38 @@ class UpdateThread(threading.Thread):
             signal = UpdateThread.signals[self.i]
 
             res = oncor(signal,self.lock,self.outage_log)
-            self.add_to_queue(res)
+            if not self.pause:
+                self.add_to_queue(res)
             
             res = controller(signal,self.lock,self.outage_log)
-            self.add_to_queue(res)
+            if not self.pause:
+                self.add_to_queue(res)
 
             res = time_res(signal,self.lock,self.outage_log)
-            self.add_to_queue(res)
+            if not self.pause:
+                self.add_to_queue(res)
 
             if self.i%100==0:
                 self.save_and_bak()
+
+            if self.record:
+                with self.lock:
+                    exist = getattr(self,'record_time',False)
+                    if exist:
+                        expired = UpdateThread.record_time<datetime.datetime.now()
+                        if expired:
+                            self.to_excel()
+                            UpdateThread.record_time = datetime.datetime.now()+datetime.timedelta(hours=float(self.record))
+                    else:
+                        UpdateThread.record_time = datetime.datetime.now()+datetime.timedelta(hours=float(self.record))
+
+            if self.stop_at and UpdateThread.stop_at<datetime.datetime.now() and not self.stop:
+                print('stopping now!')
+                with UpdateThread.lock:
+                    stop_power()
+                    UpdateThread.last_complete_entry = 0
+                self.save_and_bak()
+
 
             with self.lock:
                 percent_complete = self.i/self.n_signals*100
@@ -101,8 +124,28 @@ class UpdateThread(threading.Thread):
             shutil.copy(self.db,os.path.join(self.data_root,'signals.bak'))
             with open(self.db,'w') as f:
                 json.dump(self.signals,f)
-            
 
+    def to_excel(self):
+        file = export_sig(UpdateThread.signals)
+        log_dir = os.path.join(UpdateThread.data_root,'logs')
+        finish_time = datetime.datetime.now()
+        filename = f'excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx'
+        outpath = os.path.join(log_dir,filename)
+        with open(outpath,'wb') as f:
+            f.write(file.getbuffer())
+        xl_files = []
+        files = os.listdir(log_dir)
+        for f in files:
+            if (f.endswith('.xlsx')):
+                xl_files.append(f)
+        
+        if len(xl_files)>9:
+            filename = f'excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.zip'
+            outpath = os.path.join(log_dir,filename)
+            with zipfile.ZipFile(outpath, mode='w') as archive:
+                for f in xl_files:
+                    archive.write(os.path.join(log_dir,f))
+                    os.remove(os.path.join(log_dir,f))
 
 def oncor(signal,lock,log):
     preffered_ind = 0
@@ -121,6 +164,7 @@ def oncor(signal,lock,log):
         meter = signal['meters'][preffered_ind]
 
         obj = PowerMeter(meter)
+        obj.cog_id = signal['cog_id']
 
         # Safely writes to outage log
         with lock:

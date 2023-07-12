@@ -96,7 +96,7 @@
                     <input type="checkbox" name="recordOpt" id="recordOpt" class="form-check-input">
                 </div>
                 <label for="recordInt" class="form-text">Recording Inteval (hours):</label>
-                <input type="number" name="recordInt" id="recordInt" class="form-control" disabled>
+                <input type="number" name="recordInt" id="recordInt" class="form-control" step="0.01" disabled>
                 <button class="btn btn-success mt-auto" id="simpleBtn">Run</button>
             </div>
         </form>
@@ -118,7 +118,7 @@
                 </div>
                 <div id="runForInput" style="display: none;" class="pb-4">
                     <label for="runFor" class="form-text"> Run for how long? (hours)</label>
-                    <input type="number" name="runFor" id="runFor" class="form-control">
+                    <input type="number" name="runFor" id="runFor" class="form-control" step="0.01">
                 </div>
 
                 <div style="display: block;" class="pt-3">
@@ -127,7 +127,7 @@
                     <input type="checkbox" name="recordOptAdv" id="recordOptAdv" class="form-check-input">
                 </div>
                 <label for="recordIntAdv" class="form-text">Recording Inteval (hours):</label>
-                <input type="number" name="recordInt" id="recordIntAdv" class="form-control" disabled>
+                <input type="number" name="recordInt" id="recordIntAdv" class="form-control" step="0.01" disabled>
                 <button class="btn btn-success mt-auto" id="advBtn">Run</button>
             </div>
         </form>
