@@ -156,7 +156,7 @@ function getSortFunction(){
 
 
 function drawTable(filters){
-    let allSignalCount = sessionStorage.length
+    let allSignalCount = 0
     let PowerOutageCount = 0
     let ComOutageCount = 0
     let PowerCommCount = 0
@@ -168,6 +168,7 @@ function drawTable(filters){
         if (cog_id=='sortOrder'){
             continue
         }
+        allSignalCount++
         let signal = JSON.parse(sessionStorage.getItem(cog_id))
         let filt1 = signal.modem_online !== true
         let filt2 = signal.meters[0]?.online_status != "ON"

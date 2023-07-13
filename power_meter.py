@@ -6,6 +6,12 @@ import datetime
 import requests
 import json
 from urllib3.connection import ConnectTimeoutError
+import dotenv
+import os
+
+dotenv.load_dotenv()
+
+a_cert = os.path.join(os.environ['CERT_PATH'],'amazon.cer')
 
 class PowerMeter():
     
@@ -151,7 +157,7 @@ class PowerMeter():
                     return 'no_id'
                 else:
                     esi_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/meter?meter={self.number[0:9]}'
-                    res = json.loads(requests.get(esi_url,verify='./amazon.cer').text)
+                    res = json.loads(requests.get(esi_url,verify=a_cert).text)
                     if res.get('validateMeterResponse',False):
                         self.esi_id = res['validateMeterResponse']['account'][0]['number']
                     else:
@@ -163,13 +169,13 @@ class PowerMeter():
             validate_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}'
             url = f"https://ors-svc.aws.cloud.oncor.com/customerOutage/outage/checkStatus?esiid={self.id}&source=ORS"
 
-            res = json.loads(requests.get(validate_url,verify='./amazon.cer').text)
+            res = json.loads(requests.get(validate_url,verify=a_cert).text)
             if res.get('Error',False):
                 return 'bad_id'
             if res.get('validateAccountResponse',False):
                 if res['validateAccountResponse']['account']['status'] =='ACTIVE':
                     
-                    res = json.loads(requests.get(url,verify='./amazon.cer').text)
+                    res = json.loads(requests.get(url,verify=a_cert).text)
                     return res['getOutageStatusResponse']['powerStatus']['status']
                 else:
                     return res['validateAccountResponse']['account']['status']

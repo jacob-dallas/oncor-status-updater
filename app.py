@@ -29,6 +29,26 @@ app = Flask(__name__)
 base_dir = os.path.dirname(__file__)
 queue_outage = queue.Queue(6)
 
+if not os.path.exists(data_root):
+    os.mkdir(data_root)
+if not os.path.exists(log_dir):
+    os.mkdir(log_dir)
+
+if not os.path.exists(db_path):
+    shutil.copy('db_template.json',db_path)
+
+with open(db_path,'r') as f:
+    signals = json.load(f)
+
+outage_log = open(oncor_log,'w')
+
+UpdateThread.signals = signals
+UpdateThread.outage_log = outage_log
+UpdateThread.db = db_path
+UpdateThread.data_root = data_root
+
+UpdateThread.n_signals = len(UpdateThread.signals)
+
 @app.route('/')
 def index():
     if n_power_updaters():
@@ -71,6 +91,9 @@ def post_xlsx():
     signals = import_sig(file)
     with UpdateThread.lock:
         UpdateThread.signals = signals
+        shutil.copy(UpdateThread.db,os.path.join(UpdateThread.data_root,'signals.bak'))
+        with open(UpdateThread.db,'w') as f:
+            json.dump(UpdateThread.signals,f)
     return redirect(url_for('power'))
 
 @app.route('/pause_listen', methods=['POST'])
@@ -131,27 +154,12 @@ def start_power_threads():
     if stop_after:
         stop_at = datetime.datetime.now() + datetime.timedelta(hours=float(stop_after))
 
-    if not os.path.exists(data_root):
-        os.mkdir(data_root)
-    if not os.path.exists(log_dir):
-        os.mkdir(log_dir)
 
-    if not os.path.exists(db_path):
-        shutil.copy('power.json',db_path)
 
-    with open(db_path,'r') as f:
-        signals = json.load(f)
-
-    outage_log = open(oncor_log,'w')
     UpdateThread.pause=pause
-    UpdateThread.signals = signals
-    UpdateThread.outage_log = outage_log
-    UpdateThread.db = db_path
-    UpdateThread.data_root = data_root
     UpdateThread.stop_at = stop_at
     UpdateThread.record = record
-
-    UpdateThread.n_signals = len(UpdateThread.signals)
+    
     threads = []
     for thread in range(n_threads):
         thread_i = UpdateThread(queue_outage)
@@ -188,12 +196,14 @@ def auth():
 
 
 if __name__ == '__main__':
-    
+    ip = os.environ['HOSTIP']
+    port = os.environ['HOSTPORT']
     with keep.presenting() as m:
         
 
-        if os.environ['DEVELOPMENT']:
-            webbrowser.open_new_tab('http://127.0.0.1:5000')
+        if os.environ['DEVELOPMENT']=='True':
             app.run(debug=True)
         else:
-            serve(app, host='0.0.0.0', port=5000)
+            url = f'http://{ip}:{port}'
+            webbrowser.open_new_tab(url)
+            serve(app, host=ip, port=port)

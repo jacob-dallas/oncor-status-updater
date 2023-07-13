@@ -6,15 +6,17 @@ import os
 import pandas
 
 dotenv.load_dotenv()
-
-with open('new_power.json','r') as f:
+data_path_dir = os.environ['DATA_PATH']
+data_path = os.path.join(data_path_dir,'power.json')
+with open(data_path,'r') as f:
     data = json.load(f)
 
 meters = data['Traffic Signals']
-local_data = pandas.read_excel('Traffic Signal Spreadsheets','GPS')
+local_data_path = os.path.join(data_path_dir,'Traffic Signal Spreadsheets.xlsx')
+local_data = pandas.read_excel(local_data_path,'GPS')
 
+key = os.environ['GEOAPI']
 for meter in meters:
-    key = os.environ['GEOAPI']
     meter_obj = power_meter.PowerMeter(meter)
     req_str = meter_obj.name.replace(' ','+')
 

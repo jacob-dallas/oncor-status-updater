@@ -5,6 +5,13 @@ from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from itertools import compress
+import os
+import dotenv
+
+dotenv.load_dotenv()
+data_path_dir = os.environ['DATA_PATH']
+
+spreadsheet = os.path.join(data_path_dir,'Traffic Signal Spreadsheets.xlsx')
 
 def migrate(filename, oncor=False):
     # migrate_1(filename)
@@ -16,7 +23,8 @@ def migrate(filename, oncor=False):
 
 def migrate_1(json_file):
 # convert data to better format
-    data = pd.read_excel('Traffic Signal Spreadsheets.xlsx','ONCOR', converters={"ESI ID": str})
+
+    data = pd.read_excel(spreadsheet,'ONCOR', converters={"ESI ID": str})
 
     data = data.drop([
         'ESI ID', 
@@ -178,7 +186,7 @@ def ago_ip_integrate(json_file):
     )
 
     ip_data = pd.read_excel(
-        'Traffic Signal Spreadsheets.xlsx',
+        spreadsheet,
         sheet_name="Intersections",
         header=4,
         na_values='-',
@@ -338,8 +346,10 @@ def ago_ip_integrate(json_file):
         json.dump(signals_out,f,indent=1)
 
 if __name__ == '__main__':
-    ago_ip_integrate('power.json')
-    cut_integrate('power.json','cut_devices.json')
+    power_path = os.path.join(data_path_dir,'power.json')
+    cut_path = os.path.join(data_path_dir,'cut_devices.json')
+    ago_ip_integrate(power_path)
+    cut_integrate(cut_path)
 
     # old spreadsheet is at least older than 7.2022
     # i need to find a meter that says it is working but actually isnt

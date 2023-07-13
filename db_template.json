@@ -1,0 +1,26 @@
+[
+ {
+  "cog_id": 1234,
+  "ip": "0.0.0.0",
+  "name": "street-road",
+  "street": "1000 street",
+  "zip_code": 12345,
+  "signal_system": "downtown",
+  "meters": [
+   {
+    "esi_id": 10443720000000000,
+    "comment": "-",
+    "oncor_address": "1001 street",
+    "status": "registered",
+    "address_sim": 1.0,
+    "bbu": 1,
+    "owner": "TRN - TRAFFIC",
+    "pole_num": "1",
+    "checked": 1,
+    "number": "123456789LG"
+   }
+  ],
+  "cut_service_id": "1",
+  "cut_id": "1"
+ }
+]

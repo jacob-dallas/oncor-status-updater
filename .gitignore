@@ -5,3 +5,6 @@ logs/
 
 
 .env
+
+data
+certs
