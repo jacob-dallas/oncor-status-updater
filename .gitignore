@@ -1,1 +1,10 @@
 .venv
+
+
+logs/
+
+
+.env
+
+data
+certs

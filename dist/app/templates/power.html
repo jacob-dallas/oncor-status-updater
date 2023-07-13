@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block head%}
+    <title>Power Outage Dashboard</title>
+
+{% endblock %}
+
+{% block body%}
+    
+
+
+
+    <main class="d-flex flex-nowrap h-100">
+        <div id="status" class="d-flex flex-column p-3 bg-dark sticky-top" style="width: 300px;">
+            <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white fs-4 bg-dark"> Power Outage Detector</span>
+            <hr class="bg-light">
+            <ul class="nav nav-pills flex-column mb-auto" id="filters">
+                <li class="nav-item" >
+                    <a href="#" class="nav-link active d-flex justify-content-between pe-auto" aria-current="page" id="all-signal-filter">
+                        All Signals
+                        <span id="all-signal-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="power-out-filter">
+                        Power Outage
+                        <span id="power-out-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="com-out-filter"> 
+                        Comm Outage
+                        <span id="com-out-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="power-com-out-filter">
+                        Power and Comm Outage
+                        <span id="power-com-count">(#)</span>
+                    </a>
+                </li>
+                
+            </ul>
+            <hr>
+        </div>
+        <div class="d-flex flex-column flex-fill">
+
+            
+            <div id="settings" class="sticky-top d-flex justify-content-end p-3">
+                <input class="form-control me-2 w-50 flex-fill" type="search" placeholder="Search" aria-label="Search" id="search">
+                <button class="btn btn-primary btn-sm mx-1" id="export_btn">Export to Excel</button>
+                <button class="btn btn-primary btn-sm mx-1" id="import_btn">Import From Excel</button>
+                
+            </div>
+            <div class="overflow-auto flex-fill" style="height: 760px;">
+
+                <table class="table"  >
+                    <thead class="bg-white sticky-top">
+                        <tr id="headers">
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="cog_id">COG Id </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="name">Name </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="status">Status </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="comm">Communicating </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id ="ip">IP </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id = 'esi_id'>ESI ID</th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="time">Update Time </th>
+                        </tr>
+                    </thead>
+                    <tbody id="list" class="w-100" >
+                        
+                    </tbody>
+            </div>
+                
+            </table>
+        </div>
+<!-- connect to cut button -->
+    </main>
+    
+    {%block script%}
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    {% endblock %}
+{% endblock %}

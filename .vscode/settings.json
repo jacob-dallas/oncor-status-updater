@@ -1,0 +1,10 @@
+{
+    "editor.rulers": [
+        80,
+        81,
+    ],
+    "editor.minimap.enabled": false,
+    "cSpell.words": [
+        "Oncor"
+    ]
+}
