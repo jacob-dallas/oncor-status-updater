@@ -6,7 +6,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[('db_template.json', '.'),('templates', 'templates'),('static', 'static')],
+    datas=[('db_template.json', '.'),('.env-template', '.'),('templates', 'templates'),('static', 'static')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

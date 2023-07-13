@@ -1,6 +1,5 @@
 from wakepy import keep
 import os
-import sys
 import shutil
 import flask
 from flask import (Flask, redirect, render_template, request,
@@ -9,21 +8,19 @@ import requests
 from message import format_sse
 import json
 import webbrowser
-from threaded_update import UpdateThread,n_power_updaters,stop_power
 import queue
 import pandas as pd
 import io
-from json_to_excel import export_sig, import_sig
 import threading
 import time
 import datetime
 from waitress import serve
 import dotenv
-dotenv.load_dotenv()
 
 data_root = os.path.join(os.getenv('APPDATA'),'acid')
 db_path = os.path.join(data_root,'db.json')
 log_dir = os.path.join(data_root,'logs')
+env_path = os.path.join(data_root,'.env')
 oncor_log = os.path.join(log_dir,'oncor.txt')
 app = Flask(__name__)
 base_dir = os.path.dirname(__file__)
@@ -36,6 +33,13 @@ if not os.path.exists(log_dir):
 
 if not os.path.exists(db_path):
     shutil.copy('db_template.json',db_path)
+
+if not os.path.exists(env_path):
+    shutil.copy('.env-template',env_path)
+
+dotenv.load_dotenv(env_path)
+from json_to_excel import export_sig, import_sig
+from threaded_update import UpdateThread,n_power_updaters,stop_power
 
 with open(db_path,'r') as f:
     signals = json.load(f)

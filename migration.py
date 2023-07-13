@@ -8,7 +8,9 @@ from itertools import compress
 import os
 import dotenv
 
-dotenv.load_dotenv()
+data_root = os.path.join(os.getenv('APPDATA'),'acid')
+env_path = os.path.join(data_root,'.env')
+dotenv.load_dotenv(env_path)
 data_path_dir = os.environ['DATA_PATH']
 
 spreadsheet = os.path.join(data_path_dir,'Traffic Signal Spreadsheets.xlsx')

@@ -1,8 +1,9 @@
 import json
-import requests
-import dotenv
+from dotenv import load_dotenv
 import os
-dotenv.load_dotenv()
+data_root = os.path.join(os.getenv('APPDATA'),'acid')
+env_path = os.path.join(data_root,'.env')
+load_dotenv(env_path)
 
 redirect = 'https://cmss.city.dallastx.cod'
 

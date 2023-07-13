@@ -5,7 +5,9 @@ import power_meter
 import os
 import pandas
 
-dotenv.load_dotenv()
+data_root = os.path.join(os.getenv('APPDATA'),'acid')
+env_path = os.path.join(data_root,'.env')
+dotenv.load_dotenv(env_path)
 data_path_dir = os.environ['DATA_PATH']
 data_path = os.path.join(data_path_dir,'power.json')
 with open(data_path,'r') as f:

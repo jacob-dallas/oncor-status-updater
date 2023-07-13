@@ -9,9 +9,13 @@ from urllib3.connection import ConnectTimeoutError
 import dotenv
 import os
 
-dotenv.load_dotenv()
-
-a_cert = os.path.join(os.environ['CERT_PATH'],'amazon.cer')
+data_root = os.path.join(os.getenv('APPDATA'),'acid')
+env_path = os.path.join(data_root,'.env')
+dotenv.load_dotenv(env_path)
+if os.environ['CERT_PATH'] == "":
+    a_cert = False
+else:
+    a_cert = os.environ['CERT_PATH']
 
 class PowerMeter():
     
