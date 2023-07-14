@@ -1,0 +1,35 @@
+{
+    "type":"FeatureCollection",
+    "features":[
+        {
+            "type":"Feature",
+            "id":2,
+            "geometry":{
+                "type":"Point",
+                "coordinates":[-97.6830507832361,32.8828430317084]
+            },
+            "properties":{
+                "OBJECTID":2,
+                "BLOCKNM":"badness",
+                "LOCDESC":"here!",
+                "BLOCKTYPE":"Event",
+                "COMMENT":"no good",
+                "FULLCLOSE":"Yes",
+                "DIRECTION":"every",
+                "BLOCKOCCUR":"forever",
+                "ACTIVE":"Yes",
+                "ALTROUTE":"nope",
+                "STARTDATE":"Sun, 23 Jul 2023 13:25:57 GMT",
+                "ENDDATE":"Mon, 31 Jul 2023 13:26:01 GMT",
+                "CONTACT":"me",
+                "PERMITID":"none",
+                "INCIDENTID":"1",
+                "INCIDENTNM":"badness",
+                "LASTUPDATE":"Tue, 01 Aug 2023 13:26:21 GMT",
+                "LASTEDITOR":"me",
+                "GlobalID":"3961cbdc-4598-48bf-a2c2-69ba0fc1afc5",
+                "test":"foo"
+            }
+        }
+    ]
+}
