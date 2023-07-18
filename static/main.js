@@ -121,16 +121,23 @@ searchBox.addEventListener('input',() => {
     let filters = getFilter()
     drawTable(filters)
 })
-
+const finder = (obj, keys, index = 0) => {
+    const result = obj[keys[index++]];
+    
+    if (!result) {
+        return obj;
+    }
+    return finder(result, keys, index);
+}
 function getSortFunction(){
     let keyIdMap = {
-        cog_id:'cog_id',
-        name:'name',
-        status:'meters[0].online_status',
-        comm:'modem_status',
-        ip:'ip',
-        esi_id:'esi_id',
-        time:'time',
+        cog_id:['cog_id'],
+        name:['name'],
+        status:['meters','0','online_status'],
+        comm:['modem_online'],
+        ip:['ip'],
+        esi_id:['esi_id'],
+        time:['updated_at'],
     }
     let sortOrder = JSON.parse(sessionStorage.getItem('sortOrder'))
     funcArray = Array()
@@ -143,15 +150,36 @@ function getSortFunction(){
             dir = -1
         }
         sortFunc_i = (a,b) =>{
-            if (typeof a === 'string'){
-                return a.localeCompare(b)(dir)
-            } else {
-                return (a-b)*dir
+            let trueA = finder(a,keyIdMap[elem.id])
+            let trueB = finder(b,keyIdMap[elem.id])
+            if (!(typeof trueA === 'string')){
+                if (!(typeof trueA === 'boolean')){
+                    trueA = String(trueA).padStart(String(trueB).length,'0')
+
+                }else{
+                    trueA = String(trueA)
+                }
             }
+            if (!(typeof trueB === 'string')){
+                if (!(typeof trueB === 'boolean')){
+                    trueB = String(trueB).padStart(String(trueA).length,'0')
+                } else {
+                    trueB = String(trueB)
+                }
+            }
+            return trueA.localeCompare(trueB)*(dir)
         }
         funcArray.push(sortFunc_i)
     }
-    sortFunc = 'foo'
+    sortFunc = (a,b)=>{
+        for (let i=0;i<funcArray.length;i++){
+            let cond = funcArray[i](a,b)
+            if (cond!=0 || i==funcArray.length-1){
+                return cond
+            }
+        }
+    }
+    return sortFunc
 }
 
 
@@ -225,7 +253,7 @@ function drawTable(filters){
             return cond
         })
     }
-    
+    filterdSignals.sort(getSortFunction())
     const table_data = document.getElementById('list')
     table_data.innerHTML = ""    
     filterdSignals.forEach((signal)=>{
@@ -392,6 +420,7 @@ function update(){
                 method: 'POST',
                 data: {pause:true}
             })
+            console.log('tried to closes')
             handler.close()
     }
     addEventListener('beforeunload',close_listen)

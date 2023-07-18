@@ -115,14 +115,19 @@ def listen():
         UpdateThread.pause = False
     # why are so many threads being generated
     def stream():
-        while True:
-            msg = queue_outage.get()  # blocks until a new message arrives
-            if "modem" in msg:
-                yield format_sse(msg,'ping_comm')
-            elif 'time' in msg:
-                yield format_sse(msg,'timestamp')
-            else :
-                yield format_sse(msg,'oncor')
+        cond = True
+        while cond:
+            try:
+                msg = queue_outage.get(timeout=1) 
+                if "modem" in msg:
+                    yield format_sse(msg,'ping_comm')
+                elif 'time' in msg:
+                    yield format_sse(msg,'timestamp')
+                else :
+                    yield format_sse(msg,'oncor')
+            except Exception as e:
+                cond=False
+        print('closing listen!')
 
 
     return flask.Response(stream(), mimetype='text/event-stream')
@@ -210,4 +215,4 @@ if __name__ == '__main__':
         else:
             url = f'http://{ip}:{port}'
             webbrowser.open_new_tab(url)
-            serve(app, host=ip, port=port)
+            serve(app, host=ip, port=port,)

@@ -1,9 +1,0 @@
-However, it would be smart to determine which intersections have a communication issue, then scrape the web for thier data only. To do this, we must first be able to pull which intersections have power failures.
-
-all the controllers and cabinets communicate with our maxview server. The server acts as a database, scheduler, and web interface. communication could be done entirely with the maxview server, but it can also be done with each intersection individually. the Maxview server communicates using HTTP and NTCIP. The NTCIP is a special protocol made for traffic systems communication, eliminated the need to pursue specific hardware vendors. NTCIP potentially works based on the Simple network management protocol (SNMP). SNMP is typically used in switches, routers, modems, and the like. this protocal is mainly used to exchange network management information, and it has one system that acts as the leader and coordinator.
-
-NTCIP standards 1201 and 1202 define the data encoding over SNMP for controller hardware. Using this information, information can be gathered from individual traffic lights
-
-I tried to get snmp messages from a controller using the snmp library for python and a general community name, but i think i need a user, and I do not know where to find that information from.
-
-I managed to figure out snmp communication. I needed to specify that version 1 was to be used and specify the community name. the protocols being used are very insecure.
