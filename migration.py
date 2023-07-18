@@ -347,11 +347,25 @@ def ago_ip_integrate(json_file):
     with open(json_file,'w') as f:
         json.dump(signals_out,f,indent=1)
 
+def add_loc(json_file,test_file):
+    with open(json_file,'r') as f:
+        data = json.load(f)
+    data_add = pd.read_excel(spreadsheet,'SignalDatainGIS',skiprows=2)
+    for signal in data:
+        if (signal['cog_id'] in data_add['COG_ID'].values):
+            signal['lat']=data_add[data_add['COG_ID']==signal['cog_id']]['LAT'].values[0]
+            signal['long']=data_add[data_add['COG_ID']==signal['cog_id']]['LONG'].values[0]
+        else:
+            signal['lat']=0
+            signal['long']=0
+    
+    with open(test_file,'w') as f:
+        json.dump(data,f,indent=3)
+
 if __name__ == '__main__':
     power_path = os.path.join(data_path_dir,'power.json')
-    cut_path = os.path.join(data_path_dir,'cut_devices.json')
-    ago_ip_integrate(power_path)
-    cut_integrate(cut_path)
+    test_path = os.path.join(data_path_dir,'test.json')
+    add_loc(power_path,test_path)
 
     # old spreadsheet is at least older than 7.2022
     # i need to find a meter that says it is working but actually isnt

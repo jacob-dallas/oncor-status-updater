@@ -224,14 +224,18 @@ def time_res(signal,lock,log):
     return res
 
 if __name__ == '__main__':
-    with open('power.json','r') as f:
+    UpdateThread.db = 'data/test.json'
+    with open(UpdateThread.db,'r') as f:
         signals = json.load(f)
 
         
-    outage_log = open('outage_log.txt','w')
+    outage_log = open('data/outage_log.txt','w')
     UpdateThread.signals = signals
     UpdateThread.outage_log = outage_log
-    
+    UpdateThread.pause = True
+    UpdateThread.record = False
+    UpdateThread.stop_at = False
+    UpdateThread.data_root = 'data/'
     UpdateThread.n_signals = len(UpdateThread.signals)
     ma = queue.Queue(10)
     thread_1 = UpdateThread(ma,name='thread_1')
