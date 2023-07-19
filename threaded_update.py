@@ -228,12 +228,13 @@ if __name__ == '__main__':
     with open(UpdateThread.db,'r') as f:
         signals = json.load(f)
 
-        
+    if not os.path.isdir('data/logs'):
+        os.mkdir('data/logs')
     outage_log = open('data/outage_log.txt','w')
     UpdateThread.signals = signals
     UpdateThread.outage_log = outage_log
     UpdateThread.pause = True
-    UpdateThread.record = False
+    UpdateThread.record = .01
     UpdateThread.stop_at = False
     UpdateThread.data_root = 'data/'
     UpdateThread.n_signals = len(UpdateThread.signals)
