@@ -26,7 +26,7 @@ def stop_power():
 # add update schedule
 
 class UpdateThread(threading.Thread):
-
+    one_run=False
     status_dict = {
         "160":"Cabinet Flash",
         "32":"Cabinet Flash",
@@ -62,17 +62,19 @@ class UpdateThread(threading.Thread):
     # work on updating database and making a manual update feature
     def run(self):
         while True:
-            if self.stop:
-                break
             
             with self.lock:
                 self.i = UpdateThread.last_complete_entry
                 if self.i > self.n_signals-1:
+                    if self.one_run:
+                        stop_power()
                     UpdateThread.last_complete_entry = 0
                     self.i = UpdateThread.last_complete_entry
                     # add a function in here to search for a specific meter
                 else:
                     UpdateThread.last_complete_entry += 1
+            if self.stop:
+                break
 
             signal = UpdateThread.signals[self.i]
 
@@ -125,11 +127,15 @@ class UpdateThread(threading.Thread):
             with open(self.db,'w') as f:
                 json.dump(self.signals,f)
 
-    def to_excel(self):
+    def to_excel(self,no_time=False):
         file = export_sig(UpdateThread.signals)
         log_dir = os.path.join(UpdateThread.data_root,'logs')
         finish_time = datetime.datetime.now()
-        filename = f'excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx'
+        if no_time:
+            filename = 'excel_out.xlsx'
+        else:
+            filename = f'excel_out_{finish_time.month}-{finish_time.day}_{finish_time.hour}.{finish_time.minute}.xlsx'
+
         outpath = os.path.join(log_dir,filename)
         with open(outpath,'wb') as f:
             f.write(file.getbuffer())
@@ -232,14 +238,23 @@ if __name__ == '__main__':
         os.mkdir('data/logs')
     outage_log = open('data/outage_log.txt','w')
     UpdateThread.signals = signals
+    UpdateThread.one_run = True
     UpdateThread.outage_log = outage_log
     UpdateThread.pause = True
-    UpdateThread.record = .01
+    UpdateThread.record = False
     UpdateThread.stop_at = False
     UpdateThread.data_root = 'data/'
     UpdateThread.n_signals = len(UpdateThread.signals)
     ma = queue.Queue(10)
-    thread_1 = UpdateThread(ma,name='thread_1')
-    thread_2 = UpdateThread(ma,name='thread_2')
-    thread_1.start()
-    thread_2.start()
+
+    threads = []
+    for thread in range(10):
+        thread_i = UpdateThread(ma)
+        threads.append(thread_i)
+        thread_i.start()
+
+    for thread in threads:
+        thread.join()
+
+    threads[0].to_excel(no_time=True)
+
