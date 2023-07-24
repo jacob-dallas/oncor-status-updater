@@ -1,4 +1,5 @@
 let ip = location.host
+sessionStorage.setItem('sortOrder',JSON.stringify(Array()))
 
 const export_btn = document.getElementById('export_btn')
 export_btn.addEventListener('click',async e=>{
@@ -8,7 +9,7 @@ export_btn.addEventListener('click',async e=>{
         mode: "cors",
         cache: "default",
     };
-    let data = await fetch('http://127.0.0.1:5000/get_xlsx',myInit)
+    let data = await fetch(`http://${ip}/get_xlsx`,myInit)
     // let test = await data.formData()
     let a = document.createElement('a')
     let data_b = await data.blob()
@@ -65,10 +66,11 @@ async function get_data(){
         mode: "cors",
         cache: "default",
     };
-    const data = await fetch(`http://${ip}/get_data`,myInit)
+    const data = await fetch(`http://${ip}/get_radar_data`,myInit)
     console.log(data)
     return data
 }
+
 addEventListener("load",async (event) =>  {
 
     const data = await get_data()
@@ -133,10 +135,10 @@ function getSortFunction(){
     let keyIdMap = {
         cog_id:['cog_id'],
         name:['name'],
-        status:['meters','0','online_status'],
+        type:['radar_ccus','0','online_status'],
         comm:['modem_online'],
         ip:['ip'],
-        esi_id:['esi_id'],
+        firm:['radar_ccus','0','ver'],
         time:['updated_at'],
     }
     let sortOrder = JSON.parse(sessionStorage.getItem('sortOrder'))
@@ -185,9 +187,10 @@ function getSortFunction(){
 
 function drawTable(filters){
     let allSignalCount = 0
-    let PowerOutageCount = 0
-    let ComOutageCount = 0
-    let PowerCommCount = 0
+    let count656 = 0
+    let count650 = 0
+    let count600 = 0
+    let noneCount = 0
     const signals = new Array()
     let searchStr = document.getElementById('search').value
 
@@ -198,50 +201,68 @@ function drawTable(filters){
         }
         allSignalCount++
         let signal = JSON.parse(sessionStorage.getItem(cog_id))
-        let filt1 = signal.modem_online !== true
-        let filt2 = signal.meters[0]?.online_status != "ON"
+
+        let filt1 = signal.radar_ccus?.some((d)=>d.name?.includes('656'))
+        let filt2 = signal.radar_ccus?.some((d)=>d.name?.includes('650'))
+        let filt3 = signal.radar_ccus?.some((d)=>d.name?.includes('600'))
         if (filt1){
-            ComOutageCount = ComOutageCount+1
+            count656++
         }
         if (filt2){
-            PowerOutageCount = PowerOutageCount+1
+            count650++
         }
-        if (filt1&&filt2){
-            PowerCommCount = PowerCommCount +1
+        if (filt3){
+            count600++
+        }
+        if (!(filt1||filt2||filt3)){
+            noneCount++
         }
         signals.push(signal)
     }
 
     let aCountElem = document.getElementById("all-signal-count")
-    let pCountElem = document.getElementById("power-out-count")
-    let cCountElem = document.getElementById("com-out-count")
-    let pcCountElem = document.getElementById("power-com-count")
+    let count656Elem = document.getElementById("656-count")
+    let count650Elem = document.getElementById("650-count")
+    let count600Elem = document.getElementById("600-count")
+    let noCountElem = document.getElementById("no-count")
 
     aCountElem.innerHTML = `( ${allSignalCount} )`
-    pCountElem.innerHTML = `( ${PowerOutageCount} )`
-    cCountElem.innerHTML = `( ${ComOutageCount} )`
-    pcCountElem.innerHTML = `( ${PowerCommCount} )`
+    count656Elem.innerHTML = `( ${count656} )`
+    count650Elem.innerHTML = `( ${count650} )`
+    count600Elem.innerHTML = `( ${count600} )`
+    noCountElem.innerHTML = `( ${noneCount} )`
+
     let filterdSignals
-    if (filters.baseFilter =="power-out-filter"){
+    if (filters.baseFilter =="656-filter"){
         filterdSignals = signals.filter((signal) => {
-            let cond = signal.meters[0]?.online_status!="ON"
+            let cond = signal.radar_ccus?.some((d)=>d.name?.includes('656'))
             cond = matchSearch(cond,searchStr,signal)
             return cond
         })
     }
-    if (filters.baseFilter =="com-out-filter"){
+    if (filters.baseFilter =="650-filter"){
         filterdSignals = signals.filter((signal) => {
-            let cond = signal.modem_online !== true
+            let cond = signal.radar_ccus?.some((d)=>d.name?.includes('650'))
             cond = matchSearch(cond,searchStr,signal)
             
             return cond
         })
         
     }
-    if (filters.baseFilter =="power-com-out-filter"){
+    if (filters.baseFilter =="600-filter"){
         filterdSignals = signals.filter((signal) => {
-            let cond = signal.meters[0]?.online_status!="ON" && signal.modem_online !== true
+            let cond = signal.radar_ccus?.some((d)=>d.name?.includes('600'))
 
+            cond = matchSearch(cond,searchStr,signal)
+            return cond
+        })
+    } 
+    if (filters.baseFilter =="no-filter"){
+        filterdSignals = signals.filter((signal) => {
+            let cond = signal.radar_ccus?.some((d)=>d.name?.includes('656'))
+            cond = signal.radar_ccus?.some((d)=>d.name?.includes('650')) ||cond
+            cond = signal.radar_ccus?.some((d)=>d.name?.includes('600')) || cond
+            cond = !cond
             cond = matchSearch(cond,searchStr,signal)
             return cond
         })
@@ -253,8 +274,10 @@ function drawTable(filters){
             return cond
         })
     }
+
     filterdSignals.sort(getSortFunction())
     const table_data = document.getElementById('list')
+
     table_data.innerHTML = ""    
     filterdSignals.forEach((signal)=>{
         let entry = document.createElement('tr')
@@ -269,14 +292,9 @@ function drawTable(filters){
         entry_name.innerHTML = signal.name
         entry.append(entry_name)
 
-        let status = document.createElement('td')
-        if (signal.meters[0]){
-            status.innerHTML = signal.meters[0].online_status || '&#9203'
-        } else {
-            status.innerHTML = 'no_meter'
-        }
-        status.setAttribute('title','Not Updated')
-        entry.append(status)
+        let type = document.createElement('td')
+        type.innerHTML = signal.radar_ccus?.[0]?.name || 'N/A'
+        entry.append(type)
             
         let comm = document.createElement('td')
         comm.innerHTML = signal.modem_online || '&#9203'
@@ -286,15 +304,9 @@ function drawTable(filters){
         ip.innerHTML = signal.ip
         entry.append(ip)
 
-
-        let esi = document.createElement('td')
-        if (signal.meters[0]){
-            esi.innerHTML = signal.meters[0].esi_id
-
-        } else {
-            esi.innerHTML = 'N/A'
-        }
-        entry.append(esi)
+        let ver = document.createElement('td')
+        ver.innerHTML = signal.radar_ccus?.[0]?.ver || 'N/A'
+        entry.append(ver)
 
         let ts = document.createElement('td')
         ts.innerHTML = signal.updated_at ||'00:00:00'
@@ -304,7 +316,9 @@ function drawTable(filters){
         table_data.append(entry)
     })
 }
-sessionStorage.setItem('sortOrder',JSON.stringify(Array()))
+
+
+
 columnHeaders = document.getElementById('headers')
 columnHeaders.addEventListener('click',(e) => {
     console.log(e)
@@ -336,44 +350,21 @@ columnHeaders.addEventListener('click',(e) => {
     }
     sessionStorage.setItem('sortOrder',JSON.stringify(sortOrder))
     e.target.innerHTML = outStr
+    let filters = getFilter()
+    drawTable(filters)
 })
-// respond to event loops for sorts and filters
 
-// begin running/listening to updates as they come in
-
-// continuously have up to date data
-
-// have a few interaction features
-
-// only refresh display when requested
-
-// export to excel functionality
 
 addEventListener('load',update)
+
 function update(){
-    let handler = new EventSource(`http://${ip}/listen`)
+    let handler = new EventSource(`http://${ip}/radar_listen`)
 
-    handler.addEventListener('oncor', (e) => {
-        const meter_string = e.data
-        const meter_obj = JSON.parse(e.data)
-        let local_meter = JSON.parse(sessionStorage.getItem(meter_obj.cog_id))
-        if (!local_meter.meters[0]){
-            local_meter.meters[0] = {}
-        }
-        local_meter.meters[0].online_status = meter_obj.online_status
-        local_meter.meters[0].esi_id = meter_obj.esi_id
-        sessionStorage.setItem(meter_obj.cog_id,JSON.stringify(local_meter))
-
-        // const table_data = document.getElementById('list')
-        // let meters = table_data.children
-        // meters = Array.from(meters)
-        // meters.forEach(meter =>{
-        //     if (String(meter.id) == String(meter_obj.cog_id)){
-        //         meter.children[2].innerHTML=meter_obj.online_status
-        //         meter.children[2].setAttribute('title','updated')
-        //         meter.children[5].innerHTML=meter_obj.esi_id
-        //     }
-        // })
+    handler.addEventListener('radar', (e) => {
+        const data_obj = JSON.parse(e.data)
+        let signal = JSON.parse(sessionStorage.getItem(data_obj.cog_id))
+        signal.devices=data_obj.devices
+        sessionStorage.setItem(data_obj.cog_id,JSON.stringify(signal))
     })
     
 
@@ -383,40 +374,25 @@ function update(){
         let local_com = JSON.parse(sessionStorage.getItem(com_obj.cog_id))
         local_com.modem_online = com_obj.modem_online
         sessionStorage.setItem(com_obj.cog_id,JSON.stringify(local_com))
-        // const table_data = document.getElementById('list')
-        // let signals = table_data.children
-        // signals = Array.from(signals)
-        
-        // signals.forEach(signal =>{
-        //     if (Number(signal.id) == com_obj.cog_id){
-            //         signal.children[3].innerHTML=com_obj.modem_online
-            //     }
-            // })
         })
+
         handler.addEventListener("timestamp", (e)=>{
             const com_obj = JSON.parse(e.data)
-        let local_com = JSON.parse(sessionStorage.getItem(com_obj.cog_id))
-        local_com.time = com_obj.time
-        sessionStorage.setItem(com_obj.cog_id,JSON.stringify(local_com))
-        // const table_data = document.getElementById('list')
-        // let signals = table_data.children
-        // signals = Array.from(signals)
-        
-        // signals.forEach(signal =>{
-            //     if (Number(signal.id) == com_obj.cog_id){
-                //         signal.children[6].innerHTML=com_obj.time
-                //     }
-                // })
-            })
+            let local_com = JSON.parse(sessionStorage.getItem(com_obj.cog_id))
+            local_com.time = com_obj.time
+            sessionStorage.setItem(com_obj.cog_id,JSON.stringify(local_com))
+        })
+
         handler.addEventListener('error',(e)=>{
             console.log(e)
             e.target.close()
+            close_listen()
             window.alert('Unable to connect to backend. Closing Listener...')
         })
         
         //todo: handle no response| update: partially handled
         async function close_listen (){
-            let res = fetch(`http://${ip}/pause_listen`,{
+            let res = fetch(`http://${ip}/pause_radar_listen`,{
                 method: 'POST',
                 data: {pause:true}
             })
@@ -425,8 +401,8 @@ function update(){
     }
     addEventListener('beforeunload',close_listen)
 }
-
-window.addEventListener('click',() => {
+let filterList = document.getElementById('filter-list')
+filterList.addEventListener('click',() => {
     let filters = getFilter()
     drawTable(filters)
 })
@@ -434,3 +410,111 @@ setInterval(() => {
     let filters = getFilter()
     drawTable(filters)
 },10000)
+
+function dblToChange(e){
+    let svBtn = document.getElementById('sv-btn')
+    svBtn.disabled=false
+    let elem = e.target
+    let info = elem.innerHTML
+    let input = document.createElement('input')
+    input.value=info
+    input.setAttribute('type','text')
+    elem.replaceWith(input)
+    input.id=elem.id
+    elem.value = info
+}
+
+let confDial = document.getElementById('conf')
+let data_table = document.getElementById('list')
+data_table.addEventListener('click',(e)=>{
+    confDial.showModal()
+    if (e.target.tagName.toLocaleLowerCase()=='tr'){
+        confDial.innerHTML = e.target.id
+    } else {
+        data = JSON.parse(sessionStorage.getItem(String(e.target.parentElement.id)))
+        let info = document.getElementById('main-info')
+        info.innerHTML = ''
+        let cog_id = document.createElement('span')
+        cog_id.id = 'cog-id-conf'
+        let name = document.createElement('span')
+        cog_id.innerHTML = data.cog_id
+        cog_id.classList.add('border-end','pe-3','me-3')
+        name.innerHTML = data.name
+        name.id='name-inp'
+        name.addEventListener('dblclick',dblToChange)
+        info.append(cog_id)
+        info.append(name)
+        info.classList.add('border-bottom','pb-2')
+
+
+        let ipConf = document.getElementById('ip-conf')
+        ipConf.innerHTML = ''
+        let ipLab = document.createElement('span')
+        let ip = document.createElement('span')
+        ip.id = 'ip-inp'
+        ipLab.innerHTML = 'IP Address : '
+        ip.innerHTML = data.ip
+        ip.addEventListener('dblclick',dblToChange)
+        ipConf.append(ipLab)
+        ipConf.append(ip)
+
+        let saveButton = document.getElementById('sv-btn')
+        saveButton.disabled=true
+    }
+})
+
+function recInpSearch(elem,changes){
+    
+    for (let child of elem.children){
+        if (child.tagName?.toLocaleLowerCase()=='input'){
+            let change = {
+                id:child.id,
+                value:child.value
+            }
+            changes.push(change)
+        }
+        else {
+            if (child.children.length>0){
+                recInpSearch(child,changes)
+            }
+        }
+    }
+}
+
+let saveButton = document.getElementById('sv-btn')
+saveButton.addEventListener('click',updateEntry)
+async function updateEntry(e){
+    let cog_id = document.getElementById('cog-id-conf').innerHTML
+    let data = JSON.parse(sessionStorage.getItem(cog_id))
+    let changes = Array()
+    let modal = e.target.parentElement
+    recInpSearch(modal,changes)
+    console.log(changes)
+
+    let formData = new FormData()
+    for (let change of changes){
+        data[change.id.slice(0,-4)] = change.value
+        formData.append(change.id.slice(0,-4),change.value)
+    }
+    formData.append('cog_id',cog_id)
+    res = await fetch(`http://${ip}/update_from_input`,{
+        method: 'POST',
+        body: formData,
+    })
+    sessionStorage.setItem(cog_id,JSON.stringify(data))
+    modal.close()
+    let filters = getFilter()
+    drawTable(filters)
+}
+
+confDial.addEventListener("click", e => {
+    const dialogDimensions = confDial.getBoundingClientRect()
+    if (
+      e.clientX < dialogDimensions.left ||
+      e.clientX > dialogDimensions.right ||
+      e.clientY < dialogDimensions.top ||
+      e.clientY > dialogDimensions.bottom
+    ) {
+        confDial.close()
+    }
+  })

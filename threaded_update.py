@@ -73,10 +73,10 @@ class UpdateThread(threading.Thread):
                     # add a function in here to search for a specific meter
                 else:
                     UpdateThread.last_complete_entry += 1
+                signal = UpdateThread.signals[self.i]
             if self.stop:
                 break
 
-            signal = UpdateThread.signals[self.i]
 
             res = oncor(signal,self.lock,self.outage_log)
             if not self.pause:
@@ -125,7 +125,7 @@ class UpdateThread(threading.Thread):
         with self.lock:
             shutil.copy(self.db,os.path.join(self.data_root,'signals.bak'))
             with open(self.db,'w') as f:
-                json.dump(self.signals,f)
+                json.dump(self.signals,f,indent=4)
 
     def to_excel(self,no_time=False):
         file = export_sig(UpdateThread.signals)

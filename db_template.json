@@ -21,6 +21,16 @@
    }
   ],
   "cut_service_id": "1",
-  "cut_id": "1"
+  "cut_id": "1",
+  "lat": 32.69126406,
+  "long": -96.85707565,
+  "n_ccu": 1.0,
+  "n_matrix": 4.0,
+  "n_advance": 0.0,
+  "radar_ccus": [],
+  "modem_online": true,
+  "controller_online": true,
+  "controller_status": "Coordination",
+  "updated_at": "2023-07-24 09:08:05.996872"
  }
 ]

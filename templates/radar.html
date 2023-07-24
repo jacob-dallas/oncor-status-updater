@@ -11,7 +11,7 @@
 
     <main class="d-flex flex-nowrap h-100">
         <div id="filter-list" class="d-flex flex-column p-3 bg-dark sticky-top" style="width: 300px;">
-            <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white fs-4 bg-dark"> Power Outage Detector</span>
+            <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white fs-4 bg-dark"> Radar Monitor</span>
             <hr class="bg-light">
             <ul class="nav nav-pills flex-column mb-auto" id="filters">
                 <li class="nav-item" >
@@ -21,21 +21,27 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="power-out-filter">
-                        Power Outage
-                        <span id="power-out-count">(#)</span>
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="656-filter">
+                        656
+                        <span id="656-count">(#)</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="com-out-filter"> 
-                        Comm Outage
-                        <span id="com-out-count">(#)</span>
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="650-filter"> 
+                        650
+                        <span id="650-count">(#)</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="power-com-out-filter">
-                        Power and Comm Outage
-                        <span id="power-com-count">(#)</span>
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="600-filter">
+                        600
+                        <span id="600-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="no-filter">
+                        No Radar
+                        <span id="no-count">(#)</span>
                     </a>
                 </li>
                 
@@ -58,24 +64,43 @@
                         <tr id="headers">
                             <th scope = "col"  style="cursor: pointer;" class="no-sort" id="cog_id">COG Id </th>
                             <th scope = "col"  style="cursor: pointer;" class="no-sort" id="name">Name </th>
-                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="status">Status </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="type">Radar Type</th>
                             <th scope = "col"  style="cursor: pointer;" class="no-sort" id="comm">Communicating </th>
                             <th scope = "col"  style="cursor: pointer;" class="no-sort" id ="ip">IP </th>
-                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id = 'esi_id'>ESI ID </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id = 'firm'>Firmware </th>
                             <th scope = "col"  style="cursor: pointer;" class="no-sort" id="time">Update Time </th>
                         </tr>
                     </thead>
                     <tbody id="list" class="w-100" >
                         
                     </tbody>
+                </table>
             </div>
                 
-            </table>
         </div>
+        <dialog id="conf" style="width: 800px;">
+            <div id="main-info" class="d-flex">
+
+            </div>
+            <div id="meta-info" class="d-flex flex-column border-bottom py-2">
+                <div id="ip-conf">
+
+                </div>
+
+            </div>
+            <div id="ccus">
+
+            </div>
+            <div id="panels">
+
+            </div>
+            <button class="btn btn-success" id="sv-btn">Save Changes</button>
+        </dialog>
+
 <!-- connect to cut button -->
     </main>
     
     {%block script%}
-    <script src="{{ url_for('static', filename='power.js') }}"></script>
+    <script src="{{ url_for('static', filename='radar.js') }}"></script>
     {% endblock %}
 {% endblock %}

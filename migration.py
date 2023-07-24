@@ -350,7 +350,7 @@ def ago_ip_integrate(json_file):
 def add_loc(json_file,test_file):
     with open(json_file,'r') as f:
         data = json.load(f)
-    data_add = pd.read_excel(spreadsheet,'SignalDatainGIS',skiprows=2)
+    data_add = pd.read_excel(spreadsheet,'SignalDatainGIS',skiprows=2).fillna('0')
     for signal in data:
         if (signal['cog_id'] in data_add['COG_ID'].values):
             signal['lat']=data_add[data_add['COG_ID']==signal['cog_id']]['LAT'].values[0]
@@ -362,10 +362,27 @@ def add_loc(json_file,test_file):
     with open(test_file,'w') as f:
         json.dump(data,f,indent=3)
 
+def add_n_radar(json_file,test_file):
+    with open(json_file,'r') as f:
+        data = json.load(f)
+    data_add = pd.read_excel(spreadsheet,'Radar',skiprows=1).fillna('0')
+    for signal in data:
+        if (signal['cog_id'] in data_add['COGID'].values):
+            signal['n_ccu']=data_add[data_add['COGID']==signal['cog_id']]['#\nControl Units'].values[0]
+            signal['n_matrix']=data_add[data_add['COGID']==signal['cog_id']]['#\nMatrix Panels'].values[0]
+            signal['n_advance']=data_add[data_add['COGID']==signal['cog_id']]['# Advance Panels'].values[0]
+        else:
+            signal['n_ccu']=0
+            signal['n_matrix']=0
+            signal['n_advance']=0
+    
+    with open(test_file,'w') as f:
+        json.dump(data,f,indent=3)
+
 if __name__ == '__main__':
     power_path = os.path.join(data_path_dir,'power.json')
-    test_path = os.path.join(data_path_dir,'test.json')
-    add_loc(power_path,test_path)
+    test_path = os.path.join(data_path_dir,'power.json')
+    add_n_radar(power_path,test_path)
 
     # old spreadsheet is at least older than 7.2022
     # i need to find a meter that says it is working but actually isnt
