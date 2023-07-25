@@ -170,6 +170,7 @@ class PowerMeter():
             # pars error is because of bad response but there is only a bad response some of the time when accouts are inactive or temporarily disabled
             # nevermind, that had something to do with caches
             # even error codes come back with 200 response
+           
             validate_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/esiId?esiid={self.id}'
             url = f"https://ors-svc.aws.cloud.oncor.com/customerOutage/outage/checkStatus?esiid={self.id}&source=ORS"
 
@@ -188,5 +189,6 @@ class PowerMeter():
         except (requests.Timeout, TimeoutError, ConnectTimeoutError) as e:
             print(e)
             return 'update failed'
-        except :
+        except Exception as e:
+            print(e)
             return 'update failed'
