@@ -45,6 +45,13 @@ def get_data():
         data = UpdateThread.signals
     return data
 
+@app.route('/get_radar_data')
+def get_radar_data():
+    data = pd.read_excel('Radar.xlsx','Radar Intersections')
+    data_json = data.to_json(orient = 'records')
+    return data_json
+
+
 @app.route('/get_xlsx', methods=['GET'])
 def get_xlsx():
     with UpdateThread.lock:
@@ -60,26 +67,33 @@ def post_xlsx():
         UpdateThread.signals = signals
     return redirect(url_for('power'))
 
-@app.route('/listen', methods=['GET'])
-def listen():
+@app.route('/failed', methods=['GET'])
+def failed():
     # why are so many threads being generated
     def stream():
         while True:
             msg = queue_outage.get()  # blocks until a new message arrives
             if "modem" in msg:
                 yield format_sse(msg,'ping_comm')
+                
             elif 'time' in msg:
                 yield format_sse(msg,'timestamp')
             else :
                 yield format_sse(msg,'oncor')
 
+            return flask.Response(stream(), mimetype='text/event-stream')
 
-    return flask.Response(stream(), mimetype='text/event-stream')
-
+@app.route('/passed')
+def passed():
+    return render_template('stable_communication.html')
 
 @app.route('/wip')
 def progress():
     return render_template('wip.html')
+
+@app.route('/radar')
+def radar():
+    return render_template('radarportal.html')
 
 @app.route('/stop_power_threads', methods=['POST'])
 def stop_power_threads():

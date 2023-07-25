@@ -90,15 +90,21 @@ addEventListener("load",async (event) =>  {
 
         let status = document.createElement('td')
         if (signal.meters[0]){
-            status.innerHTML = signal.meters[0].online_status || '&#9203'
+            if (signal.meters[0].online_status == "ON"){
+                status.innerHTML = '&#10003'
+            }
+            else {
+                status.innerHTML = '&#9203'
+            }
         } else {
-            status.innerHTML = 'no_meter'
+            status.innerHTML = 'No Meter'
         }
-        status.setAttribute('title','Not Updated')
+        status.setAttribute('title','Pending Update')
         entry.append(status)
         
         let comm = document.createElement('td')
         comm.innerHTML = signal.modem_online || '&#9203'
+        comm.setAttribute('title','Pending Update')
         entry.append(comm)
 
         let ip = document.createElement('td')
@@ -126,23 +132,9 @@ addEventListener("load",async (event) =>  {
 
 })
 
-
-
-// respond to event loops for sorts and filters
-
-// begin running/listening to updates as they come in
-
-// continuously have up to date data
-
-// have a few interaction features
-
-// only refresh display when requested
-
-// export to excel functionality
-
 addEventListener('load',update)
 function update(){
-    handler = new EventSource('http://127.0.0.1:5000/listen')
+    handler = new EventSource('http://127.0.0.1:5000/failed')
 
     handler.addEventListener('oncor', (e) => {
         const meter_string = e.data
@@ -185,3 +177,25 @@ function update(){
         })
     })
 }
+
+// respond to event loops for sorts and filters
+
+// begin running/listening to updates as they come in
+
+// continuously have up to date data
+
+// have a few interaction features
+
+// only refresh display when requested
+
+// export to excel functionality *
+
+//divide by council districts
+
+//allow reorganization by users choice (alphatecial or numerical, etc)
+
+//figure out how to identify the right meter, rather than just picking the first one
+
+//summarize the ammount of signals that arent communicating on the side bar
+
+//build a legend representing what each symbol means
