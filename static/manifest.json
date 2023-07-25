@@ -1,0 +1,13 @@
+{
+    "name": "Automatic Communication and Information display",
+    "short_name": "ACID",
+    "description": "A way to get information",
+    "start_url": "/",
+    "display":"standalone",
+    "icons": [
+          {
+        "src": "images/icon.svg",
+        "sizes": "150x150"
+      }
+    ]
+  }

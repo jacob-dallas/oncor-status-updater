@@ -310,6 +310,9 @@ if __name__ == '__main__':
         
 
         if os.environ['DEVELOPMENT']=='True':
+            # print(os.getcwd())
+            # os.chdir(app.root_path)
+            # time.sleep(30)
             app.run(debug=True)
         else:
             url = f'http://{ip}:{port}'

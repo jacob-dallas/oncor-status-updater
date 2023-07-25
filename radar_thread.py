@@ -160,7 +160,7 @@ def get_devices(signal,lock,log):
 
         url = f"http://{ip}:8080/api/config/firewall/portfwd/"
 
-        res = requests.get(url,cookies=cookies,timeout=2)
+        res = requests.get(url,cookies=cookies,timeout=3)
         ports = res.json()['data']
 
 
@@ -174,7 +174,7 @@ def get_devices(signal,lock,log):
                 if port['ip_address']==ip_lan:
                     try:
                         url = f"http://{ip}:{port['wan_port_start']}/isapiSdlc.dll?admin_config"
-                        res = requests.get(url,timeout=1).json()
+                        res = requests.get(url,timeout=5).json()
                         devices.append({'name':res['product'],'mac':res['macAddress'],'port':port['wan_port_start']})
                     except Exception as e:
                         try:

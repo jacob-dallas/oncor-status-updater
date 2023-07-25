@@ -4,8 +4,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/bootstrap/css/bootstrap.min.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script>
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}").then(
+                (registration) => {
+                    console.log("Service worker registration successful:", registration);
+                },
+                (error) => {
+                    console.error(`Service worker registration failed: ${error}`);
+                },
+                );
+            } else {
+                console.error("Service workers are not supported.");
+            }
+    </script>
+            
     {% block head%}
     <title>ACID</title>
     {% endblock %}
@@ -16,7 +33,7 @@
             <a href="{{ url_for('index')}}" class="mx-auto object-fit-scale" style="text-decoration: none;color:white;">
                 Automated Communication and Information Display (ACID)
             </a>
-            <a href="{{ url_for('auth')}}"> Login </a>
+            <!-- <a href="{{ url_for('auth')}}"> Login </a> -->
         </h1>
         <div class="flex-fill">
 

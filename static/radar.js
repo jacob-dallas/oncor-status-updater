@@ -135,10 +135,10 @@ function getSortFunction(){
     let keyIdMap = {
         cog_id:['cog_id'],
         name:['name'],
-        type:['radar_ccus','0','online_status'],
+        type:['radar_ccus','0','name'],
         comm:['modem_online'],
         ip:['ip'],
-        firm:['radar_ccus','0','ver'],
+        firm:['radar_ccus','0','version'],
         time:['updated_at'],
     }
     let sortOrder = JSON.parse(sessionStorage.getItem('sortOrder'))
@@ -293,11 +293,11 @@ function drawTable(filters){
         entry.append(entry_name)
 
         let type = document.createElement('td')
-        type.innerHTML = signal.radar_ccus?.[0]?.name || 'N/A'
+        type.innerHTML = signal.radar_ccus?.[0]?.name
         entry.append(type)
             
         let comm = document.createElement('td')
-        comm.innerHTML = signal.modem_online || '&#9203'
+        comm.innerHTML = signal.modem_online
         entry.append(comm)
 
         let ip = document.createElement('td')
@@ -305,7 +305,7 @@ function drawTable(filters){
         entry.append(ip)
 
         let ver = document.createElement('td')
-        ver.innerHTML = signal.radar_ccus?.[0]?.ver || 'N/A'
+        ver.innerHTML = signal.radar_ccus?.[0]?.version
         entry.append(ver)
 
         let ts = document.createElement('td')
@@ -387,7 +387,7 @@ function update(){
             console.log(e)
             e.target.close()
             close_listen()
-            window.alert('Unable to connect to backend. Closing Listener...')
+            // window.alert('Unable to connect to backend. Closing Listener...')
         })
         
         //todo: handle no response| update: partially handled
@@ -457,6 +457,155 @@ data_table.addEventListener('click',(e)=>{
         ip.addEventListener('dblclick',dblToChange)
         ipConf.append(ipLab)
         ipConf.append(ip)
+
+        metaInfo = document.getElementById('meta-info')
+        let nMatrixTag = document.getElementById('n-matrix-tag')
+        let nCCUTag = document.getElementById('n-advance-tag')
+        let nAdvancedTag = document.getElementById('n-ccu-tag')
+        nMatrixTag.innerHTML = "Number of Recorded Matrix: "
+        nCCUTag.innerHTML = "Number of Recorded Advance: "
+        nAdvancedTag.innerHTML="Number of Recorded CCU: "
+
+
+        let nMatrix = document.createElement('span')
+        nMatrix.addEventListener('dblclick',dblToChange)
+        nMatrix.innerHTML = data.n_matrix
+        nMatrix.id='n_matrix-inp'
+        let nCCU = document.createElement('span')
+        nCCU.addEventListener('dblclick',dblToChange)
+        nCCU.innerHTML=data.n_ccu
+        nCCU.id='n_ccu-inp'
+        let nAdvanced = document.createElement('span')
+        nAdvanced.addEventListener('dblclick',dblToChange)
+        nAdvanced.innerHTML=data.n_advance
+        nAdvanced.id='n_advance-inp'
+        nMatrixTag.append(nMatrix)
+        nCCUTag.append(nCCU)
+        nAdvancedTag.append(nAdvanced)
+
+        let cculabel = document.getElementById('ccu-title')
+        let ccus = document.getElementById('ccus')
+        ccus.innerHTML=''
+        if (data.radar_ccus.length){
+            ccus.style.display='block'
+            cculabel.style.display='block'
+            let i=0
+            for(let ccu of data.radar_ccus){
+                let ccu_acc = document.createElement('div')
+                let acc_head = document.createElement('p')
+                let accBtn = document.createElement('button')
+                let drop = document.createElement('div')
+                let dropBody = document.createElement('div')
+                
+                
+                ccu_acc.classList.add('accordion-item')
+                acc_head.classList.add('accordion-header')
+                accBtn.classList.add('d-flex','accordion-button','collapsed')
+                drop.classList.add('accordion-collapse','collapse')
+                dropBody.classList.add('accordion-body')
+                
+                
+                accBtn.setAttribute('data-bs-toggle','collapse')
+                accBtn.setAttribute('data-bs-target',`#radar${i}`)
+                accBtn.setAttribute('type','button')
+                accBtn.setAttribute('aria-expanded',`${i}`)
+                accBtn.setAttribute('aria-controls','button')
+                drop.setAttribute('data-bs-parent','#ccus')
+                drop.id = `radar${i}`
+                
+                
+                ccu_acc.append(acc_head)
+                ccus.append(ccu_acc)
+                acc_head.append(accBtn)
+                ccu_acc.append(drop)
+                drop.append(dropBody)
+                
+                
+                let elem = document.createElement('span')
+                elem.innerHTML=ccu.name
+                elem.style.width='100px'
+                accBtn.append(elem)
+                elem = document.createElement('span')
+                elem.innerHTML=ccu.serial
+                elem.style.width='200px'
+                accBtn.append(elem)
+                
+                
+                elem = document.createElement('p')
+                elem.innerHTML=`MAC Address: ${ccu.mac}`
+                dropBody.append(elem)
+                elem = document.createElement('p')
+                elem.innerHTML=`Version: ${ccu.version}`
+                dropBody.append(elem)
+                elem = document.createElement('p')
+                elem.innerHTML=`Port: ${ccu.port}`
+                dropBody.append(elem)
+                i++
+                let j=0
+                let panelsLabel = document.createElement('h4')
+                panelsLabel
+                panelsLabel.innerHTML = 'Sensors'
+                dropBody.append(panelsLabel)
+                
+                let sTbl = document.createElement('table')
+                let sTblH = document.createElement('thead')
+                let sTblR = document.createElement('tr')
+                let sTblH1 = document.createElement('th')
+                let sTblH2 = document.createElement('th')
+                let sTblH3 = document.createElement('th')
+                let sTblH4 = document.createElement('th')
+                let sTblH5 = document.createElement('th')
+
+                sTbl.classList.add('table')
+
+                sTblH1.scope = "col"
+                sTblH1.innerHTML = 'Name'
+                sTblH2.scope = "col"
+                sTblH2.innerHTML = 'S/N'
+                sTblH3.scope = "col"
+                sTblH3.innerHTML = 'Type'
+                sTblH4.scope = "col"
+                sTblH4.innerHTML = 'Channels'
+                sTblH5.scope = "col"
+                sTblH5.innerHTML = 'Port'
+
+                dropBody.append(sTbl)
+                sTbl.append(sTblH)
+                sTblH.append(sTblR)
+                sTblR.append(sTblH1)
+                sTblR.append(sTblH2)
+                sTblR.append(sTblH3)
+                sTblR.append(sTblH4)
+                sTblR.append(sTblH5)
+                let sTblBdy = document.createElement('tbody')
+                sTbl.append(sTblBdy)
+                for (let panel of ccu.sensors){
+                    let sTblDR = document.createElement('tr')
+                    let sTblD1 = document.createElement('td')
+                    let sTblD2 = document.createElement('td')
+                    let sTblD3 = document.createElement('td')
+                    let sTblD4 = document.createElement('td')
+                    let sTblD5 = document.createElement('td')
+
+                    sTblD1.innerHTML=panel.name
+                    sTblD2.innerHTML=panel.serialNumber
+                    sTblD3.innerHTML=panel.type
+                    sTblD4.innerHTML=panel.channels.map(x =>+ x)
+                    sTblD5.innerHTML=panel.port
+
+                    sTblBdy.append(sTblDR)
+                    sTblDR.append(sTblD1)
+                    sTblDR.append(sTblD2)
+                    sTblDR.append(sTblD3)
+                    sTblDR.append(sTblD4)
+                    sTblDR.append(sTblD5)
+                }
+                
+            } 
+        } else {
+            ccus.style.display='none'
+            cculabel.style.display='none'
+        }
 
         let saveButton = document.getElementById('sv-btn')
         saveButton.disabled=true
