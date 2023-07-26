@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block head%}
+    <title>Radar Portal</title>
+
+{% endblock %}
+
+{% block body%}
+
+<main class="d-flex justify-content-center">
+    <h1>Radar Portal</h1>
+
+    <div id="settings" class="sticky-top d-flex justify-content-end p-3">
+    <button class="btn btn-primary btn-sm mx-1" id="export_btn">Export to Excel</button>
+    <button class="btn btn-primary btn-sm mx-1" id="import_btn">Import From Excel</button>
+    
+    </div>
+</main>
+
+<body>
+    <table class="table" >
+        <thead class="sticky-top bg-white">
+            <tr>
+                <th scope = "col">COG ID</th>
+                <th scope = "col">Intersection Name</th>
+                <th scope = "col">IP Address</th>
+                <th scope = "col">Radar Type</th>
+                <th scope = "col">CCU Serial</th>
+                <th scope = "col">CCU Version</th>
+                <th scope = "col">CCU MAC Add.</th>
+                <th scope = "col">BIU Enabled</th>
+                <th scope = "col">Sensor 1</th>
+                <th scope = "col">Sensor 2</th>
+                <th scope = "col">Sensor 3</th>
+                <th scope = "col">Sensor 4</th>
+                <th scope = "col">Sensor 5</th>
+                <th scope = "col">Sensor 6</th>
+                <th scope = "col">Sensor 7</th>
+                <th scope = "col">Sensor 8</th>
+            </tr>
+        </thead>
+        <tbody id="list">
+                    
+        </tbody>
+       
+    </table>
+    {%block script%}
+    <script src="{{ url_for('static', filename='Radar.js') }}"></script>
+    {% endblock %}
+</body>
+{% endblock %}

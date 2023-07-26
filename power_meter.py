@@ -148,7 +148,7 @@ class PowerMeter():
         # Handles any unexpected exceptions so the program will mostly continue to 
         # run        
         except Exception as error:
-            print("an error occured\n")
+            print("An error ocurred\n")
             print(error)
             status = 'An unknown error occured; status update cannot be guaranteed'
             log_str = f'{datetime.datetime.now()}: ESI ID \"{self.id}\": [ERROR] a fatal error occured\n'
@@ -158,14 +158,15 @@ class PowerMeter():
         try:
             if self.id == '0000000000' or self.id == '0000000':
                 if self.number == '-':
-                    return 'no_id'
+                    return 'No_ID'
                 else:
                     esi_url = f'https://ors-svc.aws.cloud.oncor.com/customerOutage/identifyLocation/meter?meter={self.number[0:9]}'
                     res = json.loads(requests.get(esi_url,verify=a_cert).text)
+
                     if res.get('validateMeterResponse',False):
                         self.esi_id = res['validateMeterResponse']['account'][0]['number']
                     else:
-                        return 'bad_id'
+                        return 'Bad_ID'
             # json parse error on 1823
             # pars error is because of bad response but there is only a bad response some of the time when accouts are inactive or temporarily disabled
             # nevermind, that had something to do with caches
@@ -176,7 +177,7 @@ class PowerMeter():
 
             res = json.loads(requests.get(validate_url,verify=a_cert).text)
             if res.get('Error',False):
-                return 'bad_id'
+                return 'Bad_ID'
             if res.get('validateAccountResponse',False):
                 if res['validateAccountResponse']['account']['status'] =='ACTIVE':
                     
@@ -185,10 +186,10 @@ class PowerMeter():
                 else:
                     return res['validateAccountResponse']['account']['status']
             else:
-                return 'unknown'
+                return 'Unknown'
         except (requests.Timeout, TimeoutError, ConnectTimeoutError) as e:
             print(e)
-            return 'update failed'
+            return 'update Failed'
         except Exception as e:
             print(e)
-            return 'update failed'
+            return 'update Failed'

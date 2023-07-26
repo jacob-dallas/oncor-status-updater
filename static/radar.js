@@ -15,7 +15,7 @@ export_btn.addEventListener('click',async e=>{
     let data_b = await data.blob()
     let url = URL.createObjectURL(data_b)
     a.href = url
-    a.download = 'Signals.xlsx'
+    a.download = 'Radar.xlsx'
     document.body.appendChild(a)
     a.click()
     setTimeout(()=>{
