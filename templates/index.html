@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body%}
 
-<main class="d-flex justify-content-sm-start m-5 gap-4">
+<main class="d-flex justify-content-sm-start gap-4 flex-wrap" style="width: 1300px;margin:20px auto">
     <div class="card bg-secondary text-white" style="width: 300px; height: 350px">
         <img src="" alt="" class="card-img-top">
         <div class="card-body d-flex flex-column">
@@ -34,12 +34,25 @@
         <img src="" alt="" class="card-img-top">
         <div class="card-body d-flex flex-column">
             <h5 class="card-title">Modem Portal</h5>
-            <p class="card-text"></p>
+            <p class="card-text">View status of modems and update signal IP's. Update Firmware too</p>
             <div class="d-flex flex-column-reverse h-50 mt-auto">
-
                 <div class="d-flex justify-content-around gap-2">
-                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1" style="background-color:blue">Go</a>
-                    
+                    <a href="{{url_for('modem')}}" class="btn btn-primary flex-grow-1">Go</a>
+                    <a id = 'modem_updater_start' class="btn btn-success flex-grow-1" style="display:block">Start</a>
+                    <a id = 'modem_updater_stop' class="btn btn-danger flex-grow-1" style="display:none">Stop</a>
+                </div>
+                <div id="modem_thread_statuses" class="mb-3 border-bottom border-top">
+                    <div class="row">
+    
+                        <div class="col">Status:</div>
+                        <div class="col" id="modem_thread_status">Offline</div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col">n_threads:</div>
+                        <div class="col" id="modem_thread_count">0</div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -75,7 +88,37 @@
         <img src="" alt="" class="card-img-top+
         ">
         <div class="card-body d-flex flex-column">
-            <h5 class="card-title">Database Hub</h5>
+            <h5 class="card-title">Database Manager</h5>
+            <p class="card-text"></p>
+            <div class="d-flex flex-column-reverse h-50 mt-auto">
+
+                <div class="d-flex justify-content-around gap-2">
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1"style="background-color:blue">Go</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card bg-secondary text-white" style="width: 300px; height: 350px">
+        <img src="" alt="" class="card-img-top+
+        ">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Thread Manager</h5>
+            <p class="card-text"></p>
+            <div class="d-flex flex-column-reverse h-50 mt-auto">
+
+                <div class="d-flex justify-content-around gap-2">
+                    <a href="{{url_for('progress')}}" class="btn btn-primary flex-grow-1"style="background-color:blue">Go</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card bg-secondary text-white" style="width: 300px; height: 350px">
+        <img src="" alt="" class="card-img-top+
+        ">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">CUT Interface</h5>
             <p class="card-text"></p>
             <div class="d-flex flex-column-reverse h-50 mt-auto">
 

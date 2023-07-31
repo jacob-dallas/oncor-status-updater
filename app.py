@@ -19,47 +19,74 @@ import dotenv
 
 data_root = os.path.join(os.getenv('APPDATA'),'acid')
 db_path = os.path.join(data_root,'db.json')
+modem_db_path = os.path.join(data_root,'modem_db.json')
 log_dir = os.path.join(data_root,'logs')
 env_path = os.path.join(data_root,'.env')
 oncor_log = os.path.join(log_dir,'oncor.txt')
-app = Flask(__name__)
 base_dir = os.path.dirname(__file__)
-queue_outage = queue.Queue(20)
-queue_radar = queue.Queue(20)
 
+
+app = Flask(__name__)
 if not os.path.exists(data_root):
     os.mkdir(data_root)
 if not os.path.exists(log_dir):
     os.mkdir(log_dir)
 
 if not os.path.exists(db_path):
-    shutil.copy('db_template',db_path)
+    shutil.copy('db_template.json',db_path)
+    
+if not os.path.exists(modem_db_path):
+    shutil.copy('modem_db_template.json',modem_db_path)
 
 if not os.path.exists(env_path):
     shutil.copy('.env-template',env_path)
 
 dotenv.load_dotenv(env_path)
 app.secret_key=os.environ['SESSION_KEY']
+
+
 from json_to_excel import export_sig, import_sig
 from threaded_update import UpdateThread,n_power_updaters,stop_power
 from radar_thread import RadarThread,n_radar_updaters,stop_radar
+from modem_thread import ModemThread,n_modem_updaters,stop_modem
 
+# Give threads the basic info they need
 with open(db_path,'r') as f:
     signals = json.load(f)
 
+with open(modem_db_path,'r') as f:
+    modems = json.load(f)
+
 outage_log = open(oncor_log,'w')
 
+queue_outage = queue.Queue(20)
 UpdateThread.signals = signals
 UpdateThread.outage_log = outage_log
 UpdateThread.db = db_path
 UpdateThread.data_root = data_root
 UpdateThread.n_signals = len(UpdateThread.signals)
 
+queue_radar = queue.Queue(20)
 RadarThread.signals = signals
 RadarThread.log = outage_log
 RadarThread.db = db_path
 RadarThread.data_root = data_root
 RadarThread.n_signals = len(RadarThread.signals)
+
+queue_modem = queue.Queue(20)
+ModemThread.signals = signals
+ModemThread.modems = modems
+ModemThread.log = outage_log
+ModemThread.db = db_path
+ModemThread.db_modem = modem_db_path
+ModemThread.data_root = data_root
+ModemThread.n_signals = len(ModemThread.signals)
+
+
+#################################################################################
+##############################    Page Routes    ################################
+#################################################################################
+
 
 @app.route('/')
 def index():
@@ -72,14 +99,42 @@ def index():
 
     n_threads = n_power_updaters()
 
-    return render_template('index.html',power_status=power_status,n_threads=n_threads,buttons=buttons)
+    return render_template(
+        'index.html',
+        power_status=power_status,
+        n_threads=n_threads,
+        buttons=buttons
+    )
+
 
 @app.route('/power')
 def power():
     return render_template('power.html')
+
+
 @app.route('/radar')
 def radar():
     return render_template('radar.html')
+
+
+@app.route('/modem')
+def modem():
+    return render_template('modem.html')
+
+
+@app.route('/passed')
+def passed():
+    return render_template('stable_communication.html')
+
+
+@app.route('/wip')
+def progress():
+    return render_template('wip.html')
+
+
+#################################################################################
+##############################     Services      ################################
+#################################################################################
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
@@ -92,6 +147,8 @@ def get_data():
             with UpdateThread.lock:
                 UpdateThread.signals = data
     return data
+
+
 @app.route('/get_radar_data', methods=['GET'])
 def get_radar_data():
     try:
@@ -104,30 +161,224 @@ def get_radar_data():
                 RadarThread.signals = data
     return data
 
-@app.route('/get_radar_data')
-def get_radar_data():
-    data = pd.read_excel('Radar.xlsx','Radar Intersections')
-    data_json = data.to_json(orient = 'records')
-    return data_json
+
+@app.route('/get_modem_data', methods=['GET'])
+def get_modem_data():
+    try:
+        with ModemThread.lock:
+            data = ModemThread.modems
+    except AttributeError:
+        with open(modem_db_path,'r') as f:
+            data = json.load(f)
+            with ModemThread.lock:
+                ModemThread.modems = data
+    return data
 
 
-@app.route('/get_xlsx', methods=['GET'])
-def get_xlsx():
-    with UpdateThread.lock:
-        data = UpdateThread.signals
-    file = export_sig(data)
-    return send_file(file,download_name='signals.xlsx',mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+@app.route('/get_pf_table', methods=['GET'])
+def get_pf_table():
+    ip = request.args.get('ip')
+    url = f"http://{ip}:8080/login/"
+    data = {
+    'cprouterusername': os.environ['CP_USER'],
+    'cprouterpassword': os.environ['CP_PASS']
+    }
+    try:
+        res = requests.post(url,data=data,timeout=4)
+        cookie_1 = res.history[0].cookies.get_dict(domain=ip)
+        cookies = requests.utils.add_dict_to_cookiejar(res.cookies,cookie_1)
 
-@app.route('/post_xlsx', methods=['POST'])
-def post_xlsx():
-    file = request.files['file']
-    signals = import_sig(file)
-    with UpdateThread.lock:
-        UpdateThread.signals = signals
-        shutil.copy(UpdateThread.db,os.path.join(UpdateThread.data_root,'signals.bak'))
-        with open(UpdateThread.db,'w') as f:
-            json.dump(UpdateThread.signals,f)
-    return redirect(url_for('power'))
+        url = f"http://{ip}:8080/api/config/firewall/portfwd/"
+
+        res = requests.get(url,cookies=cookies,timeout=4)
+        if res.status_code==401:
+            return {'ip':ip,'modem':'not authorized'}
+        ports = res.json()['data']
+        return ports
+
+    except Exception as e:
+        return {}
+
+
+@app.route('/add_pf_table', methods=['POST'])
+def add_pf_table():
+    data = request.get_json()
+    ip = data.get('ip')
+    ip_loc = data.get('ip_loc')
+    name = data.get('name')
+    int_port_start = data.get('int_port_start')
+    int_port_end = data.get('int_port_end')
+    loc_port = data.get('loc_port')
+    protocol = data.get('protocol')
+    enable = data.get('enable')
+
+    enable_mapping = {'true':True,'1':True,'0':False,'false':False}
+    enable=enable_mapping.get(enable)
+    url = f"http://{ip}:8080/login/"
+    data = {
+    'cprouterusername': os.environ['CP_USER'],
+    'cprouterpassword': os.environ['CP_PASS']
+    }
+    try:
+        res = requests.post(url,data=data,timeout=4)
+        cookie_1 = res.history[0].cookies.get_dict(domain=ip)
+        cookies = requests.utils.add_dict_to_cookiejar(res.cookies,cookie_1)
+
+        url = f"http://{ip}:8080/api/config/firewall/portfwd/"
+        xrsf = res.cookies.get_dict(domain=ip)['_xsrf']
+        res = requests.post(
+            url,
+            cookies=cookies,
+            timeout=4,
+            params={
+                'data':json.dumps(
+                    {
+                        'protocol':protocol,
+                        'enabled':enable, 
+                        'name':name,
+                        'wan_port_start':int(int_port_start),
+                        'wan_port_end':int(int_port_end),
+                        'ip_address':ip_loc,
+                        'lan_port_offt':int(loc_port),
+                    },
+                    separators=(',', ':')
+                )
+            },
+            data={
+                        'protocol':protocol,
+                        'enabled':enable, 
+                        'name':name,
+                        'wan_port_start':int(int_port_start),
+                        'wan_port_end':int(int_port_end),
+                        'ip_address':ip_loc,
+                        'lan_port_offt':int(loc_port),
+            },
+            headers={
+                'Content-Type': 'application/json',
+                'X-Csrftoken':xrsf
+            }
+        )
+        if res.status_code==401:
+            return {'ip':ip,'modem':'not authorized'}
+        ind = res.json()['data']
+        return {'ind':ind}
+
+    except Exception as e:
+        return {}
+
+
+@app.route('/edit_pf_table', methods=['PUT'])
+def edit_pf_table():
+    data = request.get_json()
+    ip = data.get('ip')
+    ip_loc = data.get('ip_loc')
+    name = data.get('name')
+    int_port_start = data.get('int_port_start')
+    int_port_end = data.get('int_port_end')
+    loc_port = data.get('loc_port')
+    protocol = data.get('protocol','both')
+    enable = data.get('enable',True)
+    ind = data.get('ind')
+    url = f"http://{ip}:8080/login/"
+    data = {
+    'cprouterusername': os.environ['CP_USER'],
+    'cprouterpassword': os.environ['CP_PASS']
+    }
+    try:
+        res = requests.post(url,data=data,timeout=4)
+        cookie_1 = res.history[0].cookies.get_dict(domain=ip)
+        cookies = requests.utils.add_dict_to_cookiejar(res.cookies,cookie_1)
+        xrsf = res.cookies.get_dict(domain=ip)['_xsrf']
+
+        url = f"http://{ip}:8080/api/config/firewall/portfwd/{ind}"
+
+        res = requests.put(
+            url,
+            cookies=cookies,
+            timeout=4,
+            params={
+                'data':json.dumps(
+                    {
+                        'protocol':protocol,
+                        'enabled':enable, 
+                        'name':name,
+                        'wan_port_start':int(int_port_start),
+                        'wan_port_end':int(int_port_end),
+                        'ip_address':ip_loc,
+                        'lan_port_offt':int(loc_port),
+                    },
+                    separators=(',', ':')
+                )
+            },
+            headers={
+                'Content-Type': 'application/json',
+                'X-Csrftoken':xrsf
+            }
+        )
+        if res.status_code==401:
+            return {'ip':ip,'modem':'not authorized'}
+        updates = res.json()['data']
+        return updates
+
+    except Exception as e:
+        return {}
+
+
+@app.route('/del_pf_table', methods=['DELETE'])
+def del_pf_table():
+    ip = request.args.get('ip')
+    ind = request.args.get('ind')
+    url = f"http://{ip}:8080/login/"
+    data = {
+    'cprouterusername': os.environ['CP_USER'],
+    'cprouterpassword': os.environ['CP_PASS']
+    }
+    try:
+        res = requests.post(url,data=data,timeout=4)
+        cookie_1 = res.history[0].cookies.get_dict(domain=ip)
+        cookies = requests.utils.add_dict_to_cookiejar(res.cookies,cookie_1)
+
+        xrsf = res.cookies.get_dict(domain=ip)['_xsrf']
+        url = f"http://{ip}:8080/api/config/firewall/portfwd/{ind}"
+
+        res = requests.delete(
+            url,
+            cookies=cookies,
+            timeout=4,
+            params={'data':int(ind)},
+            headers={
+                'Content-Type': 'application/json',
+                'X-Csrftoken':xrsf
+            }
+            )
+        if res.status_code==401:
+            return {'ip':ip,'modem':'not authorized'}
+        status = res.json()['data']
+        return {'status':status}
+
+    except Exception as e:
+        return {}
+    
+
+# put http://172.22.4.118:8080/api/config/firewall/portfwd/(ind)?data=%7B%22protocol%22%3A%22both%22%2C%22enabled%22%3Atrue%2C%22name%22%3A%22test%22%2C%22wan_port_start%22%3A12345%2C%22wan_port_end%22%3A12345%2C%22lan_port_offt%22%3A12345%2C%22ip_address%22%3A%22192.168.0.50%22%7D
+# delete http://172.22.4.118:8080/api/config/firewall/portfwd/(ind)?data=(ind)
+
+#################################################################################
+##############################     Monitors      ################################
+#################################################################################
+
+
+@app.route('/monitor_threads')
+def monitor_thread():
+    def stream():
+        while (n_power_updaters() or n_radar_updaters() or n_modem_updaters()):                
+            yield format_sse(f'{n_power_updaters()}','power_thread_count')
+            yield format_sse(f'{n_radar_updaters()}','radar_thread_count')
+            yield format_sse(f'{n_modem_updaters()}','modem_thread_count')
+            time.sleep(2)
+        yield format_sse(f'','close')
+
+    return flask.Response(stream(), mimetype='text/event-stream')
 
 
 @app.route('/pause_listen', methods=['POST'])
@@ -137,6 +388,8 @@ def puase_listen():
     with UpdateThread.lock:
         UpdateThread.pause= True
     return flask.Response(status=200)
+
+
 @app.route('/pause_radar_listen', methods=['POST'])
 def puase_radar_listen():
     req_data = request.form
@@ -144,6 +397,16 @@ def puase_radar_listen():
     with RadarThread.lock:
         RadarThread.pause= True
     return flask.Response(status=200)
+
+
+@app.route('/pause_modem_listen', methods=['POST'])
+def puase_modem_listen():
+    req_data = request.form
+    print(req_data)
+    with ModemThread.lock:
+        ModemThread.pause= True
+    return flask.Response(status=200)
+
 
 @app.route('/listen', methods=['GET'])
 def listen():
@@ -166,8 +429,8 @@ def listen():
                 cond=False
         print('closing listen!')
 
-
     return flask.Response(stream(), mimetype='text/event-stream')
+
 
 @app.route('/radar_listen', methods=['GET'])
 def radar_listen():
@@ -187,7 +450,26 @@ def radar_listen():
                     yield format_sse(msg,'radar')
             except Exception as e:
                 cond=False
-            return flask.Response(stream(), mimetype='text/event-stream')
+    return flask.Response(stream(), mimetype='text/event-stream')
+
+
+@app.route('/modem_listen', methods=['GET'])
+def modem_listen():
+    with ModemThread.lock:
+        ModemThread.pause = False
+    def stream():
+        cond = True
+        while cond:
+            try:
+                msg = queue_modem.get(timeout=20) 
+                if '\"msg_id\":\"time\"' in msg:
+                    yield format_sse(msg,'timestamp')
+                else :
+                    yield format_sse(msg,'modem')
+            except Exception as e:
+                cond=False
+    return flask.Response(stream(), mimetype='text/event-stream')
+        
 
 @app.route('/failed', methods=['GET'])
 def failed():
@@ -205,13 +487,10 @@ def failed():
 
             return flask.Response(stream(), mimetype='text/event-stream')
 
-@app.route('/passed')
-def passed():
-    return render_template('stable_communication.html')
 
-@app.route('/wip')
-def progress():
-    return render_template('wip.html')
+#################################################################################
+##############################     Functions     ################################
+#################################################################################
 
 
 @app.route('/stop_threads', methods=['POST'])
@@ -220,7 +499,10 @@ def stop_threads():
         stop_power()
     if request.args.get('thread')=='radar':
         stop_radar()
+    if request.args.get('thread')=='modem':
+        stop_modem()
     return flask.Response(status=200)
+
 
 def start_update_thread(req_data,thread_type,queue_loc):
     record = req_data.get('recordInt',0)
@@ -229,14 +511,10 @@ def start_update_thread(req_data,thread_type,queue_loc):
     stop_at = req_data.get('runUntil',0)
     pause = req_data.get('pause',True)
 
-
-
     if stop_at:
         stop_at = datetime.datetime.fromisoformat(stop_at)
     if stop_after:
         stop_at = datetime.datetime.now() + datetime.timedelta(hours=float(stop_after))
-
-
 
     thread_type.pause=pause
     thread_type.stop_at = stop_at
@@ -260,6 +538,7 @@ def start_power_threads():
     
     return flask.Response(status=200)
 
+
 @app.route('/start_radar_threads', methods=['POST'])
 def start_radar_threads():
     if n_radar_updaters():
@@ -271,44 +550,28 @@ def start_radar_threads():
     
     return flask.Response(status=200)
 
-@app.route('/monitor_threads')
-def monitor_thread():
-    def stream():
-        while (n_power_updaters() or n_radar_updaters()):                
-            yield format_sse(f'{n_power_updaters()}','power_thread_count')
-            yield format_sse(f'{n_radar_updaters()}','radar_thread_count')
-            time.sleep(2)
-        yield format_sse(f'','close')
+@app.route('/start_modem_threads', methods=['POST'])
+def start_modem_threads():
+    if n_modem_updaters():
+        return flask.Response(status=400)
 
-    return flask.Response(stream(), mimetype='text/event-stream')
-
-@app.route('/update_from_input', methods = ['POST'])
-def update_from_input():
-    data = request.form
-    with UpdateThread.lock:
-        for signal in UpdateThread.signals:
-            if signal['cog_id']==int(data['cog_id']):
-                for k,v in data.items():
-                    if k=='cog_id':
-                        continue
-                    else:
-                        signal[k]=v
-    with RadarThread.lock:
-        for signal in RadarThread.signals:
-            if signal['cog_id']==int(data['cog_id']):
-                for k,v in data.items():
-                    if k=='cog_id':
-                        continue
-                    else:
-                        signal[k]=v
-        with open(RadarThread.db,'w') as f:
-                json.dump(RadarThread.signals,f,indent=4)
+    print(request.form)
+    req_data = request.form
+    start_update_thread(req_data,ModemThread,queue_modem)
+    
     return flask.Response(status=200)
+
+
+#################################################################################
+##############################        Auth       ################################
+#################################################################################
+
 @app.route('/auth')
 def auth():
     tenant = os.environ['AAD_TENANT']
     client = os.environ['AAD_CLIENT']
     return redirect(f'https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={client}&response_type=code&scope=https://ericomm.onmicrosoft.com/ab34a501-302c-4972-a8e2-ebe14334f9e0/user_impersonation')
+
 
 @app.route('/auth_code')
 def auth_code():
@@ -328,6 +591,50 @@ def auth_code():
     session['cut'] = json.loads(res.text)
 
     return render_template('index.html')
+
+#################################################################################
+##############################      Exp/Imp      ################################
+#################################################################################
+
+
+@app.route('/update_from_input', methods = ['POST'])
+def update_from_input():
+    data = request.form
+    with UpdateThread.lock:
+        with RadarThread.lock:
+            with ModemThread.lock:
+                for signal in UpdateThread.signals:
+                    if signal['cog_id']==int(data['cog_id']):
+                        for k,v in data.items():
+                            if k=='cog_id':
+                                continue
+                            else:
+                                signal[k]=v
+                with open(RadarThread.db,'w') as f:
+                        json.dump(RadarThread.signals,f,indent=4)
+    return flask.Response(status=200)
+
+
+@app.route('/get_xlsx', methods=['GET'])
+def get_xlsx():
+    with UpdateThread.lock:
+        data = UpdateThread.signals
+    file = export_sig(data)
+    return send_file(file,download_name='signals.xlsx',mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+
+@app.route('/post_xlsx', methods=['POST'])
+def post_xlsx():
+    file = request.files['file']
+    signals = import_sig(file)
+    with UpdateThread.lock:
+        UpdateThread.signals = signals
+        shutil.copy(UpdateThread.db,os.path.join(UpdateThread.data_root,'signals.bak'))
+        with open(UpdateThread.db,'w') as f:
+            json.dump(UpdateThread.signals,f)
+    return redirect(url_for('power'))
+
+
 
 if __name__ == '__main__':
     ip = os.environ['HOSTIP']

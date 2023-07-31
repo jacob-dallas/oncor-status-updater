@@ -222,7 +222,8 @@ def time_res(signal,lock,log):
     updated_at = str(datetime.datetime.now())
     res = {
         "cog_id":signal["cog_id"],
-        'time':updated_at
+        'time':updated_at,
+        "msg_id":'time'
     }
     with lock:
         signal["updated_at"] = updated_at

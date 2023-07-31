@@ -1,0 +1,146 @@
+{% extends "layout.html" %}
+{% block head%}
+    <title>Modem Portal</title>
+
+{% endblock %}
+
+{% block body%}
+    
+
+
+
+    <main class="d-flex flex-nowrap h-100">
+        <div id="filter-list" class="d-flex flex-column p-3 bg-dark sticky-top" style="width: 300px;">
+            <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white fs-4 bg-dark"> Radar Monitor</span>
+            <hr class="bg-light">
+            <ul class="nav nav-pills flex-column mb-auto" id="filters">
+                <li class="nav-item" >
+                    <a href="#" class="nav-link active d-flex justify-content-between pe-auto" aria-current="page" id="all-signal-filter">
+                        All IPs
+                        <span id="all-signal-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="600-filter">
+                        600
+                        <span id="600-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page" id="1150-filter"> 
+                        1150
+                        <span id="1150-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="900-filter">
+                        900
+                        <span id="900-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="yes-filter">
+                        Modem/Activity
+                        <span id="yes-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="no-filter">
+                        No Modem/Activity
+                        <span id="no-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="gps-filter">
+                        GPS-Recieved
+                        <span id="gps-count">(#)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link d-flex justify-content-between pe-auto" aria-current="page"id="no-gps-filter">
+                        GPS-Failure
+                        <span id="no-gps-count">(#)</span>
+                    </a>
+                </li>
+                
+            </ul>
+            <hr>
+        </div>
+        <div class="d-flex flex-column flex-fill">
+
+            
+            <div id="settings" class="sticky-top d-flex justify-content-end p-3">
+                <input class="form-control me-2 w-50 flex-fill" type="search" placeholder="Search" aria-label="Search" id="search">
+                <!-- <button class="btn btn-primary btn-sm mx-1" id="export_btn">Export to Excel</button>
+                <button class="btn btn-primary btn-sm mx-1" id="import_btn">Import From Excel</button> -->
+                
+            </div>
+            <div class="overflow-auto flex-fill" style="height: 760px;">
+
+                <table class="table"  >
+                    <thead class="bg-white sticky-top">
+                        <tr id="headers">
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="check-all"><input type="checkbox" name="all" id="check-all-box"> </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="IP">IP </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="name">Name </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="name">COG ID </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="type">Modem Type </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="sn">Serial Number </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="os">OS </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id ="firm">Firmware </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id = 'temp'>Temperature </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id = 'sig'>Signal Strength </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="cpu">CPU Usage </th>
+                            <th scope = "col"  style="cursor: pointer;" class="no-sort" id="reg"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="list" class="w-100" >
+                        
+                    </tbody>
+                </table>
+            </div>
+                
+        </div>
+        <dialog id="conf" style="width: 1100px;">
+            <h4>Information</h4>
+            <div id="main-info" class="d-flex flex-column">
+
+            </div>
+            <h4>Clients</h4>
+            <div id="clients" class="d-flex flex-column">
+                
+                
+            </div>
+            <h4>Licenses</h4>
+            <div id="licenses" class="d-flex flex-column">
+                
+            </div>
+            <h4>Port Forwarding</h4>
+            <table id="pf-table" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Internet Port</th>
+                        <th scope="col">Forwarding To</th>
+                        <th scope="col">Protocol</th>
+                        <th scope="col">Enable</th>
+                    </tr>
+                </thead>
+                <tbody id="pf-table-body">
+
+                </tbody>
+                
+            </table>
+
+            <button class="btn btn-success" id="sv-btn">Save Changes</button>
+            <button class="btn btn-primary" id="add-btn">Add Port</button>
+        </dialog>
+
+<!-- connect to cut button -->
+    </main>
+    
+    {%block script%}
+    <script src="{{ url_for('static', filename='modem.js') }}"></script>
+    {% endblock %}
+{% endblock %}

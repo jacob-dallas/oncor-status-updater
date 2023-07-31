@@ -1,61 +1,61 @@
 let ip = location.host
 sessionStorage.setItem('sortOrder',JSON.stringify(Array()))
 
-const export_btn = document.getElementById('export_btn')
-export_btn.addEventListener('click',async e=>{
-    console.log(e)
-    const myInit = {
-        method: "GET",
-        mode: "cors",
-        cache: "default",
-    };
-    let data = await fetch(`http://${ip}/get_xlsx`,myInit)
-    // let test = await data.formData()
-    let a = document.createElement('a')
-    let data_b = await data.blob()
-    let url = URL.createObjectURL(data_b)
-    a.href = url
-    a.download = 'Radar.xlsx'
-    document.body.appendChild(a)
-    a.click()
-    setTimeout(()=>{
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }, 0);
-})
+// const export_btn = document.getElementById('export_btn')
+// export_btn.addEventListener('click',async e=>{
+//     console.log(e)
+//     const myInit = {
+//         method: "GET",
+//         mode: "cors",
+//         cache: "default",
+//     };
+//     let data = await fetch(`http://${ip}/get_xlsx`,myInit)
+//     // let test = await data.formData()
+//     let a = document.createElement('a')
+//     let data_b = await data.blob()
+//     let url = URL.createObjectURL(data_b)
+//     a.href = url
+//     a.download = 'Radar.xlsx'
+//     document.body.appendChild(a)
+//     a.click()
+//     setTimeout(()=>{
+//         document.body.removeChild(a);
+//         window.URL.revokeObjectURL(url);
+//     }, 0);
+// })
 
-const import_btn = document.getElementById('import_btn')
-import_btn.addEventListener('click',async e=>{
-    console.log(e)
-    let file = document.createElement('input')
-    file.setAttribute('type','file')
-    file.display = 'hidden'
-    document.body.appendChild(file)
-    file.addEventListener('change', async (e) => {
-        if (e.target.files[0]) {
-            let data = new FormData()
-            let filedata = e.target.files[0]
-            data.append('file', filedata)
-            console.log('You selected ' + e.target.files[0].name);
+// const import_btn = document.getElementById('import_btn')
+// import_btn.addEventListener('click',async e=>{
+//     console.log(e)
+//     let file = document.createElement('input')
+//     file.setAttribute('type','file')
+//     file.display = 'hidden'
+//     document.body.appendChild(file)
+//     file.addEventListener('change', async (e) => {
+//         if (e.target.files[0]) {
+//             let data = new FormData()
+//             let filedata = e.target.files[0]
+//             data.append('file', filedata)
+//             console.log('You selected ' + e.target.files[0].name);
             
-            const myInit = {
-                method: "POST",
-                body: data,
-                mode: "cors",
-                cache: "default",
-                redirect: 'follow'
-            };
-            let res = await fetch(`http://${ip}/post_xlsx`,myInit)
-            console.log(res)
-            location.reload()
-        }
+//             const myInit = {
+//                 method: "POST",
+//                 body: data,
+//                 mode: "cors",
+//                 cache: "default",
+//                 redirect: 'follow'
+//             };
+//             let res = await fetch(`http://${ip}/post_xlsx`,myInit)
+//             console.log(res)
+//             location.reload()
+//         }
 
-    })
-    file.click()
+//     })
+//     file.click()
 
 
 
-})
+// })
 
 async function get_data(){
     const myInit = {
@@ -110,7 +110,7 @@ function getFilter(){
 
 function matchSearch(cond,searchStr,signal){
     cond = cond && (
-        signal.name.toLocaleLowerCase('en-US').includes(searchStr.toLocaleLowerCase('en-US')) 
+        signal?.name?.toLocaleLowerCase('en-US')?.includes(searchStr.toLocaleLowerCase('en-US')) 
         || String(signal.cog_id).includes(searchStr) 
         || signal.ip.includes(searchStr) 
         || String(signal.meters[0]?.esi_id).includes(searchStr)
@@ -196,7 +196,7 @@ function drawTable(filters){
 
     for (let i = 0; i<sessionStorage.length;i++){
         let cog_id = sessionStorage.key(i)
-        if (cog_id=='sortOrder'){
+        if (cog_id=='sortOrder'|| cog_id.includes('.')){
             continue
         }
         allSignalCount++

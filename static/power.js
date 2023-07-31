@@ -108,7 +108,7 @@ function getFilter(){
 
 function matchSearch(cond,searchStr,signal){
     cond = cond && (
-        signal.name.toLocaleLowerCase('en-US').includes(searchStr.toLocaleLowerCase('en-US')) 
+        signal?.name?.toLocaleLowerCase('en-US')?.includes(searchStr.toLocaleLowerCase('en-US')) 
         || String(signal.cog_id).includes(searchStr) 
         || signal.ip.includes(searchStr) 
         || String(signal.meters[0]?.esi_id).includes(searchStr)
@@ -193,13 +193,14 @@ function drawTable(filters){
 
     for (let i = 0; i<sessionStorage.length;i++){
         let cog_id = sessionStorage.key(i)
-        if (cog_id=='sortOrder'){
+        if (cog_id=='sortOrder' || cog_id.includes('.')){
             continue
         }
         allSignalCount++
         let signal = JSON.parse(sessionStorage.getItem(cog_id))
         let filt1 = signal.modem_online !== true
-        let filt2 = signal.meters[0]?.online_status != "ON"
+        console.log(signal['cog_id'])
+        let filt2 = signal?.meters?.[0]?.online_status != "ON"
         if (filt1){
             ComOutageCount = ComOutageCount+1
         }
@@ -270,7 +271,7 @@ function drawTable(filters){
         entry.append(entry_name)
 
         let status = document.createElement('td')
-        if (signal.meters[0]){
+        if (signal.meters?.[0]){
             status.innerHTML = signal.meters[0].online_status || '&#9203'
         } else {
             status.innerHTML = 'no_meter'
