@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block head%}
+    <title>Database Manager</title>
+    <style>
+        .sync-tab{
+            writing-mode: vertical-rl;
+            text-orientation: sideways;
+        }
+    </style>
+{% endblock %}
+
+{% block body%}
+    <main class="d-flex">
+        <div class="d-flex flex-column">
+            <div id="load-save-btns">
+                <button class="btn">Load All Data</button>
+                <button class="btn">Save All Data</button>
+            </div>
+            <div class="d-flex">
+                <div>fil</div>
+                <input class="form-control me-2 flex-fill" type="search" placeholder="Search" aria-label="Search" id="search">
+            </div>
+            <div class="overflow-auto flex-fill">
+                <table class="table"  >
+                    <thead class="bg-white sticky-top">
+                        <tr id="headers">
+                            <th scope="col"> COG ID</th>
+                            <th scope="col"> Name</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div id="data_window" class="flex-fill">
+            No Data Selected
+        </div>
+        <div class="d-flex flex-column">
+            <div id="local_sync">
+                <div class="d-flex">
+                    <p id="local-tab" class="sync-tab"> Sync Data Locally</p>
+                    <div id="local-main"></div>
+                </div>
+            </div>
+
+            <div id="ago_sync"></div>
+            <div id="cut_sync"></div>
+            <div id="drive_sync"></div>
+
+        </div>
+    </main>
+{% endblock %}

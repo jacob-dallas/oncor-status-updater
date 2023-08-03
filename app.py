@@ -132,6 +132,11 @@ def progress():
     return render_template('wip.html')
 
 
+@app.route('/db_manager')
+def db_manager():
+    return render_template('db_manager.html')
+
+
 #################################################################################
 ##############################     Services      ################################
 #################################################################################
@@ -650,5 +655,5 @@ if __name__ == '__main__':
         else:
             url = f'http://{ip}:{port}'
             webbrowser.open_new_tab(url)
-            serve(app, host=ip, port=port,)
+            serve(app, host=ip, port=port,threads=20)
 
