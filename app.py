@@ -381,7 +381,7 @@ def radar_listen():
         cond = True
         while cond:
             try:
-                msg = RadarThread.q.get(timeout=60) 
+                msg = RadarThread.q.get(timeout=450) 
                 if "modem" in msg:
                     yield format_sse(msg,'ping_comm')
                 elif 'time' in msg:
@@ -573,7 +573,7 @@ def post_xlsx():
     db_type = request.args.get('type')
     db_map = {
         'network':net_db,
-        'signals':sig_db
+        'signal':sig_db
     }
     db = import_from_excel(file,db_map[db_type])
     return redirect(url_for('db_manager'))

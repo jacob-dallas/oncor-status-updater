@@ -10,42 +10,82 @@
 {% endblock %}
 
 {% block body%}
-    <main class="d-flex">
-        <div class="d-flex flex-column">
-            <div id="load-save-btns">
+    <main class="d-flex h-100">
+        <div class="d-flex flex-column p-4 border-end h-100 overflow-y-scroll" style="width:500px">
+            <!-- <div id="load-save-btns">
                 <button class="btn">Load All Data</button>
                 <button class="btn">Save All Data</button>
+            </div> -->
+            <div class="pb-2 border-bottom">
+                <select class="form-select" aria-label="Default select example" id="db-selector">
+                    <option selected>Choose Database</option>
+                    <option value="signal">Signals</option>
+                    <option value="network">Networks</option>
+                </select>
+
             </div>
-            <div class="d-flex">
-                <div>fil</div>
-                <input class="form-control me-2 flex-fill" type="search" placeholder="Search" aria-label="Search" id="search">
+            <div class="d-flex  py-2 border-top">
+                <input class="form-control flex-fill" type="search" placeholder="Search" aria-label="Search" id="search">
             </div>
-            <div class="overflow-auto flex-fill">
+            <div class="overflow-auto flex-fill" style="height: 760px;" hidden>
                 <table class="table"  >
                     <thead class="bg-white sticky-top">
-                        <tr id="headers">
+                        <tr id="sig-headers">
                             <th scope="col"> COG ID</th>
                             <th scope="col"> Name</th>
                         </tr>
                     </thead>
+                    <tbody id="signal" class="overflow-y-scroll">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="overflow-auto flex-fill" style="height: 760px;" hidden>
+                <table class="table"  >
+                    <thead class="bg-white sticky-top">
+                        <tr id="net-headers">
+                            <th scope="col"> IP </th>
+                            <th scope="col"> Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="network" class="overflow-y-scroll">
+
+                    </tbody>
                 </table>
             </div>
         </div>
-        <div id="data_window" class="flex-fill">
+        <div id="data_window" class="flex-fill h-100">
             No Data Selected
         </div>
-        <div class="d-flex flex-column">
+        <div class="d-flex flex-column border-start">
             <div id="local_sync">
-                <div class="d-flex">
-                    <p id="local-tab" class="sync-tab"> Sync Data Locally</p>
+                <div class="d-flex flex-column gap-3 m-4">
+                    <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#localcanvas">Sync Data Locally</button>
+                    <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#drivecanvas">Sync Data To Drive</button>
                     <div id="local-main"></div>
                 </div>
             </div>
+        </div> 
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="localcanvas" style="width: 600px;">
+            <div class="d-flex justify-content-around p-3 border-bottom">
+                <button class="btn btn-primary btn-sm mx-1" id="export_btn_local">Export to Excel</button>
+                <button class="btn btn-primary btn-sm mx-1" id="import_btn_local">Import From Excel</button>
 
-            <div id="ago_sync"></div>
-            <div id="cut_sync"></div>
-            <div id="drive_sync"></div>
+            </div>
+            <div id="local-export-options">
+                
+            </div>
+            <!-- <button id="local-export-button" class="btn btn-success mt-5 mx-3" disabled>Export</button> -->
+        </div>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="drivecanvas" style="width: 600px;">
+            <button class="btn btn-primary btn-sm mx-1" id="export_btn_local">Export to Drive</button>
+            <button class="btn btn-primary btn-sm mx-1" id="import_btn_local">Import From Drive</button>
 
         </div>
+
     </main>
+{% endblock %}
+
+{%block script%}
+<script src="{{ url_for('static', filename='db_man.js') }}"></script>
 {% endblock %}

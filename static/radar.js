@@ -460,11 +460,11 @@ data_table.addEventListener('click',(e)=>{
 
         metaInfo = document.getElementById('meta-info')
         let nMatrixTag = document.getElementById('n-matrix-tag')
-        let nCCUTag = document.getElementById('n-advance-tag')
-        let nAdvancedTag = document.getElementById('n-ccu-tag')
+        let nAdvancedTag = document.getElementById('n-advance-tag')
+        let nCCUTag = document.getElementById('n-ccu-tag')
         nMatrixTag.innerHTML = "Number of Recorded Matrix: "
-        nCCUTag.innerHTML = "Number of Recorded Advance: "
-        nAdvancedTag.innerHTML="Number of Recorded CCU: "
+        nAdvancedTag.innerHTML="Number of Recorded Advance: "
+        nCCUTag.innerHTML = "Number of Recorded CCU: "
 
 
         let nMatrix = document.createElement('span')
@@ -480,8 +480,8 @@ data_table.addEventListener('click',(e)=>{
         nAdvanced.innerHTML=data.n_advance
         nAdvanced.id='n_advance-inp'
         nMatrixTag.append(nMatrix)
-        nCCUTag.append(nCCU)
         nAdvancedTag.append(nAdvanced)
+        nCCUTag.append(nCCU)
 
         let cculabel = document.getElementById('ccu-title')
         let ccus = document.getElementById('ccus')

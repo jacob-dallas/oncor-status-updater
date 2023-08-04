@@ -31,6 +31,8 @@ class Signal():
     types = [
         {
             'cog_id':int,
+            'lat':int,
+            'long':int,
             'ip':str,
             'name':str,
             'street':str,

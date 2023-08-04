@@ -1,61 +1,6 @@
 let ip = location.host
 
-const export_btn = document.getElementById('export_btn')
-export_btn.addEventListener('click',async e=>{
-    const myInit = {
-        method: "POST",
-        mode: "cors",
-        cache: "default",
-        headers: {'Content-Type': 'application/json'},
-        body:JSON.stringify({
-            signals:['cog_id','ip','online_status']
-        })
-    };
-    let url = `http://${ip}/get_xlsx?`+ new URLSearchParams({type:'signals'})
-    let data = await fetch(url,myInit)
-    let a = document.createElement('a')
-    let data_b = await data.blob()
-    url = URL.createObjectURL(data_b)
-    a.href = url
-    a.download = 'Signals.xlsx'
-    document.body.appendChild(a)
-    a.click()
-    setTimeout(()=>{
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }, 0);
-})
 
-const import_btn = document.getElementById('import_btn')
-import_btn.addEventListener('click',async e=>{
-    let file = document.createElement('input')
-    file.setAttribute('type','file')
-    file.display = 'hidden'
-    document.body.appendChild(file)
-    file.addEventListener('change', async (e) => {
-        if (e.target.files[0]) {
-            let data = new FormData()
-            let filedata = e.target.files[0]
-            data.append('file', filedata)
-            console.log('You selected ' + e.target.files[0].name);
-            
-            const myInit = {
-                method: "POST",
-                body: data,
-                mode: "cors",
-                cache: "default",
-                redirect: 'follow'
-            };
-            let res = await fetch(`http://${ip}/post_xlsx`,myInit)
-            location.reload()
-        }
-
-    })
-    file.click()
-
-
-
-})
 
 async function get_data(){
     const myInit = {

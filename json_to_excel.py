@@ -13,6 +13,8 @@ def rec_get_sheets(data,sheet,sheet_data,converter,fk_str,parent,fks_old=None):
     
     # for every entry in the spreadsheet, add it to the sheet data
     for entry in data:
+        if isinstance(entry,list):
+            continue
         # This section is all about defining the fk's that will be added to sheet
         # fks will be recursively defined
         if fks_old==None:
@@ -23,7 +25,10 @@ def rec_get_sheets(data,sheet,sheet_data,converter,fk_str,parent,fks_old=None):
         l = fk_str.split(',')
         for i in l:
             p = i.split('.')
-            val = entry.get(p[-1],{})   
+            if isinstance(entry,dict):
+                val = entry.get(p[-1],{})
+            else:
+                continue
 
             # if val is a nested object, wait until next recursion to get its properties
             if len(p)>1:
@@ -35,7 +40,7 @@ def rec_get_sheets(data,sheet,sheet_data,converter,fk_str,parent,fks_old=None):
                 if val:
                     fks.append({'key':key,'val':val,'parent':parent})
                 else: 
-                    fks.append({'key':key,'val':'error'})
+                    fks.append({'key':key,'val':val,'parent':parent})
         
         # rejoin all sub fk so they look like fks_old when it came in
         sub_fk = ','.join(sub_fk)
