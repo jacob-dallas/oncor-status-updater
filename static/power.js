@@ -2,17 +2,20 @@ let ip = location.host
 
 const export_btn = document.getElementById('export_btn')
 export_btn.addEventListener('click',async e=>{
-    console.log(e)
     const myInit = {
-        method: "GET",
+        method: "POST",
         mode: "cors",
         cache: "default",
+        headers: {'Content-Type': 'application/json'},
+        body:JSON.stringify({
+            signals:['cog_id','ip','online_status']
+        })
     };
-    let data = await fetch('http://127.0.0.1:5000/get_xlsx',myInit)
-    // let test = await data.formData()
+    let url = `http://${ip}/get_xlsx?`+ new URLSearchParams({type:'signals'})
+    let data = await fetch(url,myInit)
     let a = document.createElement('a')
     let data_b = await data.blob()
-    let url = URL.createObjectURL(data_b)
+    url = URL.createObjectURL(data_b)
     a.href = url
     a.download = 'Signals.xlsx'
     document.body.appendChild(a)
@@ -25,7 +28,6 @@ export_btn.addEventListener('click',async e=>{
 
 const import_btn = document.getElementById('import_btn')
 import_btn.addEventListener('click',async e=>{
-    console.log(e)
     let file = document.createElement('input')
     file.setAttribute('type','file')
     file.display = 'hidden'
@@ -45,7 +47,6 @@ import_btn.addEventListener('click',async e=>{
                 redirect: 'follow'
             };
             let res = await fetch(`http://${ip}/post_xlsx`,myInit)
-            console.log(res)
             location.reload()
         }
 
@@ -66,7 +67,6 @@ async function get_data(){
         cache: "default",
     };
     const data = await fetch(`http://${ip}/get_data`,myInit)
-    console.log(data)
     return data
 }
 addEventListener("load",async (event) =>  {
@@ -199,7 +199,6 @@ function drawTable(filters){
         allSignalCount++
         let signal = JSON.parse(sessionStorage.getItem(cog_id))
         let filt1 = signal.modem_online !== true
-        console.log(signal['cog_id'])
         let filt2 = signal?.meters?.[0]?.online_status != "ON"
         if (filt1){
             ComOutageCount = ComOutageCount+1
@@ -308,8 +307,6 @@ function drawTable(filters){
 sessionStorage.setItem('sortOrder',JSON.stringify(Array()))
 columnHeaders = document.getElementById('headers')
 columnHeaders.addEventListener('click',(e) => {
-    console.log(e)
-    // make sure th was clicked
     let outStr
     let sortOrder = JSON.parse(sessionStorage.getItem('sortOrder'))
 
@@ -350,32 +347,30 @@ function update(){
         if (!local_meter.meters[0]){
             local_meter.meters[0] = {}
         }
-        local_meter.meters[0].online_status = meter_obj.online_status
-        local_meter.meters[0].esi_id = meter_obj.esi_id
-        sessionStorage.setItem(meter_obj.cog_id,JSON.stringify(local_meter))
+        local_meter.meters[0].online_status = meter_obj?.online_status
+        local_meter.meters[0].esi_id = meter_obj?.esi_id
+        sessionStorage.setItem(meter_obj?.cog_id,JSON.stringify(local_meter))
     })
     
 
     
     handler.addEventListener("ping_comm", (e)=>{
         const com_obj = JSON.parse(e.data)
-        let local_com = JSON.parse(sessionStorage.getItem(com_obj.cog_id))
-        local_com.modem_online = com_obj.modem_online
-        sessionStorage.setItem(com_obj.cog_id,JSON.stringify(local_com))
+        let local_com = JSON.parse(sessionStorage.getItem(com_obj?.cog_id))
+        local_com.modem_online = com_obj?.modem_online
+        sessionStorage.setItem(com_obj?.cog_id,JSON.stringify(local_com))
     })
 
         handler.addEventListener("timestamp", (e)=>{
             const com_obj = JSON.parse(e.data)
-            let local_com = JSON.parse(sessionStorage.getItem(com_obj.cog_id))
-            local_com.time = com_obj.time
-            sessionStorage.setItem(com_obj.cog_id,JSON.stringify(local_com))
+            let local_com = JSON.parse(sessionStorage.getItem(com_obj?.cog_id))
+            local_com.time = com_obj?.time
+            sessionStorage.setItem(com_obj?.cog_id,JSON.stringify(local_com))
 
         })
 
         handler.addEventListener('error',(e)=>{
-            console.log(e)
             e.target.close()
-            window.alert('Unable to connect to backend. Closing Listener...')
         })
         
         //todo: handle no response| update: partially handled
@@ -384,7 +379,6 @@ function update(){
                 method: 'POST',
                 data: {pause:true}
             })
-            console.log('tried to closes')
             handler.close()
     }
     addEventListener('beforeunload',close_listen)

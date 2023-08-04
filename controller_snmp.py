@@ -7,9 +7,14 @@ env_path = os.path.join(data_root,'.env')
 load_dotenv(env_path)
 
 community = os.environ['COMMUNITY']
-
+versions = {
+    '1':snmp.SNMPv1,
+    '2':snmp.SNMPv2c,
+    '3':snmp.SNMPv3,
+}
+version = os.environ['SNMPVER']
 def controller_ping(ip):
-    with snmp.Engine(defaultVersion=snmp.SNMPv1,defaultCommunity=community.encode()) as engine:
+    with snmp.Engine(defaultVersion=versions[version],defaultCommunity=community.encode()) as engine:
         try:
             localhost = engine.Manager((ip,161))
             res = localhost.get("1.3.6.1.4.1.1206.4.2.1.3.8")

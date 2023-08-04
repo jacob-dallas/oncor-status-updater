@@ -12,8 +12,44 @@ A simple program to update the status of oncor equipment
 
 ### Steps for installing and running python files
 #### Prerequisites for installation
-- python 3.10
-- git
+- [python 3.10][1]
+- [git][2]
+[1]: https://apps.microsoft.com/store/detail/python-310/9PJPW5LDXLZ5
+[2]: https://git-scm.com/downloads
+
+#### Steps for Installation
+1. Download the repository either through git or from github. If you download with git, simply type `git clone git@github.com:jacob-dallas/oncor-status-updater.git` (if you are using ssh). If you download the zip file, extract it somewhere you can easily find.
+
+2. Once the code has been downloaded through git or from github, navigate to that folder in you preferred terminal and run `python -m venv .venv`, where `.venv` can be whatever you wish. 
+
+3. Once this is complete, activate the virtual environment. If you are using powershell on windows, this can be done by entering `.\.venv\Scripts\Activate.ps1`
+
+4. Install the projects depedencies by running `pip install -r requirements.txt`. At this point, you can run app.py and the program will run in an unconfigured mode. Please follow the next set of steps for configuration.
+
+#### Steps for configuration
+In general, configuration will include setting up environment variables, providing databases, and providing any certificates that might be needed for TLS.
+##### Setting up Environment variables
+The app will look for a .env file in the folder signified by python's APPDATA variable. If you have already ran app.py, it will have copied .env-template into this directory as .env, but it will be unconfigured. To find this folder and modify .env, start an instance of the python interpreter and run the following commands.
+
+1. `import os`
+2. `os.path.realpath(os.getenv('APPDATA'))`
+
+For python installations downloaded from the python website, the displayed path will be the normal appdata path, but if python was download from the microsoft store or some other repository, it could be in a strange place.
+
+Navigating to this folder will show you its contents, including a log folder, two json databases, and a .env file. Open the .env file in any text editor to configure it. The most important variables to set are:
+- IP: set equal to the internal or external IP you want the server to be hosted on
+- PORT: the port for the server
+- COMMUNITY: This has to do with communicating with controllers through SNMP. If you controller supports this, provide an acceptable community name for communication with it.
+- SNMPVER: The version of SNMP your traffic signal controllers use.
+- CERT_PATH: If you need to provide a certificate for http requests, put the path to it here. Otherwise, leave blank
+- CP_USER: Cradlepoint username for communication with modems. If you do not use cradlepoint modems or dont plan to use the modem portal, ignore this.
+- CP_PASS: Cradlepoint password for communication with modems. If you do not use cradlepoint modems or dont plan to use the modem portal, ignore this.
+
+##### Setting up Databases
+Databases can either be set up by copying the json format provided in the database templates or by using the app's import from excel feature. To determine the format required by for an excel document, first use the export to excel feature, and it will generate a template for either database.
+
+There are two databases used in this application: the main database `db.json` and the modem database `modem_db.json`. The main database has a unique ID for each traffic signal. This id is the COG_ID. This value is used as the primary key of the database. This database contains information on the traffic signal's power meters and radar brains, which both have a many-to-one relationship with the traffic signals, The modem database uses IP addresses as primary keys because this app can change which signal is associated with each IP. 
+
 
 ### Generally how this application works
 This application employs a server-client architecture, where the server and the

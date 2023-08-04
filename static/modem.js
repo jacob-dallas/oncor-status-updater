@@ -898,59 +898,6 @@ confDial.addEventListener("click", e => {
     }
   })
 
-export_btn.addEventListener('click',async e=>{
-    console.log(e)
-    const myInit = {
-        method: "GET",
-        mode: "cors",
-        cache: "default",
-    };
-    let data = await fetch(`http://${ip}/get_xlsx`,myInit)
-    // let test = await data.formData()
-    let a = document.createElement('a')
-    let data_b = await data.blob()
-    let url = URL.createObjectURL(data_b)
-    a.href = url
-    a.download = 'Radar.xlsx'
-    document.body.appendChild(a)
-    a.click()
-    setTimeout(()=>{
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }, 0);
-})
-
-import_btn.addEventListener('click',async e=>{
-    console.log(e)
-    let file = document.createElement('input')
-    file.setAttribute('type','file')
-    file.display = 'hidden'
-    document.body.appendChild(file)
-    file.addEventListener('change', async (e) => {
-        if (e.target.files[0]) {
-            let data = new FormData()
-            let filedata = e.target.files[0]
-            data.append('file', filedata)
-            console.log('You selected ' + e.target.files[0].name);
-            
-            const myInit = {
-                method: "POST",
-                body: data,
-                mode: "cors",
-                cache: "default",
-                redirect: 'follow'
-            };
-            let res = await fetch(`http://${ip}/post_xlsx`,myInit)
-            console.log(res)
-            location.reload()
-        }
-
-    })
-    file.click()
-
-
-
-})
 
 Array.from(filters.children).forEach( (filter)=>{
     filter.firstElementChild.addEventListener('click',filterState)

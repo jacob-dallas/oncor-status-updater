@@ -16,6 +16,8 @@ import time
 import datetime
 from waitress import serve
 import dotenv
+from model import Signal, Network
+from json_to_excel import import_from_excel
 
 data_root = os.path.join(os.getenv('APPDATA'),'acid')
 db_path = os.path.join(data_root,'db.json')
@@ -32,55 +34,25 @@ if not os.path.exists(data_root):
 if not os.path.exists(log_dir):
     os.mkdir(log_dir)
 
-if not os.path.exists(db_path):
-    shutil.copy('db_template.json',db_path)
-    
-if not os.path.exists(modem_db_path):
-    shutil.copy('modem_db_template.json',modem_db_path)
-
 if not os.path.exists(env_path):
     shutil.copy('.env-template',env_path)
 
 dotenv.load_dotenv(env_path)
+
 app.secret_key=os.environ['SESSION_KEY']
+log_dir=os.environ.get('LOGDIR',log_dir)
 
-
-from json_to_excel import export_sig, import_sig
-from threaded_update import UpdateThread,n_power_updaters,stop_power
-from radar_thread import RadarThread,n_radar_updaters,stop_radar
-from modem_thread import ModemThread,n_modem_updaters,stop_modem
+from threaded_update import DBCounter,UpdateThread
+from power_thread import PowerThread,n_power_updaters
+from radar_thread import RadarThread,n_radar_updaters
+from modem_thread import ModemThread,n_modem_updaters
 
 # Give threads the basic info they need
-with open(db_path,'r') as f:
-    signals = json.load(f)
+sig_db = Signal(path=db_path)
+net_db = Network(path=modem_db_path)
 
-with open(modem_db_path,'r') as f:
-    modems = json.load(f)
-
-outage_log = open(oncor_log,'w')
-
-queue_outage = queue.Queue(20)
-UpdateThread.signals = signals
-UpdateThread.outage_log = outage_log
-UpdateThread.db = db_path
-UpdateThread.data_root = data_root
-UpdateThread.n_signals = len(UpdateThread.signals)
-
-queue_radar = queue.Queue(20)
-RadarThread.signals = signals
-RadarThread.log = outage_log
-RadarThread.db = db_path
-RadarThread.data_root = data_root
-RadarThread.n_signals = len(RadarThread.signals)
-
-queue_modem = queue.Queue(20)
-ModemThread.signals = signals
-ModemThread.modems = modems
-ModemThread.log = outage_log
-ModemThread.db = db_path
-ModemThread.db_modem = modem_db_path
-ModemThread.data_root = data_root
-ModemThread.n_signals = len(ModemThread.signals)
+ModemThread.signals = sig_db
+UpdateThread.log_dir = log_dir
 
 
 #################################################################################
@@ -143,41 +115,17 @@ def db_manager():
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    try:
-        with UpdateThread.lock:
-            data = UpdateThread.signals
-    except AttributeError:
-        with open(db_path,'r') as f:
-            data = json.load(f)
-            with UpdateThread.lock:
-                UpdateThread.signals = data
-    return data
+    return sig_db.get_data()
 
 
 @app.route('/get_radar_data', methods=['GET'])
 def get_radar_data():
-    try:
-        with RadarThread.lock:
-            data = RadarThread.signals
-    except AttributeError:
-        with open(db_path,'r') as f:
-            data = json.load(f)
-            with RadarThread.lock:
-                RadarThread.signals = data
-    return data
+    return sig_db.get_data()
 
 
 @app.route('/get_modem_data', methods=['GET'])
 def get_modem_data():
-    try:
-        with ModemThread.lock:
-            data = ModemThread.modems
-    except AttributeError:
-        with open(modem_db_path,'r') as f:
-            data = json.load(f)
-            with ModemThread.lock:
-                ModemThread.modems = data
-    return data
+    return net_db.get_data()
 
 
 @app.route('/get_pf_table', methods=['GET'])
@@ -365,9 +313,6 @@ def del_pf_table():
         return {}
     
 
-# put http://172.22.4.118:8080/api/config/firewall/portfwd/(ind)?data=%7B%22protocol%22%3A%22both%22%2C%22enabled%22%3Atrue%2C%22name%22%3A%22test%22%2C%22wan_port_start%22%3A12345%2C%22wan_port_end%22%3A12345%2C%22lan_port_offt%22%3A12345%2C%22ip_address%22%3A%22192.168.0.50%22%7D
-# delete http://172.22.4.118:8080/api/config/firewall/portfwd/(ind)?data=(ind)
-
 #################################################################################
 ##############################     Monitors      ################################
 #################################################################################
@@ -388,42 +333,34 @@ def monitor_thread():
 
 @app.route('/pause_listen', methods=['POST'])
 def puase_listen():
-    req_data = request.form
-    print(req_data)
-    with UpdateThread.lock:
-        UpdateThread.pause= True
+    if n_power_updaters():
+        PowerThread.pauser.set()
     return flask.Response(status=200)
 
 
 @app.route('/pause_radar_listen', methods=['POST'])
 def puase_radar_listen():
-    req_data = request.form
-    print(req_data)
-    with RadarThread.lock:
-        RadarThread.pause= True
+    if n_radar_updaters():
+        RadarThread.pauser.set()
     return flask.Response(status=200)
 
 
 @app.route('/pause_modem_listen', methods=['POST'])
 def puase_modem_listen():
-    req_data = request.form
-    print(req_data)
-    with ModemThread.lock:
-        ModemThread.pause= True
+    if n_modem_updaters():
+        ModemThread.pauser.set()
     return flask.Response(status=200)
 
 
 @app.route('/listen', methods=['GET'])
 def listen():
-    print('new listen!')
-    with UpdateThread.lock:
-        UpdateThread.pause = False
-    # why are so many threads being generated
+    if n_power_updaters():
+        PowerThread.pauser.clear()
     def stream():
         cond = True
         while cond:
             try:
-                msg = queue_outage.get(timeout=2) 
+                msg = PowerThread.q.get(timeout=60) 
                 if "modem" in msg:
                     yield format_sse(msg,'ping_comm')
                 elif 'time' in msg:
@@ -432,21 +369,19 @@ def listen():
                     yield format_sse(msg,'oncor')
             except Exception as e:
                 cond=False
-        print('closing listen!')
 
     return flask.Response(stream(), mimetype='text/event-stream')
 
 
 @app.route('/radar_listen', methods=['GET'])
 def radar_listen():
-    with RadarThread.lock:
-        RadarThread.pause = False
-    # why are so many threads being generated
+    if n_radar_updaters():
+        RadarThread.pauser.clear()
     def stream():
         cond = True
         while cond:
             try:
-                msg = queue_radar.get(timeout=20) 
+                msg = RadarThread.q.get(timeout=60) 
                 if "modem" in msg:
                     yield format_sse(msg,'ping_comm')
                 elif 'time' in msg:
@@ -460,13 +395,13 @@ def radar_listen():
 
 @app.route('/modem_listen', methods=['GET'])
 def modem_listen():
-    with ModemThread.lock:
-        ModemThread.pause = False
+    if n_modem_updaters():
+        ModemThread.pauser.clear()
     def stream():
         cond = True
         while cond:
             try:
-                msg = queue_modem.get(timeout=20) 
+                msg = ModemThread.q.get(timeout=60) 
                 if '\"msg_id\":\"time\"' in msg:
                     yield format_sse(msg,'timestamp')
                 else :
@@ -474,23 +409,6 @@ def modem_listen():
             except Exception as e:
                 cond=False
     return flask.Response(stream(), mimetype='text/event-stream')
-        
-
-@app.route('/failed', methods=['GET'])
-def failed():
-    # why are so many threads being generated
-    def stream():
-        while True:
-            msg = queue_outage.get()  # blocks until a new message arrives
-            if "modem" in msg:
-                yield format_sse(msg,'ping_comm')
-                
-            elif 'time' in msg:
-                yield format_sse(msg,'timestamp')
-            else :
-                yield format_sse(msg,'oncor')
-
-            return flask.Response(stream(), mimetype='text/event-stream')
 
 
 #################################################################################
@@ -501,15 +419,15 @@ def failed():
 @app.route('/stop_threads', methods=['POST'])
 def stop_threads():
     if request.args.get('thread')=='power':
-        stop_power()
+        PowerThread.stopper.set()
     if request.args.get('thread')=='radar':
-        stop_radar()
+        RadarThread.stopper.set()
     if request.args.get('thread')=='modem':
-        stop_modem()
+        ModemThread.stopper.set()
     return flask.Response(status=200)
 
 
-def start_update_thread(req_data,thread_type,queue_loc):
+def start_update_thread(req_data,thread_type):
     record = req_data.get('recordInt',0)
     n_threads = req_data.get('nThread',10)
     stop_after = req_data.get('runFor', 0)
@@ -524,10 +442,30 @@ def start_update_thread(req_data,thread_type,queue_loc):
     thread_type.pause=pause
     thread_type.stop_at = stop_at
     thread_type.record = record
-    
+
+    q = queue.Queue(20)
+    counter= DBCounter()
+    stopper = threading.Event()
+    pauser = threading.Event()
+    if thread_type == ModemThread:
+        db = net_db
+    else:
+        db = sig_db
     threads = []
+
+    thread_type.counter=counter
+    thread_type.stopper=stopper
+    thread_type.pauser=pauser
+    thread_type.q=q
+
     for thread in range(int(n_threads)):
-        thread_i = thread_type(queue_loc)
+        thread_i = thread_type(
+            db,
+            counter,
+            stopper,
+            q,
+            pauser
+        )
         threads.append(thread_i)
         thread_i.start()
 
@@ -539,7 +477,7 @@ def start_power_threads():
 
     print(request.form)
     req_data = request.form
-    start_update_thread(req_data,UpdateThread,queue_outage)
+    start_update_thread(req_data,PowerThread)
     
     return flask.Response(status=200)
 
@@ -551,7 +489,7 @@ def start_radar_threads():
 
     print(request.form)
     req_data = request.form
-    start_update_thread(req_data,RadarThread,queue_radar)
+    start_update_thread(req_data,RadarThread)
     
     return flask.Response(status=200)
 
@@ -562,7 +500,7 @@ def start_modem_threads():
 
     print(request.form)
     req_data = request.form
-    start_update_thread(req_data,ModemThread,queue_modem)
+    start_update_thread(req_data,ModemThread)
     
     return flask.Response(status=200)
 
@@ -605,39 +543,40 @@ def auth_code():
 @app.route('/update_from_input', methods = ['POST'])
 def update_from_input():
     data = request.form
-    with UpdateThread.lock:
-        with RadarThread.lock:
-            with ModemThread.lock:
-                for signal in UpdateThread.signals:
-                    if signal['cog_id']==int(data['cog_id']):
-                        for k,v in data.items():
-                            if k=='cog_id':
-                                continue
-                            else:
-                                signal[k]=v
-                with open(RadarThread.db,'w') as f:
-                        json.dump(RadarThread.signals,f,indent=4)
+    with sig_db.lock:
+        for signal in sig_db.data:
+            if signal['cog_id']==int(data['cog_id']):
+                for k,v in data.items():
+                    if k=='cog_id':
+                        continue
+                    else:
+                        signal[k]=v
+    sig_db.save_to_file()
     return flask.Response(status=200)
 
 
-@app.route('/get_xlsx', methods=['GET'])
+@app.route('/get_xlsx', methods=['POST'])
 def get_xlsx():
-    with UpdateThread.lock:
-        data = UpdateThread.signals
-    file = export_sig(data)
-    return send_file(file,download_name='signals.xlsx',mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    db_type = request.args.get('type')
+    fields = request.json
+    db_map = {
+        'network':net_db,
+        'signals':sig_db
+    }
+    file = db_map[db_type].export(fields)
+    return send_file(file,download_name='data.xlsx',mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 
 @app.route('/post_xlsx', methods=['POST'])
 def post_xlsx():
     file = request.files['file']
-    signals = import_sig(file)
-    with UpdateThread.lock:
-        UpdateThread.signals = signals
-        shutil.copy(UpdateThread.db,os.path.join(UpdateThread.data_root,'signals.bak'))
-        with open(UpdateThread.db,'w') as f:
-            json.dump(UpdateThread.signals,f)
-    return redirect(url_for('power'))
+    db_type = request.args.get('type')
+    db_map = {
+        'network':net_db,
+        'signals':sig_db
+    }
+    db = import_from_excel(file,db_map[db_type])
+    return redirect(url_for('db_manager'))
 
 
 

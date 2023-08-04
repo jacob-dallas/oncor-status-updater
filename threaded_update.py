@@ -2,11 +2,9 @@ import datetime
 import threading
 import json
 import os
-from pythonping import ping
-from controller_snmp import controller_ping
+
 import queue
 import shutil
-from json_to_excel import export_sig
 from power_meter import PowerMeter
 
 import zipfile
@@ -16,50 +14,41 @@ class DBCounter():
         self.value = 0
         self.just_reset=False
     def increment(self,max):
-        if self.value>max:
+        out_val =self.value
+        if self.value>=max:
             self.reset()
+            out_val=self.value
         else:
             self.value+=1
-        return self.value
+            self.just_reset=False
+        return out_val
     def reset(self):
         self.value=0
         self.just_reset=True
-        
 
-def n_power_updaters():
-    i = 0
-    for thread in threading.enumerate():
-        if isinstance(thread, UpdateThread):
-            i+=1
-    return i
-def stop_power():
-    for thread in threading.enumerate():
-        if isinstance(thread, UpdateThread):
-            thread.set_stop(True)
-    
-
-# add update schedule
 
 class UpdateThread(threading.Thread):
     
     def __init__(
             self,
             db,
-            db_lock,
             fn_list,
             db_counter,
             stopper,
-            queue,
+            q,
             pauser,
+            *args,
             **kwargs
         ):
+        self.args=args
         super().__init__(**kwargs)
-        self.db=db
-        self.db_lock=db_lock
+        self.db=db.data
+        self.db_obj=db
+        self.db_lock=db.lock
         self.fn_list=fn_list
         self.db_counter=db_counter
         self.stopper=stopper
-        self.q=queue
+        self.q=q
         self.pauser=pauser
     
     # work on updating database and making a manual update feature
@@ -68,46 +57,47 @@ class UpdateThread(threading.Thread):
             
             with self.db_lock:
                 self.i = self.db_counter.increment(len(self.db))
-                if self.db_counter.just_reset:
-                    self.stopper.set()
-                db_i = UpdateThread.db[self.i]
-                if self.stopper.is_set():
-                    break
+                
+            if self.db_counter.just_reset:
+                self.db_obj.save_and_bak()
+
+            with self.db_lock:
+                db_i = self.db[self.i]
+                
+            if self.stopper.is_set():
+                self.db_obj.save_and_bak()
+                break
 
             for fn in self.fn_list:
-
-                res = fn(db_i,self.db_lock)
-                if not self.pauser.is_set():
-                    self.add_to_queue(res)
-
-            if self.i%100==0:
-                with self.db_lock:
-                    self.save_and_bak()
+                res = fn(db_i,self.db_lock,*self.args)
+                if self.pauser.is_set():
+                    self.add_to_queue(res)                
 
             if self.record:
                 with self.db_lock:
                     exist = getattr(self,'record_time',False)
-                    if exist:
-                        expired = UpdateThread.record_time<datetime.datetime.now()
-                        if expired:
-                            self.to_excel()
+                if exist:
+                    expired = UpdateThread.record_time<datetime.datetime.now()
+                    if expired:
+                        self.to_excel()
+                        with self.db_lock:
                             UpdateThread.record_time = datetime.datetime.now()+datetime.timedelta(hours=float(self.record))
-                    else:
+                else:
+                    with self.db_lock:
                         UpdateThread.record_time = datetime.datetime.now()+datetime.timedelta(hours=float(self.record))
 
             if self.stop_at and UpdateThread.stop_at<datetime.datetime.now() and not self.stopper.is_set():
-                print('stopping now!')
+                self.stopper.set()
+                self.db_obj.save_and_bak()
                 with self.db_lock:
-                    self.stopper.set()
                     self.db_counter.reset()
-                    self.save_and_bak()
 
             percent_complete = self.i/len(self.db)*100
             print(f'{percent_complete:.2f}%')
-            
+
     def to_excel(self,no_time=False):
-        file = export_sig(UpdateThread.signals)
-        log_dir = os.path.join(UpdateThread.data_root,'logs')
+        file = self.db_obj.export()
+        log_dir = self.log_dir
         finish_time = datetime.datetime.now()
         if no_time:
             filename = 'excel_out.xlsx'
@@ -130,6 +120,14 @@ class UpdateThread(threading.Thread):
                 for f in xl_files:
                     archive.write(os.path.join(log_dir,f))
                     os.remove(os.path.join(log_dir,f))
+    def add_to_queue(self,res):
+        self.q.put(json.dumps(res))
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
